@@ -151,5 +151,27 @@ for _ph,_f in (("<!--@@ANALORG2_HTML@@-->","analorg2.html"),("/*@@ANALORG2_CSS@@
     html=html.replace(_ph,_t)
 a=html.index("/* ---------- dados: exercícios"); b=html.index("/* ---------- utilidades")
 html=html[:a]+"/* ---------- dados ---------- */\n"+js+"\n"+html[b:]
+# dados grandes viram <script type="application/json"> (o navegador não compila, só lê com JSON.parse: início bem mais rápido no celular)
+_a=html.index("/* ---------- dados ---------- */");_b=html.index("/* ---------- utilidades")
+_reg=html[_a:_b];_dj=[];_out=[]
+for _ln in _reg.split("\n"):
+    _m=re.match(r"^const (\w+)=(.*);$",_ln)
+    if _m and len(_ln)>20000:
+        _nm,_val=_m.group(1),_m.group(2)
+        try: _o=json.loads(_val)
+        except Exception: _o=None
+        else:
+            if _nm=="BDJSON":
+                _txt=_o;json.loads(_txt)
+                _out.append("const BDJSON=document.getElementById('dj-BDJSON').textContent;")
+            else:
+                _txt=_val
+                _out.append("const "+_nm+"=JSON.parse(document.getElementById('dj-"+_nm+"').textContent);")
+            _dj.append('<script type="application/json" id="dj-'+_nm+'">'+_txt.replace("<","\\u003c")+'</script>')
+            continue
+    _out.append(_ln)
+_reg="\n".join(_out)
+_sp=html.rindex("<script",0,_a)
+html=html[:_sp]+"\n".join(_dj)+"\n"+html[_sp:_a]+_reg+html[_b:]
 open(os.environ.get('SAIDA','quebra_cabeca_v3.html'),'w',encoding='utf-8').write(html)
 print(len(thumbs),len(MAPS),len(html))
