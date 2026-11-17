@@ -151,5 +151,5 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - RMN > Tabelas: "H em α (M–Y)" e "H em β (M–C–Y)" com δ de CH₃, CH₂ e CH para 28 e 27 grupos. O livro só traz esses valores como pontos num gráfico, então foram medidos: calibração do eixo pelas linhas da grade, detecção das barras (CH₃), círculos vazios (CH₂) e círculos cheios (CH) por correspondência de modelo, conferência com valores conhecidos (CH₃Cl 3,05, CH₃Br 2,70, CH₃F 4,25) e com a posição vista na imagem. Arredondados a 0,05 ppm.
 - Limite: a leitura de gráfico tem precisão de ~0,05 ppm; a continuação de A.1 (p. 176) tem marcadores de forma irregular e não entrou.
 
-## v253: Apêndice E do Silverstein
+## v254: Apêndice E do Silverstein
 - RMN > Tabelas: "H em heteroátomos: O–H, N–H e S–H", 20 faixas medidas nas pontas das barras do gráfico (raster a 200 dpi, eixo calibrado pelas 20 linhas de grade). Arredondadas a 0,1 ppm. A barra de água a ~4,5 a 5,0 não tem rótulo de solvente no gráfico e ficou de fora.
