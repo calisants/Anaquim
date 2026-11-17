@@ -172,6 +172,7 @@ function ringPat(c){
   if(c.bd&&!c.hasd)return null;
   const o=(c.ot||[]).find(o=>/^Combinação e harmônico/.test(o[0]));if(!o)return 'nenhum';
   const t=String(o[2]);
+  if(/mais de um anel isolado/.test(t))return null; /* dois anéis isolados (azobenzeno etc.): o texto só descreve o 1º anel, então não mostro padrão */
   if(/^Anel monossubst/.test(t))return 'mono';if(/^Anel orto/.test(t))return 'orto';if(/^Anel meta/.test(t))return 'meta';if(/^Anel para/.test(t))return 'para';
   if(/^Anel 1,2,3/.test(t))return 't123';if(/^Anel 1,2,4/.test(t))return 't124';if(/^Anel 1,3,5/.test(t))return 't135';
   /* anel com 4, 5 ou 6 substituintes (ex.: ácido gálico) e anel fundido (naftaleno): têm anel benzênico, só não há padrão tabelado do 2000–1650 */

@@ -39,8 +39,9 @@ with sync_playwright() as p:
       return bdAll().concat(COMP).map(c=>{const s=icScore(c,x);const p=s.parts.find(p=>/^Overtones: anel/.test(p.lab));return [c.n,ringPat(c),p?p.f:null]})}"""
     ids=[k for k,_ in pg.evaluate("RING")]
     assert 't4' in ids and 'fund' in ids,('faltam as opções de anel com 4+ substituintes e anel fundido',ids)
-    todos=pg.evaluate("bdAll().concat(COMP).map(c=>[c.n,ringPat(c)])")
-    assert not [n for n,k in todos if k=='outro'],'sobrou composto sem classificação de anel'
+    todos=pg.evaluate("bdAll().concat(COMP).map(c=>[c.n,ringPat(c),/mais de um anel isolado/.test(JSON.stringify(c.ot||[]))])")
+    assert not [n for n,k,m in todos if k=='outro' and not m],'sobrou composto sem classificação de anel'
+    todos=[(n,k) for n,k,m in todos]
     dd=dict(todos)
     assert dd['Ácido gálico']=='t4',dd['Ácido gálico']
     assert any(k=='fund' for n,k in todos)

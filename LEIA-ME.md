@@ -136,3 +136,7 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - Os 106 compostos com anel heteroaromático (piridina, furano, tiofeno) ficam em "Sem anel benzênico", o que está certo: os benzene fingers são do anel benzênico.
 - Limite que continua: azobenzenos e bifenilas têm dois anéis isolados e o app lê só o primeiro (o texto avisa "os padrões se somam").
 - Teste: `fontes/testes/teste_anel_banco.py`.
+
+## v250: sem etiqueta de anel quando ela confunde
+- Compostos com mais de um anel benzênico isolado (azobenzenos, benzofenonas, ácidos benzoilbenzoicos etc.) tinham a etiqueta do primeiro anel só (ex.: o-hidroxiazobenzeno aparecia como "mono"). Agora ficam "sem dado" no filtro e no Identificar, sem etiqueta na lista. O texto da ficha continua igual.
+- Item "usar altura dos picos na aba Integral": não será feito, porque altura não é integral e o número enganaria.
