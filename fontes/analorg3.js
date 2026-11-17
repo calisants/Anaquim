@@ -657,6 +657,7 @@ function zoomOpen(btn){
     document.querySelectorAll('[data-rpane]').forEach(d=>d.hidden=d.dataset.rpane!==k);
     document.querySelectorAll('.rseg [data-rp]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.rp===k?'true':'false'));
     if(k==='mac')macDraw();
+    if(k==='res'&&window.resDraw)window.resDraw();
     if(k==='treino'&&!TCUR)trnDraw();
     try{sessionStorage.setItem('massas-rp',k);}catch(e){}
   }

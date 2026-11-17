@@ -159,3 +159,11 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - Os pontos foram medidos na imagem a 300 dpi (grade a cada 0,2 ppm, calibrada pelas linhas) e arredondados a 0,05 ppm. Cada ponto foi ligado a o, m ou p pela ordem dos rótulos do livro, da esquerda para a direita. Dois pontos que caem exatamente sobre uma linha da grade (OR em 7,00 e NHC(=O)R em 7,60) foram conferidos à mão no recorte da linha, porque o filtro de linhas os apagava.
 - O PDF novo que ela mandou no Drive é a 6ª ed. escaneada (495 páginas, sem texto) e o da 7ª no Projeto é só o suplemento de problemas; nenhum dos dois entrou como fonte.
 - Ainda não entraram: continuação do A.1 (p. 176), B.2c, C.2, anéis com C=O do C.1, D.4 e D.5.
+
+## v257: RMN, problemas resolvidos (fontes/analorg9.js)
+- Espectros > RMN ganhou o chip "Resolvidos": 28 problemas do Silverstein (7ª ed. em português, fotos que a Camila mandou): 4.3 A a H (¹H e ¹³C), 5.1 a a h, 5.2, 5.3, 5.4, 5.5 e 5.7 A a H. Cada um tem passos que abrem um a um, resposta e quiz curto (miniQuiz, então erros entram na revisão de 1, 3 e 7 dias). Botão "Treinar estes problemas" mistura as perguntas do grupo escolhido. Contador interativo de linhas de ¹³C–D/¹³C–H (2nI + 1, triângulo trinomial).
+- Teoria: bloco novo "¹³C: multiplicidade, DEPT e acoplamento com deutério" e roteiro de resolução.
+- Honestidade dos dados: os δ de ¹H do 4.3 e os de ¹³C do 5.7 foram lidos a olho nas fotos (±0,1 ppm no ¹H, ±2 ppm no ¹³C). Os δ de ¹³C do 4.3 e do 5.1 são de tabela, não do gráfico. Estruturas deduzidas e conferidas por GDH, soma de H e simetria; o gabarito oficial do livro não foi consultado.
+- Divergência anotada: os rótulos "sept" do 4.3 A e 4.3 H, pela regra n + 1, são sextetos.
+- Falta a foto do 4.3 I. O 5.6 está dentro dos itens do 4.3 (passo de ¹³C).
+- Teste novo: testes/teste_resolvidos.py.

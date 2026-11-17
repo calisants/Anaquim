@@ -153,6 +153,7 @@
       <button class="chip" type="button" data-rp="mac" aria-pressed="false">Macetes</button>
       <button class="chip" type="button" data-rp="tab" aria-pressed="false">Tabelas</button>
       <button class="chip" type="button" data-rp="teo" aria-pressed="false">Teoria</button>
+      <button class="chip" type="button" data-rp="res" aria-pressed="false">Resolvidos</button>
       <button class="chip" type="button" data-rp="treino" aria-pressed="false">Treinar</button>
       <button class="chip" type="button" data-rp="comp" aria-pressed="false">Compostos</button>
       <button class="chip" type="button" data-rp="integ" aria-pressed="false">Integral</button>
@@ -401,6 +402,20 @@
       <p><b>Exemplo: estireno.</b> Os três H do vinil formam um sistema de três spins (AMX), cada um um dubleto de dubletos, porque cada um acopla com os outros dois com J diferentes. Acoplamento trans (através da dupla) é o maior, cerca de 18 Hz; cis cerca de 11 Hz; geminal cerca de 1 Hz. Os H aromáticos (δ 7,2 a 7,5) saem como multipletos mal definidos e em geral não são interpretados em detalhe.</p>
       <p class="srcl"><b>Fonte:</b> resumo dos slides de RMN, 2ª a 4ª partes (Prof. Jeronimo, IFRJ). Nos slides, o δ do H<sub>X</sub> do estireno aparece como 6,73 no texto e como 6,37 na lista final; confira antes de citar. Os espectros de exemplo dos slides (etilbenzeno, cumeno, acetato de benzila, 1-nitropropano, N-metilcarbamato de etila) são imagens e não estão no app: o app mostra a estimativa de cada composto na ficha.</p>
     </details>
+    <details class="sec"><summary>¹³C: multiplicidade, DEPT e acoplamento com deutério</summary>
+      <p><b>Fora de ressonância.</b> Sem o desacoplamento total de ¹H, cada ¹³C se divide pelos H ligados a ele (regra n + 1): <b>s</b> = 0 H (C quaternário, C=O de cetona), <b>d</b> = 1 H (CH, CHO), <b>t</b> = 2 H (CH₂), <b>q</b> = 3 H (CH₃). Somando os H dos sinais e comparando com a fórmula, você descobre se sobrou H para O–H ou N–H.</p>
+      <p><b>DEPT</b> dá a mesma informação sem sobrepor sinais: o DEPT-135 mostra CH e CH₃ para cima e CH₂ para baixo; C sem H não aparece.</p>
+      <p><b>Simetria e nº de sinais.</b> Átomos trocados por um eixo ou plano de simetria dão um só sinal, e o sinal fica mais alto. Exemplos: dois CH₃ de uma isopropila; no benzeno monossubstituído, 6 C dão 4 sinais (ipso, orto ×2, meta ×2, para); no para-dissubstituído com grupos diferentes, 4 sinais aromáticos.</p>
+      <p><b>Solvente deuterado.</b> O D tem I = 1, então o ¹³C ligado a n átomos de D se divide em <b>2n + 1 linhas</b>: CDCl₃ em 3 (1:1:1), CD₂Cl₂ em 5 (1:2:3:2:1), grupo CD₃ em 7 (1:3:6:7:6:3:1; DMSO-d₆ e acetona-d₆). A conta vale para qualquer I: linhas = 2nI + 1. Para ¹H (I = ½) vira n + 1. Na aba Resolvidos tem um contador interativo.</p>
+      <p><b>Roteiro para resolver.</b> 1) GDH pela fórmula. 2) Conte os sinais de ¹³C e compare com o nº de C (simetria). 3) Multiplicidade de cada ¹³C: some os H. 4) δ de ¹³C: região diz o tipo de C (C=O acima de 160; sp² 100 a 150; C–O 50 a 90; alquila abaixo de 55). 5) ¹H: integral, δ, n + 1. 6) Monte os fragmentos, feche a fórmula e confira com as constantes (Shoolery, Z, aromático).</p>
+      <p class="srcl" style="margin-top:6px"><b>Fonte:</b> texto escrito aqui a partir de conteúdo de livro-texto, sem fonte conferida.</p>
+    </details>
+    </div>
+
+    <div data-rpane="res" hidden>
+    <div class="sec" style="padding-top:12px"><h3 style="margin:0 0 4px">Problemas resolvidos</h3>
+      <div id="resBox"></div>
+    </div>
     </div>
 
     <div data-rpane="treino" hidden>
