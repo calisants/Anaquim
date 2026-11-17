@@ -153,3 +153,9 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 
 ## v254: Apêndice E do Silverstein
 - RMN > Tabelas: "H em heteroátomos: O–H, N–H e S–H", 20 faixas medidas nas pontas das barras do gráfico (raster a 200 dpi, eixo calibrado pelas 20 linhas de grade). Arredondadas a 0,1 ppm. A barra de água a ~4,5 a 5,0 não tem rótulo de solvente no gráfico e ficou de fora.
+
+## v255: gráfico D.1 do Silverstein (benzeno monossubstituído)
+- Espectros > RMN > Tabelas ganhou "H aromático: benzeno monossubstituído" (Apêndice D, gráfico D.1, p. 183 do trecho da 8ª ed.). 36 substituintes, colunas orto, meta e para.
+- Os pontos foram medidos na imagem a 300 dpi (grade a cada 0,2 ppm, calibrada pelas linhas) e arredondados a 0,05 ppm. Cada ponto foi ligado a o, m ou p pela ordem dos rótulos do livro, da esquerda para a direita. Dois pontos que caem exatamente sobre uma linha da grade (OR em 7,00 e NHC(=O)R em 7,60) foram conferidos à mão no recorte da linha, porque o filtro de linhas os apagava.
+- O PDF novo que ela mandou no Drive é a 6ª ed. escaneada (495 páginas, sem texto) e o da 7ª no Projeto é só o suplemento de problemas; nenhum dos dois entrou como fonte.
+- Ainda não entraram: continuação do A.1 (p. 176), B.2c, C.2, anéis com C=O do C.1, D.4 e D.5.
