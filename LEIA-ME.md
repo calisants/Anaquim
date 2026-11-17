@@ -126,3 +126,6 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - **M no MS:** o maior m/z lido costuma ser o M+1 (isótopo ¹³C), não o M (na anilina o maior pico é 94 e o M é 93). O app marca como "provável M" o maior m/z que não parece M+1 (pico a 35% ou menos do pico logo abaixo). É só uma pista (com Cl, Br ou S há M+2; álcoois quase não têm M). Por isso o M só é preenchido na tela Analisar, com aviso; no Identificar ele não é preenchido, e o M provável e o M+1 ficam fora do campo de picos.
 - A barra de abas do IV passou a rolar para o lado (5 abas não cabiam em 360 px).
 - Teste: `fontes/testes/teste_rmn_pdf.py` (fixtures `sdbs_*_hnmr.pdf` e `sdbs_*_cnmr.pdf`).
+
+## v248: aba Integral no RMN
+- Espectros > RMN > Integral (sugestão do formulário, 17/11/2026): digite a fórmula molecular e, um por linha, o δ e a integral de cada sinal. O app divide o total de H da fórmula na proporção das integrais, arredonda de modo que a soma feche e avisa se algum sinal ficou longe de um número inteiro. Sem fórmula, mostra só a proporção. Botão leva os δ e a fórmula ao Identificar (o nº de sinais de ¹H não é preenchido). Código no fim de `fontes/analorg8.js`; teste: `fontes/testes/teste_integral.py`.

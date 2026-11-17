@@ -301,3 +301,41 @@ document.addEventListener('change',e=>{
   const t=e.target;if(!t||(t.id!=='icHFile'&&t.id!=='icCFile'))return;
   const f=t.files[0];if(f)icRmnArquivo(f,t.id==='icCFile'?'c':'h');
 });
+
+/* ================= RMN > Integral: do tamanho da integral ao número de H de cada sinal ================= */
+function igLinhas(tx){
+  return String(tx||'').split(/\n/).map(l=>(l.replace(/,(?=\d)/g,'.').match(/-?\d+(?:\.\d+)?/g)||[]).map(Number)).filter(n=>n.length).map(n=>n.length>=2?{d:n[0],i:n[1]}:{d:null,i:n[0]}).filter(s=>s.i>0);
+}
+/* arredonda mantendo a soma igual ao total (maiores restos primeiro) */
+function igArredonda(v){
+  const T=Math.round(v.reduce((a,b)=>a+b,0)),f=v.map(Math.floor);let r=T-f.reduce((a,b)=>a+b,0);
+  v.map((x,i)=>[x-f[i],i]).sort((a,b)=>b[0]-a[0]).forEach(p=>{if(r>0){f[p[1]]++;r--;}});return f;
+}
+function igCalcula(){
+  const box=document.getElementById('igOut');if(!box)return;
+  const S=igLinhas(document.getElementById('igT').value),fm=document.getElementById('igF').value.replace(/\s+/g,'');
+  if(!S.length){box.innerHTML='<p class="srcl">Digite pelo menos uma integral.</p>';return;}
+  let T=null;if(fm){const c=elCount(fm);if(c&&c.H>0)T=c.H;}
+  const sum=S.reduce((a,s)=>a+s.i,0);
+  let h='';
+  if(T===null){
+    const mn=Math.min(...S.map(s=>s.i));h+='<p class="hint">Sem a fórmula só dá a proporção entre os sinais (divido pelo menor).</p>';
+    h+=spTabela(['δ (ppm)','Integral','÷ menor'],S.map(s=>[s.d===null?'':String(s.d).replace('.',','),s.i,(s.i/mn).toFixed(2).replace('.',',')]));}
+  else{
+    const x=S.map(s=>s.i/sum*T),R=igArredonda(x),ruim=x.filter((v,i)=>Math.abs(v-Math.round(v))>0.3).length;
+    h+=spTabela(['δ (ppm)','Integral','H (conta)','H do sinal'],S.map((s,i)=>[s.d===null?'':String(s.d).replace('.',','),s.i,x[i].toFixed(2).replace('.',','),'<b>'+R[i]+'</b>']));
+    h+='<p>A fórmula tem <b>'+T+' H</b>; os sinais somam <b>'+R.reduce((a,b)=>a+b,0)+' H</b>.'+(ruim?' '+ruim+(ruim>1?' sinais ficaram':' sinal ficou')+' longe de um número inteiro: confira as integrais, ou se há um sinal sobreposto ou escondido (O–H e N–H trocáveis às vezes não aparecem).':' Todos ficaram perto de números inteiros.')+'</p>';
+    h+='<p class="srcl">H do sinal = integral ÷ soma das integrais × total de H da fórmula, arredondado de modo que a soma feche. Se um grupo simétrico dá um sinal só (CH₃ de um éter simétrico, por exemplo), o número de H dele já inclui os dois lados.</p>';}
+  h+='<div class="row"><button class="btn" type="button" id="igLeva">Levar os δ para o Identificar</button></div>';
+  box.innerHTML=h;
+}
+document.addEventListener('input',e=>{if(e.target&&(e.target.id==='igT'||e.target.id==='igF'))igCalcula();});
+document.addEventListener('click',e=>{
+  if(!e.target||e.target.id!=='igLeva')return;
+  const S=igLinhas(document.getElementById('igT').value),d=S.filter(s=>s.d!==null).map(s=>String(s.d)),f=document.getElementById('igF').value.trim(),c=[];
+  if(d.length)c.push(['icHd',d.join(' ')]);
+  if(f)c.push(['icF',f]);
+  if(!c.length)return;
+  spIrIdent([c[0]].concat(c.slice(1)),'Dados levados da aba Integral. Confira. O número de sinais de ¹H, conte no espectro.');
+});
+document.addEventListener('DOMContentLoaded',igCalcula);if(document.readyState!=='loading')igCalcula();
