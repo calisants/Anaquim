@@ -701,7 +701,7 @@ function bdAll(){
     const ms=r[11],nm=bdNome(r[1]),M=bdNominal(r[4],r[5]);
     const c={i:1000+ix,bd:1,r,n:nm,a:[r[2],r[3]].filter(x=>x&&x.toLowerCase()!==r[1].toLowerCase()).map(bdNome),f:r[4]||'',cas:r[0]||'',mw:r[5],M:M,
       est:bdEstado(r[6],r[7]),cor:r[22]?r[22][0]:'',g:'',pf:r[6],pe:r[7],gdh:bdGdh(r[4]||''),
-      gf:r[17]?r[17][0].map(i=>BDT.g[i]):[],iv:r[17]?r[17][1].map(i=>BDT.b[i]):[],ivf:r[17]?r[17][2].map(i=>BDT.f[i]):[],ot:(r[17]&&r[17][7])||[],
+      gf:r[17]?r[17][0].map(i=>BDT.g[i]):[],iv:r[17]?r[17][1].map(i=>BDT.b[i]):[],ivf:r[17]?r[17][2].map(i=>BDT.f[i]):[],ot:(r[17]&&r[17][7])||[],hasd:!!r[17],
       ms:ms.length?ms.map(p=>p[0]):null,msi:ms.length?ms:null,sub:r[17]?r[17][5]:[],h1:r[17]?r[17][3].map(x=>({lo:x[0],hi:x[1],h:x[2],m:x[3]?'largo':''})):[],c13:r[17]?r[17][4].map(x=>({lo:x[0],hi:x[1],n:x[2]})):[],ge:r[17]?r[17][6]:'',flag:r[18],msalto:r[19],corr:r[20],casx:r[21],
       k:[r[1],r[2],r[3],r[4],r[0]].join(' ')};
     BDC.push(c);});

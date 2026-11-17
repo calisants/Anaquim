@@ -129,3 +129,10 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 
 ## v248: aba Integral no RMN
 - Espectros > RMN > Integral (sugestão do formulário, 17/11/2026): digite a fórmula molecular e, um por linha, o δ e a integral de cada sinal. O app divide o total de H da fórmula na proporção das integrais, arredonda de modo que a soma feche e avisa se algum sinal ficou longe de um número inteiro. Sem fórmula, mostra só a proporção. Botão leva os δ e a fórmula ao Identificar (o nº de sinais de ¹H não é preenchido). Código no fim de `fontes/analorg8.js`; teste: `fontes/testes/teste_integral.py`.
+
+## v249: padrão do anel de todos os compostos do banco
+- Dos 4.663 compostos do banco Analor, só 24 apareciam como "sem dado" no filtro de padrão do anel. Eram compostos sem H (hexaclorobenzeno, pentacloronitrobenzeno, éter pentabromofenílico, CCl₄, CS₂ etc.): o código tratava "sem sinal de ¹H" como "sem registro", mas o registro existe. Agora `ringPat` só devolve "sem dado" quando o composto não tem registro (`hasd`, em `bdAll`). Os 3 com anel benzênico entram em "4 ou mais substituintes" e os demais em "Sem anel benzênico".
+- Benzeno (0 substituintes) caía em "4 ou mais substituintes" por engano. Ganhou a categoria própria "Benzeno (sem substituintes)", sem padrão tabelado (Smith não traz).
+- Os 106 compostos com anel heteroaromático (piridina, furano, tiofeno) ficam em "Sem anel benzênico", o que está certo: os benzene fingers são do anel benzênico.
+- Limite que continua: azobenzenos e bifenilas têm dois anéis isolados e o app lê só o primeiro (o texto avisa "os padrões se somam").
+- Teste: `fontes/testes/teste_anel_banco.py`.
