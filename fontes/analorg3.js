@@ -341,27 +341,29 @@ function ivPeaks(b){
   return [[mid,Math.max(7,w/(w>50?3.2:2.6)),d]];
 }
 function ivSpec(c,bs){
-  const W=340,L=24,R=10,pw=W-L-R,top=14,base=132,hgt=base-top,x=v=>L+(4000-v)/3600*pw,N=Math.round(pw/0.5);
+  const W=340,L=26,R=10,pw=W-L-R,top=20,base=182,x=v=>L+(4000-v)/3600*pw,N=Math.round(pw/0.5),span=base-top-62;
   const pk=bs.map(b=>ivPeaks(b));
   const T=new Array(N+1);
   for(let k=0;k<=N;k++){const v=4000-k/N*3600;let a=0;for(const g of pk)for(const q of g){const t=(v-q[0])/q[1];if(t<5&&t>-5)a+=q[2]*1.05*Math.exp(-t*t/2);}
     T[k]=Math.max(3,100*Math.pow(10,-a));}
-  const Y=t=>base-(t*0.96)/100*(hgt-18);let p='';
+  const Y=t=>base-(t*0.96)/100*span;let p='';
   for(let k=0;k<=N;k++)p+=(k?'L':'M')+(L+k/N*pw).toFixed(1)+','+Y(T[k]).toFixed(1);
-  let g='<rect class="fp" x="'+x(1500).toFixed(1)+'" y="'+top+'" width="'+(x(400)-x(1500)).toFixed(1)+'" height="'+hgt+'"/>';
-  g+='<text class="tl" x="'+((x(1500)+x(400))/2).toFixed(1)+'" y="'+(top+9)+'" text-anchor="middle">impressão digital</text>';
-  g+='<text class="tl" x="'+((x(4000)+x(1500))/2).toFixed(1)+'" y="'+(top+9)+'" text-anchor="middle">grupos funcionais</text>';
-  for(const t of [0,50,100])g+='<text class="tl" x="'+(L-4)+'" y="'+(Y(t)+3).toFixed(1)+'" text-anchor="end">'+t+'</text>';
-  for(let v=4000;v>=500;v-=500)g+='<line class="tk" x1="'+x(v).toFixed(1)+'" y1="'+base+'" x2="'+x(v).toFixed(1)+'" y2="'+(base+4)+'"/><text class="tl" x="'+x(v).toFixed(1)+'" y="'+(base+15)+'" text-anchor="middle">'+v+'</text>';
-  const placed=[];let lb='';
-  bs.forEach((b,i)=>{const q=pk[i].slice().sort((a,b2)=>b2[2]-a[2])[0],cx=x(q[0]);
-    const k=Math.max(0,Math.min(N,Math.round((4000-q[0])/3600*N)));let y=Math.max(Y(T[k])-11,top+14);
-    while(placed.some(o=>Math.abs(o[0]-cx)<15&&Math.abs(o[1]-y)<14))y-=14;
-    if(y<top+4)y=top+4;placed.push([cx,y]);
-    lb+=pkG(cx.toFixed(1),y.toFixed(1),i+1,b.at,'b'+(i+1),'Banda '+(i+1)+': '+b.t+' · '+(b.hi===b.lo?'~'+b.hi:b.lo+'–'+b.hi)+' cm⁻¹');});
-  return '<svg class="nmrspec irspec" viewBox="0 0 '+W+' '+(base+34)+'" role="group" aria-label="Espectro de IV simulado de '+esc(c.n)+'">'
-    +g+'<path class="sp" d="'+p+'"/><line class="ax" x1="'+L+'" y1="'+base+'" x2="'+(W-R)+'" y2="'+base+'"/>'+lb
-    +'<text class="tl" x="'+(W/2)+'" y="'+(base+30)+'" text-anchor="middle">número de onda (cm⁻¹) · eixo vertical: transmitância (%)</text></svg>';
+  let g='<rect class="fp" x="'+x(1500).toFixed(1)+'" y="'+top+'" width="'+(x(400)-x(1500)).toFixed(1)+'" height="'+(base-top)+'"/>';
+  g+='<text class="tl" x="'+(W-R-2)+'" y="'+(top+11)+'" text-anchor="end">impressão digital</text>';
+  g+='<text class="tl" x="'+((x(4000)+x(1500))/2).toFixed(1)+'" y="'+(top+11)+'" text-anchor="middle">grupos funcionais</text>';
+  g+='<text class="tl" x="2" y="'+(top+11)+'">%T</text>';
+  for(const t of [0,50,100])g+='<line class="gr" x1="'+L+'" y1="'+Y(t).toFixed(1)+'" x2="'+(W-R)+'" y2="'+Y(t).toFixed(1)+'"/><text class="tl" x="'+(L-4)+'" y="'+(Y(t)+4).toFixed(1)+'" text-anchor="end">'+t+'</text>';
+  for(let v=4000;v>=500;v-=500)g+='<line class="tk" x1="'+x(v).toFixed(1)+'" y1="'+base+'" x2="'+x(v).toFixed(1)+'" y2="'+(base+4)+'"/><text class="tl" x="'+x(v).toFixed(1)+'" y="'+(base+17)+'" text-anchor="middle">'+v+'</text>';
+  /* números numa faixa acima da curva, em até 3 linhas, cada um ligado ao seu pico por um fio */
+  const rows=[top+30,top+44,top+58],used=[[],[],[]];let lb='',ld='';
+  const ord=bs.map((b,i)=>{const q=pk[i].slice().sort((a,b2)=>b2[2]-a[2])[0];return {i:i,b:b,q:q,cx:x(q[0])};}).sort((a,b)=>a.cx-b.cx);
+  ord.forEach(o=>{let r=0;while(r<2&&used[r].some(u=>Math.abs(u-o.cx)<17))r++;used[r].push(o.cx);
+    const k=Math.max(0,Math.min(N,Math.round((4000-o.q[0])/3600*N))),tip=Y(T[k])-2;
+    ld+='<line class="ld" x1="'+o.cx.toFixed(1)+'" y1="'+(rows[r]+8).toFixed(1)+'" x2="'+o.cx.toFixed(1)+'" y2="'+tip.toFixed(1)+'"/>';
+    lb+=pkG(o.cx.toFixed(1),rows[r].toFixed(1),o.i+1,o.b.at,'b'+(o.i+1),'Banda '+(o.i+1)+': '+o.b.t+' · '+(o.b.hi===o.b.lo?'~'+o.b.hi:o.b.lo+'–'+o.b.hi)+' cm⁻¹');});
+  return '<svg class="nmrspec irspec" viewBox="0 0 '+W+' '+(base+37)+'" role="group" aria-label="Espectro de IV simulado de '+esc(c.n)+'">'
+    +g+ld+'<path class="sp" d="'+p+'"/><line class="ax" x1="'+L+'" y1="'+base+'" x2="'+(W-R)+'" y2="'+base+'"/>'+lb
+    +'<text class="tl" x="'+(W/2)+'" y="'+(base+31)+'" text-anchor="middle">número de onda (cm⁻¹)</text></svg>';
 }
 function drawIVChips(){
   const sel=$('#ivSel');if(!sel)return;

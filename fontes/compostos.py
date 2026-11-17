@@ -686,6 +686,7 @@ def _hl_svg(m, w, h, bond, numerar=None):
     d = rdMolDraw2D.MolDraw2DSVG(w, h); o = d.drawOptions()
     o.clearBackground = False; o.fixedBondLength = bond; o.padding = 0.14; o.bondLineWidth = 2; estilo.opts(o)
     o.annotationFontScale = 0.85
+    if mm.GetNumHeavyAtoms() <= 3: o.explicitMethyl = True   # CH3–OH em vez de um traço solto
     d.DrawMolecule(mm); d.FinishDrawing()
     t = d.GetDrawingText()
     circ = ''.join('<circle class="hl h%d" cx="%.1f" cy="%.1f" r="%.1f"/>' % (a.GetIdx(), d.GetDrawCoords(a.GetIdx()).x, d.GetDrawCoords(a.GetIdx()).y, bond * 0.52) for a in mm.GetAtoms())
