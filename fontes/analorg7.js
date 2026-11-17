@@ -155,7 +155,7 @@ async function syConecta(c){
     const r=await syLer(n);
     if(!r.existe)return {ok:false,m:'Não achei esse código. Confira os caracteres. Se acabou de criá-lo em outro aparelho, deixe aquele aparelho com internet por um instante e tente de novo.'};
   }catch(e){return {ok:false,m:e&&e.cifra?'Esse código existe, mas não abriu os dados. Confira se digitou igual.':'Não consegui falar com o servidor. Veja a internet e tente de novo.'};}
-  SYE={cod:n,rev:0,meta:SYE.meta||{},primeira:true,skew:SYE.skew||0};syEstSalva();
+  SYE={cod:n,rev:0,meta:SYE.meta||{},primeira:true,skew:SYE.skew||0};syEstSalva();syLink='';
   await syRodar();syRefresca();return {ok:!SYE.erro,m:SYE.erro?'Conectou, mas a primeira sincronização falhou. Toque em Sincronizar agora.':''};
 }
 function syDesliga(){SYE={meta:SYE.meta||{},skew:SYE.skew||0};syEstSalva();syMsg='';syDraw();}
@@ -176,25 +176,29 @@ function syStatusTxt(){
   return SYE.ult?'Sincronizado '+syQuando(SYE.ult)+'.':'';
 }
 let syMostra=false;
+let syLink=(function(){try{const m=/^#\/sy\/([0-9A-Za-z-]+)/.exec(location.hash||'');return m?m[1]:'';}catch(e){return '';}})();
+function syUrlLink(c){return location.origin+location.pathname+'#/sy/'+syFmt(c);}
 function syDraw(){
   const box=document.getElementById('syBox');if(!box)return;
   if(!syLiga()){box.innerHTML='<p class="hint">A sincronização ainda não está ligada neste app. Enquanto isso, use <b>Salvar e levar o progresso</b> para passar seus dados de um aparelho para outro.</p>';return;}
   if(box.querySelector('input:focus'))return;
   if(!SYE.cod){
     box.innerHTML='<div class="el"><h3>Primeiro aparelho</h3><p>O app cria um código. Você anota o código e digita o mesmo nos outros aparelhos.</p><button type="button" class="btn" data-sy="cria">Criar meu código</button></div>'
-     +'<div class="el"><h3>Já tenho um código</h3><label class="aplb">Código<input type="text" id="syCod" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX"></label><button type="button" class="btn" data-sy="conecta">Conectar este aparelho</button><div id="syErro" role="status" class="fb bad" hidden></div></div>';
+     +'<div class="el"><h3>Já tenho um código</h3>'+(syLink?'<p class="hint">O código veio do link que você abriu. Confira e toque em Conectar.</p>':'')+'<label class="aplb">Código<input type="text" id="syCod" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX" value="'+esc(syLink?syFmt(syLink):'')+'"></label><button type="button" class="btn" data-sy="conecta">Conectar este aparelho</button><div id="syErro" role="status" class="fb bad" hidden></div></div>';
     return;
   }
   const c=SYE.cod;
   box.innerHTML='<div class="el"><h3>Este aparelho está sincronizado</h3><p id="syStatus" role="status">'+esc(syStatusTxt())+'</p>'
-   +'<p class="sycod" aria-label="Seu código">'+(syMostra?esc(c):'••••-••••-••••-••••')+'</p>'
-   +'<div class="aprow"><button type="button" class="btn ghost" data-sy="mostra">'+(syMostra?'Esconder código':'Mostrar código')+'</button><button type="button" class="btn ghost" data-sy="copia">Copiar código</button></div>'
+   +'<p class="sycod" aria-label="Seu código">'+(syMostra?esc(c):'••••-••••-••••')+'</p>'
+   +'<div class="aprow"><button type="button" class="btn ghost" data-sy="mostra">'+(syMostra?'Esconder código':'Mostrar código')+'</button><button type="button" class="btn ghost" data-sy="copia">Copiar código</button><button type="button" class="btn ghost" data-sy="link">Copiar link para outro aparelho</button></div>'
+   +'<p class="hint">O link abre o app já com o código preenchido, sem digitar. Mande só para você mesma, porque quem abrir o link entra com os seus dados.</p>'
    +'<p class="hint">Anote o código em algum lugar seu. Quem tem o código vê o que você guardou, e sem ele não dá para recuperar os dados se você perder o aparelho.</p>'
    +'<div class="aprow"><button type="button" class="btn" data-sy="agora">Sincronizar agora</button></div></div>'
    +'<div class="el"><h3>Desligar</h3><p>Desligar tira a sincronização só deste aparelho. Os dados continuam aqui e a cópia na nuvem continua guardada.</p><button type="button" class="btn ghost" data-sy="desliga">Desligar neste aparelho</button>'
    +'<p style="margin-top:12px">Para apagar a cópia da nuvem de vez (os dados deste aparelho ficam):</p><button type="button" class="btn ghost" data-sy="apaga">Apagar a cópia na nuvem</button></div>';
 }
 function syInit(){
+  if(syLink){try{history.replaceState(history.state,'',location.pathname+location.search);}catch(e){}}
   const m=document.getElementById('mSy');if(m)m.hidden=!syLiga();
   const ph=document.getElementById('pgSyHint');if(ph)ph.hidden=!syLiga();
   const box=document.getElementById('syBox');if(!box)return;
@@ -209,6 +213,9 @@ function syInit(){
     if(k==='copia'){const c=SYE.cod,st=document.getElementById('syStatus'),ok=()=>{st.textContent='Código copiado.';};
       const fail=()=>{const ta=document.createElement('textarea');ta.value=c;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();let r=false;try{r=document.execCommand('copy');}catch(e){}ta.remove();st.textContent=r?'Código copiado.':'Não consegui copiar sozinho. Toque em Mostrar código e anote.';};
       try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(c).then(ok,fail);else fail();}catch(e){fail();}return;}
+    if(k==='link'){const u=syUrlLink(SYE.cod),st=document.getElementById('syStatus'),ok=()=>{st.textContent='Link copiado. Abra no outro aparelho e toque em Conectar.';};
+      const fail=()=>{const ta=document.createElement('textarea');ta.value=u;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();let r=false;try{r=document.execCommand('copy');}catch(e){}ta.remove();st.textContent=r?'Link copiado. Abra no outro aparelho e toque em Conectar.':'Não consegui copiar. Use Copiar código.';};
+      try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(u).then(ok,fail);else fail();}catch(e){fail();}return;}
     if(k==='agora'){await syRodar();return;}
     if(k==='desliga'){syDesliga();return;}
     if(k==='apaga'){

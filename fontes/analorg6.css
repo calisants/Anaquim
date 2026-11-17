@@ -48,3 +48,13 @@
   body.ap-print #apRel,body.ap-print #apRel *{color:#000!important}
   body.ap-print #apRel th,body.ap-print #apRel td{border-color:#000}
 }
+
+.aprow2{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.aprow2 .apin,.aprow2 input{flex:1;min-width:0}
+.apam{border:1px solid var(--line);border-radius:8px;padding:10px;margin:0 0 10px;background:var(--bg)}
+.apfts{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.apfw{position:relative;display:inline-block}
+.apft{width:96px;height:96px;object-fit:cover;border-radius:6px;border:1px solid var(--line);display:block}
+.apfw button{position:absolute;top:-6px;right:-6px;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1rem;line-height:1;padding:0}
+.apfbtn{display:inline-flex;align-items:center;min-height:44px;cursor:pointer}
+#apRel small{color:var(--muted)}

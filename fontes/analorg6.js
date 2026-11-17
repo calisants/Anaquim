@@ -15,7 +15,17 @@ function apVivas(d){return d.l.filter(a=>!a.del);}
 function apAtiva(d){const v=apVivas(d);return v.find(a=>a.id===d.ativa)||v[0]||null;}
 function apNova(d,t){const n=Date.now(),a={id:apId(),t:t||'Aula prática',d:apHoje(),am:'',ens:[],no:'',co:'',cr:n,up:n};d.l.push(a);d.ativa=a.id;return a;}
 function apSlug(s){return String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
-function apTemDado(x){return !!(x.f||x.r||(x.o&&x.o.trim()));}
+function apTemDado(x){return !!(x.f||x.r||(x.o&&x.o.trim())||(x.s&&x.s.trim())||(x.rg&&x.rg.trim())||(x.ha&&x.ha.trim())||(x.pa&&x.pa.length)||(x.ft&&x.ft.length));}
+/* resultado por amostra: se o ensaio tem "pa" (lista de amostras), cada uma tem o seu; senão vale o resultado único do ensaio */
+function apLinhas(x){return (x.pa&&x.pa.length)?x.pa:[{s:x.s,r:x.r,o:x.o}];}
+/* fotos: ficam só neste aparelho (chave própria, fora da sincronização e do "Salvar e levar") */
+const AP_FK='anaquim-fotos';let apFC={};
+function apFotos(){try{return JSON.parse(localStorage.getItem(AP_FK)||'{}')||{};}catch(e){return {};}}
+function apFotosSalva(o){try{localStorage.setItem(AP_FK,JSON.stringify(o));return true;}catch(e){return false;}}
+function apFotoComprime(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{try{const m=900,k=Math.min(1,m/Math.max(im.width,im.height)),w=Math.max(1,Math.round(im.width*k)),h=Math.max(1,Math.round(im.height*k)),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);URL.revokeObjectURL(u);res({d:c.toDataURL('image/jpeg',0.72),w:w,h:h});}catch(e){rej(e);}};
+  im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('img'));};im.src=u;});}
+function apFotosLimpa(){try{const d=apGet(),usa={};d.l.forEach(a=>{if(a.ens)a.ens.forEach(x=>(x.ft||[]).forEach(i=>{usa[i]=1;}));});const f=apFotos();let m=false;Object.keys(f).forEach(i=>{if(!usa[i]){delete f[i];m=true;}});if(m)apFotosSalva(f);}catch(e){}}
 
 /* ---- catálogo dos ensaios: junta os que estão escritos nas telas e os de FUN (análise funcional) ---- */
 let APCAT=null;
@@ -110,17 +120,22 @@ function apAlterna(id){
 }
 
 /* ---- relatório ---- */
-function apResRot(x){const r=AP_RES.find(q=>q[0]===x.r);return r?r[1]:(x.f?'Feito, sem resultado marcado':'Não realizado');}
+function apResRot(x,l){const r=AP_RES.find(q=>q[0]===l.r);return r?r[1]:(x.f?'Feito, sem resultado marcado':'Não realizado');}
 function apRelDados(a,comProc){
+  const fo=apFotos();
   return {t:a.t,d:apData(a.d),am:a.am,tu:(a.tu||'').trim(),nm:(a.nm||'').trim(),no:a.no,co:a.co,it:a.ens.map(x=>{const e=apPorId(x.id);
-    return {n:e?e.n:'(ensaio que saiu do app)',g:e?(e.sg||e.g):'',s:(x.s||'').trim(),rc:x.r||'',fz:x.f?1:0,res:apResRot(x),o:(x.o||'').trim(),pr:comProc&&e?apProc(e):null};})};
+    return {n:e?e.n:'(ensaio que saiu do app)',g:e?(e.sg||e.g):'',rg:(x.rg||'').trim(),ha:(x.ha||'').trim(),fz:x.f?1:0,
+      lin:apLinhas(x).map(l=>({s:(l.s||'').trim(),rc:l.r||'',res:apResRot(x,l),o:(l.o||'').trim()})),
+      ft:(x.ft||[]).map(i=>fo[i]).filter(Boolean),pr:comProc&&e?apProc(e):null};})};
 }
 function apRelHtml(a,comProc){
   const r=apRelDados(a,comProc);
   let h='<h3>'+esc(r.t)+'</h3><p>'+[r.nm?'Nome: '+esc(r.nm):'',r.tu?'Turma: '+esc(r.tu):'',r.d?'Data: '+esc(r.d):'',r.am?'Amostra: '+esc(r.am):''].filter(Boolean).join('. ')+'</p>';
   if(r.it.length){
     h+='<h4>Ensaios e resultados</h4><table><thead><tr><th>Ensaio</th><th>Amostra</th><th>Resultado</th><th>O que observei</th></tr></thead><tbody>'
-      +r.it.map(x=>'<tr><td>'+esc(x.n)+'</td><td>'+esc(x.s||'-')+'</td><td>'+esc(x.res)+'</td><td>'+esc(x.o)+'</td></tr>').join('')+'</tbody></table>';
+      +r.it.map(x=>x.lin.map((l,j)=>'<tr><td>'+(j?'':esc(x.n)+(x.rg?'<br><small>Reagente: '+esc(x.rg)+'</small>':'')+(x.ha?'<br><small>Tempo: '+esc(x.ha)+'</small>':''))+'</td><td>'+esc(l.s||'-')+'</td><td>'+esc(l.res)+'</td><td>'+esc(l.o)+'</td></tr>').join('')).join('')+'</tbody></table>';
+    const fx=r.it.filter(x=>x.ft.length);
+    if(fx.length)h+='<h4>Fotos</h4>'+fx.map(x=>'<p><b>'+esc(x.n)+'</b></p><p>'+x.ft.map(f=>'<img class="apft" src="'+f.d+'" alt="Foto: '+esc(x.n)+'">').join(' ')+'</p>').join('');
     if(comProc){const com=r.it.filter(x=>x.pr&&(x.pr.pas.length||x.pr.pos));
       if(com.length)h+='<h4>Procedimentos</h4>'+com.map(x=>'<p><b>'+esc(x.n)+'</b></p>'+(x.pr.pas.length?'<ol>'+x.pr.pas.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>':'')+(x.pr.pos?'<p>Resultado esperado: '+esc(x.pr.pos)+'</p>':'')).join('');}
   }
@@ -132,7 +147,9 @@ function apRelTexto(a,comProc){
   const r=apRelDados(a,comProc),L=[r.t];
   if(r.nm||r.tu||r.d||r.am)L.push([r.nm?'Nome: '+r.nm:'',r.tu?'Turma: '+r.tu:'',r.d?'Data: '+r.d:'',r.am?'Amostra: '+r.am:''].filter(Boolean).join('. '));
   if(r.it.length){L.push('','ENSAIOS E RESULTADOS');
-    r.it.forEach((x,i)=>{L.push((i+1)+'. '+x.n+(x.s?' (amostra '+x.s+')':'')+': '+x.res+(x.o?'. '+x.o:''));});
+    r.it.forEach((x,i)=>{const ex=[x.rg?'reagente: '+x.rg:'',x.ha?'tempo: '+x.ha:''].filter(Boolean).join('; ');
+      if(x.lin.length===1){const l=x.lin[0];L.push((i+1)+'. '+x.n+(l.s?' (amostra '+l.s+')':'')+': '+l.res+(l.o?'. '+l.o:'')+(ex?' ['+ex+']':''));}
+      else{L.push((i+1)+'. '+x.n+(ex?' ['+ex+']':''));x.lin.forEach(l=>L.push('   - '+(l.s||'amostra sem nome')+': '+l.res+(l.o?'. '+l.o:'')));}});
     if(comProc){const com=r.it.filter(x=>x.pr&&(x.pr.pas.length||x.pr.pos));
       if(com.length){L.push('','PROCEDIMENTOS');com.forEach(x=>{L.push(x.n);x.pr.pas.forEach((s,i)=>L.push('  '+(i+1)+') '+s));if(x.pr.pos)L.push('  Resultado esperado: '+x.pr.pos);});}}}
   if(r.no.trim())L.push('','ANOTAÇÕES DA AULA',r.no.trim());
@@ -151,7 +168,8 @@ function apPdfBytes(r,comProc){
   const cv=document.createElement('canvas').getContext('2d'),FN={F1:'',F2:'bold ',F3:'italic '};
   const larg=(t,f,sz)=>{cv.font=FN[f]+sz+'px Helvetica, Arial, sans-serif';return cv.measureText(t).width;};
   const cor=c=>c.map(v=>v.toFixed(3)).join(' ');
-  const pages=[];let pg,y;
+  const pages=[],imgs=[],uso=[];let pg,y;
+  const img=(ph,x,yy,w,h)=>{let k=imgs.indexOf(ph);if(k<0)k=imgs.push(ph)-1;const pi=pages.length-1;(uso[pi]=uso[pi]||{})[k]=1;pg.push('q '+w.toFixed(2)+' 0 0 '+h.toFixed(2)+' '+x.toFixed(2)+' '+yy.toFixed(2)+' cm /Im'+k+' Do Q');};
   const ret=(x,yy,w,h,c)=>pg.push(cor(c)+' rg '+x.toFixed(2)+' '+yy.toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re f');
   const lin=(x1,y1,x2,y2,c,lw)=>pg.push(lw+' w '+cor(c)+' RG '+x1.toFixed(2)+' '+y1.toFixed(2)+' m '+x2.toFixed(2)+' '+y2.toFixed(2)+' l S');
   const txt=(t,x,yy,f,sz,c)=>pg.push('BT '+cor(c)+' rg /'+f+' '+sz+' Tf 1 0 0 1 '+x.toFixed(2)+' '+yy.toFixed(2)+' Tm ('+esc(t)+') Tj ET');
@@ -175,7 +193,7 @@ function apPdfBytes(r,comProc){
   y-=hi+16;
   /* resumo */
   if(r.it.length){
-    const c={p:0,n:0,i:0,f:0,nr:0};r.it.forEach(x=>{if(x.rc==='p')c.p++;else if(x.rc==='n')c.n++;else if(x.rc==='i')c.i++;else if(x.fz)c.f++;else c.nr++;});
+    const c={p:0,n:0,i:0,f:0,nr:0};r.it.forEach(x=>x.lin.forEach(l=>{if(l.rc==='p')c.p++;else if(l.rc==='n')c.n++;else if(l.rc==='i')c.i++;else if(x.fz)c.f++;else c.nr++;}));
     const pt=[r.it.length+(r.it.length===1?' ensaio':' ensaios')];if(c.p)pt.push(c.p+(c.p===1?' positivo':' positivos'));if(c.n)pt.push(c.n+(c.n===1?' negativo':' negativos'));if(c.i)pt.push(c.i+(c.i===1?' inconclusivo':' inconclusivos'));if(c.f)pt.push(c.f+' sem resultado marcado');if(c.nr)pt.push(c.nr+(c.nr===1?' não realizado':' não realizados'));
     txt(pt.join('  ·  '),M,y-4,'F1',9.5,CINZA);y-=24;
     secao('Ensaios e resultados');
@@ -186,23 +204,37 @@ function apPdfBytes(r,comProc){
     garante(60);cab();
     const PIL={p:{bg:[0.84,0.94,0.82],fg:[0.1,0.38,0.12],t:'Positivo'},n:{bg:[0.9,0.92,0.94],fg:[0.28,0.33,0.4],t:'Negativo'},i:{bg:[1,0.93,0.74],fg:[0.55,0.36,0],t:'Inconclusivo'},f:{bg:[0.88,0.93,0.97],fg:[0.15,0.32,0.5],t:'Feito'},nr:{bg:[0.95,0.95,0.95],fg:[0.45,0.45,0.45],t:'Não feito'}};
     r.it.forEach((x,k)=>{
-      const nl=quebra(x.n,col[1].w-12,'F2',9.5),gl=x.g?quebra(x.g,col[1].w-12,'F1',7.5).slice(0,1):[],sl=quebra(x.s||'-',col[2].w-12,'F1',9.5),ol=quebra(x.o||'-',col[4].w-12,'F1',9.5);
-      const hn=nl.length*12+(gl.length?10:0),h=Math.max(hn,sl.length*12,ol.length*12,16)+14;
-      garante(h,cab);
-      if(k%2===0)ret(M,y-h,AREA,h,ZEB);
-      lin(M,y-h,M+AREA,y-h,LIN,0.5);
-      txt(String(k+1),xs[0]+6,y-15,'F1',9.5,CINZA);
-      nl.forEach((l,q)=>txt(l,xs[1]+6,y-15-12*q,'F2',9.5,TXT));gl.forEach(l=>txt(l,xs[1]+6,y-15-12*nl.length+1,'F1',7.5,CINZA));
-      sl.forEach((l,q)=>txt(l,xs[2]+6,y-15-12*q,'F1',9.5,x.s?TXT:CINZA));
-      const pl=PIL[x.rc]||(x.fz?PIL.f:PIL.nr),pw=larg(pl.t,'F2',8)+12;
-      ret(xs[3]+6,y-20,pw,15,pl.bg);txt(pl.t,xs[3]+12,y-15.5,'F2',8,pl.fg);
-      ol.forEach((l,q)=>txt(l,xs[4]+6,y-15-12*q,'F1',9.5,x.o?TXT:CINZA));
-      y-=h;
+      const nl=quebra(x.n,col[1].w-12,'F2',9.5),gl=x.g?quebra(x.g,col[1].w-12,'F1',7.5).slice(0,1):[];
+      const el=[].concat(x.rg?quebra('Reagente: '+x.rg,col[1].w-12,'F1',7.5):[],x.ha?quebra('Tempo: '+x.ha,col[1].w-12,'F1',7.5):[]);
+      x.lin.forEach((l,j)=>{
+        const sl=quebra(l.s||'-',col[2].w-12,'F1',9.5),ol=quebra(l.o||'-',col[4].w-12,'F1',9.5);
+        const hn=j?0:nl.length*12+(gl.length?10:0)+el.length*9.5,h=Math.max(hn,sl.length*12,ol.length*12,16)+14;
+        garante(h,cab);
+        if(k%2===0)ret(M,y-h,AREA,h,ZEB);
+        lin(M,y-h,M+AREA,y-h,j<x.lin.length-1?ZEB:LIN,0.5);
+        if(!j){
+          txt(String(k+1),xs[0]+6,y-15,'F1',9.5,CINZA);
+          nl.forEach((t,q)=>txt(t,xs[1]+6,y-15-12*q,'F2',9.5,TXT));
+          let yy=y-15-12*nl.length+1;if(gl.length){txt(gl[0],xs[1]+6,yy,'F1',7.5,CINZA);yy-=10;}
+          el.forEach(t=>{txt(t,xs[1]+6,yy,'F1',7.5,CINZA);yy-=9.5;});
+        }
+        sl.forEach((t,q)=>txt(t,xs[2]+6,y-15-12*q,'F1',9.5,l.s?TXT:CINZA));
+        const pl=PIL[l.rc]||(x.fz?PIL.f:PIL.nr),pw=larg(pl.t,'F2',8)+12;
+        ret(xs[3]+6,y-20,pw,15,pl.bg);txt(pl.t,xs[3]+12,y-15.5,'F2',8,pl.fg);
+        ol.forEach((t,q)=>txt(t,xs[4]+6,y-15-12*q,'F1',9.5,l.o?TXT:CINZA));
+        y-=h;
+      });
     });
     y-=10;
   }
   function secao(t){garante(46);ret(M,y-13,3,15,ACE);txt(t,M+10,y-10,'F2',12,VERDE);y-=28;}
   function par(t,f,sz,ind,cr){quebra(t,AREA-ind,f,sz).forEach(l=>{garante(sz+5);if(l)txt(l,M+ind,y-sz,f,sz,cr||TXT);y-=sz+4.5;});}
+  const fx=[];r.it.forEach(x=>x.ft.forEach(f=>fx.push({c:x.n,f:f})));
+  if(fx.length){secao('Fotos dos ensaios');const cw=(AREA-16)/3;
+    for(let a0=0;a0<fx.length;a0+=3){const gr=fx.slice(a0,a0+3),ds=gr.map(g=>{const rt=g.f.w/g.f.h;let w=cw,h=w/rt;if(h>150){h=150;w=h*rt;}return {w:w,h:h};}),hh=Math.max(...ds.map(d=>d.h))+22;
+      garante(hh);gr.forEach((g,q)=>{const x0=M+q*(cw+8);img(g.f,x0,y-ds[q].h,ds[q].w,ds[q].h);
+        let cap=g.c;while(cap.length>3&&larg(cap,'F1',8)>cw)cap=cap.slice(0,-2);if(cap!==g.c)cap+='…';txt(cap,x0,y-ds[q].h-11,'F1',8,CINZA);});y-=hh;}
+    y-=6;}
   if(r.no.trim()){secao('Anotações da aula');par(r.no.trim(),'F1',10.5,0);y-=8;}
   if(r.co.trim()){secao('Conclusão');par(r.co.trim(),'F1',10.5,0);y-=8;}
   if(comProc){const com=r.it.filter(x=>x.pr&&(x.pr.pas.length||x.pr.pos));
@@ -217,8 +249,10 @@ function apPdfBytes(r,comProc){
   obj[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
   obj[5]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding >>';
   pages.forEach((p,i)=>{const c=p.join('\n');
-    obj[6+2*i]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents '+(7+2*i)+' 0 R >>';
+    const xo=Object.keys(uso[i]||{}).map(k=>'/Im'+k+' '+(6+2*n+(+k))+' 0 R').join(' ');
+    obj[6+2*i]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >>'+(xo?' /XObject << '+xo+' >>':'')+' >> /Contents '+(7+2*i)+' 0 R >>';
     obj[7+2*i]='<< /Length '+c.length+' >>\nstream\n'+c+'\nendstream';});
+  imgs.forEach((f,k)=>{const bin=atob(f.d.split(',')[1]);obj[6+2*n+k]='<< /Type /XObject /Subtype /Image /Width '+f.w+' /Height '+f.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+bin.length+' >>\nstream\n'+bin+'\nendstream';});
   let out='%PDF-1.4\n',off=[];
   for(let i=1;i<obj.length;i++){off[i]=out.length;out+=i+' 0 obj\n'+obj[i]+'\nendobj\n';}
   const xr=out.length;out+='xref\n0 '+obj.length+'\n0000000000 65535 f \n';
@@ -251,23 +285,42 @@ function apPlanoCria(o){
 }
 /* ---- página ---- */
 function apBadge(x){
+  if(x.pa&&x.pa.length){const rs=x.pa.map(q=>q.r),un=rs.filter((v,i)=>rs.indexOf(v)===i);
+    if(un.length===1&&un[0]){const rr=AP_RES.find(q=>q[0]===un[0]);return '<span class="apbd '+(un[0]==='p'?'p':'n')+'">'+rr[1]+' (todas)</span>';}
+    const np=rs.filter(q=>q==='p').length;return '<span class="apbd f">'+x.pa.length+' amostras'+(np?', '+np+' pos.':'')+'</span>';}
   const r=AP_RES.find(q=>q[0]===x.r);
   if(r)return '<span class="apbd '+(x.r==='p'?'p':'n')+'">'+r[1]+'</span>';
   return x.f?'<span class="apbd f">Feito</span>':'<span class="apbd">A fazer</span>';
+}
+function apAmHtml(x){
+  if(x.pa&&x.pa.length)return x.pa.map((q,i)=>'<div class="apam" data-i="'+i+'"><div class="aprow2"><input type="text" class="apin" data-a="ps" value="'+esc(q.s||'')+'" maxlength="60" placeholder="Amostra (ex.: 5A)" aria-label="Amostra"><button type="button" class="btn ghost" data-a="pdel" aria-label="Tirar esta amostra">×</button></div>'
+    +'<div class="sgm" role="group" aria-label="Resultado da amostra">'+AP_RES.map(r=>'<button type="button" data-a="pr" data-v="'+r[0]+'" aria-pressed="'+(q.r===r[0]?'true':'false')+'">'+r[1]+'</button>').join('')+'</div>'
+    +'<textarea class="apta" data-a="po" rows="2" aria-label="O que observei nesta amostra" placeholder="O que observei (cor, bolhas, cheiro)">'+esc(q.o||'')+'</textarea></div>').join('')
+    +'<div class="apacts"><button type="button" class="btn ghost" data-a="addam">Adicionar amostra</button></div>';
+  return '<label class="aplb">Amostra testada neste ensaio<input type="text" class="apin" data-a="s" value="'+esc(x.s||'')+'" maxlength="60" placeholder="Ex.: 5A, amostra B, branco"></label>'
+    +'<div class="sgm" role="group" aria-label="Resultado">'+AP_RES.map(r=>'<button type="button" data-a="r" data-v="'+r[0]+'" aria-pressed="'+(x.r===r[0]?'true':'false')+'">'+r[1]+'</button>').join('')+'</div>'
+    +'<label class="aplb">O que observei (cor, bolhas, cheiro, tempo)<textarea class="apta" data-a="o" rows="3">'+esc(x.o||'')+'</textarea></label>'
+    +'<div class="apacts"><button type="button" class="btn ghost" data-a="sep">Testei mais de uma amostra</button></div>';
+}
+function apFotosHtml(x){
+  const ft=x.ft||[];
+  return '<div class="apfts">'+ft.map((id,i)=>{const f=apFC[id];return f?'<span class="apfw"><img class="apft" src="'+f.d+'" alt="Foto do ensaio"><button type="button" data-a="fdel" data-i="'+i+'" aria-label="Tirar esta foto">×</button></span>':'<span class="hint">Foto guardada em outro aparelho</span>';}).join('')+'</div>'
+    +(ft.length<3?'<label class="btn ghost apfbtn">Foto do tubo<input type="file" accept="image/*" data-a="fil" hidden></label><p class="hint">As fotos ficam só neste aparelho e não sincronizam.</p>':'');
 }
 function apItemHtml(x,i,n,abertos){
   const e=apPorId(x.id),nome=e?e.n:'(ensaio que saiu do app)',sub=e?(e.sg?e.g+' · '+e.sg:e.g):'';
   return '<details class="el ap-e" data-id="'+esc(x.id)+'"'+(abertos&&abertos[x.id]?' open':'')+'><summary><span class="apn">'+esc(nome)+'<span class="apg">'+esc(sub)+'</span></span><span class="apbd-w">'+apBadge(x)+'</span></summary>'
    +'<label class="apck"><input type="checkbox" data-a="f"'+(x.f?' checked':'')+'><span>Já fiz este ensaio</span></label>'
-   +'<div class="sgm" role="group" aria-label="Resultado">'+AP_RES.map(r=>'<button type="button" data-a="r" data-v="'+r[0]+'" aria-pressed="'+(x.r===r[0]?'true':'false')+'">'+r[1]+'</button>').join('')+'</div>'
-   +'<label class="aplb">Amostra testada neste ensaio<input type="text" class="apin" data-a="s" value="'+esc(x.s||'')+'" maxlength="60" placeholder="Ex.: 5A, amostra B, branco"></label>'
-   +'<label class="aplb">O que observei (cor, bolhas, cheiro, tempo)<textarea class="apta" data-a="o" rows="3">'+esc(x.o||'')+'</textarea></label>'
+   +'<label class="aplb">Reagente e quantidade usados<input type="text" class="apin" data-a="rg" value="'+esc(x.rg||'')+'" maxlength="80" placeholder="Ex.: 2 mL de reagente de Tollens"></label>'
+   +'<label class="aplb">Tempo ou hora da reação<input type="text" class="apin" data-a="ha" value="'+esc(x.ha||'')+'" maxlength="40" placeholder="Ex.: 2 min, 10h45"></label>'
+   +apAmHtml(x)+apFotosHtml(x)
    +'<div class="apacts">'+(e?'<button type="button" class="btn ghost" data-a="abrir">Ver procedimento</button>':'')
    +(i>0?'<button type="button" class="btn ghost" data-a="sobe" aria-label="Subir na lista">↑</button>':'')+(i<n-1?'<button type="button" class="btn ghost" data-a="desce" aria-label="Descer na lista">↓</button>':'')
    +'<button type="button" class="btn ghost" data-a="tira">Tirar da aula</button></div></details>';
 }
 function apListaDesenha(){
   const box=document.getElementById('apLista');if(!box)return;
+  apFC=apFotos();
   const a=apAtiva(apGet());if(!a)return;
   const ab={};box.querySelectorAll('details[open]').forEach(d=>{ab[d.dataset.id]=1;});
   box.innerHTML=a.ens.length?a.ens.map((x,i)=>apItemHtml(x,i,a.ens.length,ab)).join(''):'<p class="hint">Nenhum ensaio ainda. Marque as caixas abaixo, ou toque na estrela (☆) no título de qualquer ensaio.</p>';
@@ -322,7 +375,7 @@ let apDeb=0,apPend=null;
 function apTexto(fn){const prev=apPend;apPend=prev?(a,d)=>{prev(a,d);fn(a,d);}:fn;clearTimeout(apDeb);apDeb=setTimeout(apFlush,350);}
 function apFlush(){clearTimeout(apDeb);const f=apPend;apPend=null;if(f)apAplica(f);}
 function apInit(){
-  apStarsMontar();
+  apStarsMontar();apFotosLimpa();
   const box=document.getElementById('apBox');if(!box)return;
   document.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('.apstar');if(!b)return;ev.preventDefault();ev.stopPropagation();apAlterna(b.dataset.ens);},true);
   box.addEventListener('input',ev=>{
@@ -332,6 +385,8 @@ function apInit(){
     else if(id==='apAm')apTexto(a=>{a.am=t.value;});
     else if(id==='apTu')apTexto(a=>{a.tu=t.value;});
     else if(id==='apNm')apTexto(a=>{a.nm=t.value;});
+    else if(t.dataset&&(t.dataset.a==='rg'||t.dataset.a==='ha')){const eid=t.closest('.ap-e').dataset.id,v=t.value,k=t.dataset.a;apTexto(a=>{const x=a.ens.find(q=>q.id===eid);if(x)x[k]=v;});}
+    else if(t.dataset&&(t.dataset.a==='ps'||t.dataset.a==='po')){const eid=t.closest('.ap-e').dataset.id,ix=+t.closest('.apam').dataset.i,v=t.value,k=t.dataset.a==='ps'?'s':'o';apTexto(a=>{const x=a.ens.find(q=>q.id===eid);if(x&&x.pa&&x.pa[ix])x.pa[ix][k]=v;});}
     else if(t.dataset&&t.dataset.a==='s'){const eid=t.closest('.ap-e').dataset.id,v=t.value;apTexto(a=>{const x=a.ens.find(q=>q.id===eid);if(x)x.s=v;});}
     else if(id==='apNo')apTexto(a=>{a.no=t.value;});
     else if(id==='apCo')apTexto(a=>{a.co=t.value;});
@@ -344,6 +399,14 @@ function apInit(){
   box.addEventListener('change',ev=>{
     const t=ev.target;
     if(t.id==='apSel'){apFlush();const d=apGet();d.ativa=t.value;apSave(d);apDraw();apStarsAtualiza();return;}
+    if(t.dataset&&t.dataset.a==='fil'){const eid=t.closest('.ap-e').dataset.id,fl=t.files&&t.files[0];if(!fl)return;
+      apFlush();apToast('Preparando a foto…');
+      apFotoComprime(fl).then(ph=>{const f=apFotos(),id=apId();f[id]=ph;
+        if(!apFotosSalva(f)){apToast('Não coube: o aparelho está sem espaço para mais fotos.');return;}
+        apAplica(a=>{const x=a.ens.find(q=>q.id===eid);if(x){x.ft=(x.ft||[]).concat(id).slice(0,3);}});
+        apListaDesenha();const n=document.querySelector('#apLista [data-id="'+eid+'"]');if(n)n.open=true;apToast('Foto guardada neste aparelho.');
+      }).catch(()=>{apToast('Não consegui abrir essa foto. Tente outra.');});
+      t.value='';return;}
     if(t.dataset&&t.dataset.pick){
       const ok=apAlterna(t.dataset.pick);if(!ok)t.checked=true;apListaDesenha();return;}
     if(t.dataset&&t.dataset.a==='f'){const eid=t.closest('.ap-e').dataset.id,on=t.checked;
@@ -364,6 +427,19 @@ function apInit(){
       const x=apAtiva(apGet()).ens.find(q=>q.id===eid);
       it.querySelectorAll('[data-a="r"]').forEach(s=>s.setAttribute('aria-pressed',s.dataset.v===x.r?'true':'false'));
       it.querySelector('[data-a="f"]').checked=!!x.f;it.querySelector('.apbd-w').innerHTML=apBadge(x);return;}
+    if(k==='sep'){apAplica(a=>{const x=a.ens.find(q=>q.id===eid);if(!x)return;x.pa=[{s:x.s||'',r:x.r||'',o:x.o||''},{s:'',r:'',o:''}];x.s='';x.r='';x.o='';});apListaDesenha();
+      const n=document.querySelector('#apLista [data-id="'+eid+'"]');if(n)n.open=true;return;}
+    if(k==='addam'){apAplica(a=>{const x=a.ens.find(q=>q.id===eid);if(x&&x.pa)x.pa.push({s:'',r:'',o:''});});apListaDesenha();const n=document.querySelector('#apLista [data-id="'+eid+'"]');if(n)n.open=true;return;}
+    if(k==='pdel'){const ix=+b.closest('.apam').dataset.i;
+      apAplica(a=>{const x=a.ens.find(q=>q.id===eid);if(!x||!x.pa)return;x.pa.splice(ix,1);
+        if(x.pa.length<=1){const q=x.pa[0]||{};x.s=q.s||'';x.r=q.r||'';x.o=q.o||'';delete x.pa;}});
+      apListaDesenha();const n=document.querySelector('#apLista [data-id="'+eid+'"]');if(n)n.open=true;return;}
+    if(k==='pr'){const ix=+b.closest('.apam').dataset.i,v=b.dataset.v;
+      apAplica(a=>{const x=a.ens.find(q=>q.id===eid);if(!x||!x.pa||!x.pa[ix])return;x.pa[ix].r=x.pa[ix].r===v?'':v;if(x.pa[ix].r)x.f=1;});
+      const x=apAtiva(apGet()).ens.find(q=>q.id===eid),q=x.pa[ix];
+      b.closest('.apam').querySelectorAll('[data-a="pr"]').forEach(s=>s.setAttribute('aria-pressed',s.dataset.v===q.r?'true':'false'));
+      it.querySelector('[data-a="f"]').checked=!!x.f;it.querySelector('.apbd-w').innerHTML=apBadge(x);return;}
+    if(k==='fdel'){const ix=+b.dataset.i;apAplica(a=>{const x=a.ens.find(q=>q.id===eid);if(x&&x.ft){x.ft.splice(ix,1);if(!x.ft.length)delete x.ft;}});apFotosLimpa();apListaDesenha();const n=document.querySelector('#apLista [data-id="'+eid+'"]');if(n)n.open=true;return;}
     if(k==='abrir'){apAbrir(eid);return;}
     if(k==='sobe'||k==='desce'){apAplica(a=>{const i=a.ens.findIndex(q=>q.id===eid),j=i+(k==='sobe'?-1:1);if(i<0||j<0||j>=a.ens.length)return;const t=a.ens[i];a.ens[i]=a.ens[j];a.ens[j]=t;});apListaDesenha();
       const n=document.querySelector('#apLista [data-id="'+eid+'"]');if(n){n.open=true;n.scrollIntoView({block:'nearest'});}return;}

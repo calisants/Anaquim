@@ -99,3 +99,10 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - Cabeçalho verde com título, quadro de data/amostra/turma/nome, resumo (quantos positivos, negativos...), tabela com colunas N°, Ensaio (com a categoria embaixo), Amostra, Resultado (etiqueta colorida) e O que observei, depois Anotações, Conclusão e Procedimentos (opcional), rodapé com número da página.
 - Cada ensaio da aula ganhou o campo "Amostra testada neste ensaio" (`s` no dado). A aula ganhou "Turma ou disciplina" (`tu`) e "Seu nome no relatório" (`nm`), os dois opcionais e só usados no relatório.
 - A coluna Amostra, o texto copiado e o relatório da tela também mostram a amostra de cada ensaio.
+
+### v242 e v243: reagente, tempo, resultado por amostra, fotos e link
+- Cada ensaio da aula tem agora: Reagente e quantidade (`rg`), Tempo ou hora (`ha`), e resultado por amostra (`pa`: lista de {s, r, o}). O botão "Testei mais de uma amostra" separa; ficando com 1 amostra, volta ao modo simples.
+- Fotos (até 3 por ensaio, reduzidas para no máximo 900 px, JPEG): ficam só no aparelho, na chave `anaquim-fotos`, fora da sincronização e do "Salvar e levar o progresso" (para não estourar o limite de 600 KB da nuvem). Fotos sem ensaio são apagadas ao abrir o app. Numa aula que veio de outro aparelho, a foto aparece como "guardada em outro aparelho".
+- O PDF mostra uma linha por amostra, reagente e tempo embaixo do nome do ensaio, e uma seção de fotos (JPEG embutido sem recomprimir).
+- Sincronização: botão "Copiar link para outro aparelho" (`#/sy/CODIGO`). Abrir o link preenche o código e a pessoa toca em Conectar; o código sai do endereço na hora. A máscara do código escondido passou a ter 3 grupos.
+- Teste novo: `testes/teste_aula2.py`.
