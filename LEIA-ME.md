@@ -170,3 +170,6 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 
 ## v261: RMN, tabelas de ¹³C do cap. 5 (fontes/analorg10.js)
 Painel RMN > Tabelas ganhou `#c13Box`, desenhado por `window.c13Draw` (chamado em `rp('tab')`). Dados transcritos das págs. 224 a 238 do Silverstein (6ª ed., scan só de imagem, lido visualmente). Calculadoras: alcano (tab. 5.1), substituinte (5.3), alceno (constantes da pág. 226) e anel aromático até dissubstituído (5.9). Tabelas desenhadas (5.6, 5.7, 5.11, 5.12, 5.15, 5.16): só linhas com atribuição clara. Os ¹³C de 4.3, 5.1, 5.3 e 5.5 em analorg9.js usam a tag "Do seu livro" quando vêm dessas tabelas. Teste: testes/teste_c13.py. Tabelas de tipo largo usam `.obt.nostk` para não empilhar no celular.
+
+## v262: início mais rápido
+build3.py (fim) converte toda constante grande de dados (`const X=<json>;` com mais de 20 mil caracteres: SVG, MAPS, ARWD, MECH, SLD, COMP, BDJSON, MSFS) em `<script type="application/json" id="dj-X">` e o código lê com JSON.parse. O navegador não compila esses dados como JavaScript. Medido com CPU 6x mais lenta: carga de 4,9 s para 3,8 s. O arquivo continua com cerca de 12 MB; o que sobra é leitura do arquivo e `cpDraw()`/`bdLoad()` no início (analorg2.js linha 25).
