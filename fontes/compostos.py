@@ -5,6 +5,7 @@ build_comp() devolve a lista COMP que o build3.py coloca no app."""
 import math
 from collections import defaultdict
 from rdkit import Chem
+import estilo
 from rdkit.Chem import Descriptors, rdMolDescriptors
 
 # nome, outros nomes, SMILES, CAS, estado (25 °C), cor, PF °C, PE °C, grupo de solubilidade, nº do exercício de MS (ou None), observação
@@ -683,14 +684,14 @@ def _hl_svg(m, w, h, bond, numerar=None):
         for k, sg in enumerate(numerar, 1):
             for ai in sg["at"]: mm.GetAtomWithIdx(ai).SetProp("atomNote", str(k))
     d = rdMolDraw2D.MolDraw2DSVG(w, h); o = d.drawOptions()
-    o.clearBackground = False; o.fixedBondLength = bond; o.padding = 0.14; o.bondLineWidth = 2
+    o.clearBackground = False; o.fixedBondLength = bond; o.padding = 0.14; o.bondLineWidth = 2; estilo.opts(o)
     o.annotationFontScale = 0.85
     d.DrawMolecule(mm); d.FinishDrawing()
     t = d.GetDrawingText()
     circ = ''.join('<circle class="hl h%d" cx="%.1f" cy="%.1f" r="%.1f"/>' % (a.GetIdx(), d.GetDrawCoords(a.GetIdx()).x, d.GetDrawCoords(a.GetIdx()).y, bond * 0.52) for a in mm.GetAtoms())
     t = re.sub(r'<\?xml.*?\?>', '', t)
     t = re.sub(r"<rect[^>]*?style='opacity:1\.0;fill:#FFFFFF[^>]*?/>", '', t)
-    t = t.replace('#000000', 'currentColor').replace('#FF0000', 'var(--lost)').replace('#0000FF', 'var(--blue)')
+    t = estilo.pos(t)
     t = re.sub(r"<svg[^>]*>", f'<svg viewBox="0 0 {w} {h}" xmlns="http://www.w3.org/2000/svg" role="img">' + circ, t, count=1)
     t = re.sub(r'<!--.*?-->', '', t); t = re.sub(r'\s+', ' ', t)
     return t.strip()

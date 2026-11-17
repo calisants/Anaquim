@@ -7,6 +7,7 @@ from ioni import IONI
 from intens import INTS
 import arrows as ARWMOD
 from rdkit import Chem
+import estilo
 from rdkit.Chem.Draw import rdMolDraw2D
 src=open('build_app.py',encoding='utf-8').read().split("store = {}")[0]
 BL=30
@@ -16,7 +17,7 @@ exec(src)  # svg, EXD
 def post(s,w,h):
     s=re.sub(r'<\?xml.*?\?>','',s)
     s=re.sub(r"<rect[^>]*?style='opacity:1\.0;fill:#FFFFFF[^>]*?/>",'',s)
-    s=s.replace('#000000','currentColor').replace('#FF0000','var(--lost)').replace('#0000FF','var(--blue)')
+    s = estilo.pos(s)
     s=re.sub(r"<svg[^>]*>",f'<svg viewBox="0 0 {w} {h}" xmlns="http://www.w3.org/2000/svg" role="img">',s,count=1)
     s=re.sub(r'<!--.*?-->','',s); return re.sub(r'\s+',' ',s).strip()
 
@@ -25,7 +26,7 @@ def mapsvg(smi,keep,h=None,w=210,hh=140):
     m=Chem.MolFromSmiles(smi); n=m.GetNumAtoms()
     d=rdMolDraw2D.MolDraw2DSVG(w,hh); o=d.drawOptions()
     o.clearBackground=False; o.fixedBondLength=30; o.padding=0.12; o.bondLineWidth=2
-    o.useBWAtomPalette(); o.addAtomIndices=False; o.highlightRadius=0.5
+    estilo.opts(o); o.addAtomIndices=False; o.highlightRadius=0.5
     ats={};bds={}
     if keep is None: keep=list(range(n))
     for i in range(n): ats[i]=KEEP if i in keep else LOST

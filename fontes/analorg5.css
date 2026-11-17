@@ -1,4 +1,11 @@
-.ens{margin:10px 0;color:var(--muted)}.ens svg{display:block;width:100%;max-width:300px;margin:0 auto}.ens figcaption{font-size:.85em;text-align:center;margin-top:4px}
+.ens{margin:12px 0;padding:12px 10px 8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--muted)}.ens svg{display:block;width:100%;max-width:300px;margin:0 auto}.ens figcaption{font-size:.8rem;text-align:center;margin-top:8px;padding-top:6px;border-top:1px solid var(--line)}
 .ens5ic{display:flex;gap:14px;justify-content:center}.ens5ic .fuic{flex:none;width:44px;height:44px}
 .ens5dot{display:inline-block;width:.8em;height:.8em;border-radius:50%;border:1px solid currentColor;vertical-align:-1px;margin-right:2px}
 #e5chama h4{margin:14px 0 4px}
+/* ---- figuras: um só acabamento (estruturas, mecanismos, espectros) ---- */
+figure.st,figure.map,.msfb figure{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 6px 4px}
+figure.st figcaption,.msfb figcaption{color:var(--muted)}
+svg.mdl2{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px;box-sizing:border-box}
+svg.mdl2 text{font-family:var(--sans)}
+svg.mdl2 path[stroke]{shape-rendering:geometricPrecision}
+@media (prefers-reduced-motion:no-preference){figure.st svg,.ens svg{transition:opacity .15s}}

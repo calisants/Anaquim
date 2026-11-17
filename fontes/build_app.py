@@ -1,5 +1,6 @@
 import re, json
 from rdkit import Chem
+import estilo
 from rdkit.Chem.Draw import rdMolDraw2D
 
 def svg(smi, w=170, h=120):
@@ -15,13 +16,14 @@ def svg(smi, w=170, h=120):
     o.fixedBondLength = 30
     o.padding = 0.12
     o.bondLineWidth = 2
+    estilo.opts(o)
     o.annotationFontScale = 0.8
     d.DrawMolecule(m)
     d.FinishDrawing()
     s = d.GetDrawingText()
     s = re.sub(r'<\?xml.*?\?>', '', s)
     s = re.sub(r"<rect[^>]*?style='opacity:1\.0;fill:#FFFFFF[^>]*?/>", '', s)
-    s = s.replace('#000000', 'currentColor').replace('#FF0000', 'var(--lost)').replace('#0000FF', 'var(--blue)')
+    s = estilo.pos(s)
     s = re.sub(r"<svg[^>]*>", f'<svg viewBox="0 0 {w} {h}" xmlns="http://www.w3.org/2000/svg" role="img">', s, count=1)
     s = re.sub(r'<!--.*?-->', '', s)
     s = re.sub(r'\s+', ' ', s)

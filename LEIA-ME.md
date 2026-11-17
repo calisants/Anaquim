@@ -106,3 +106,9 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - O PDF mostra uma linha por amostra, reagente e tempo embaixo do nome do ensaio, e uma seção de fotos (JPEG embutido sem recomprimir).
 - Sincronização: botão "Copiar link para outro aparelho" (`#/sy/CODIGO`). Abrir o link preenche o código e a pessoa toca em Conectar; o código sai do endereço na hora. A máscara do código escondido passou a ter 3 grupos.
 - Teste novo: `testes/teste_aula2.py`.
+
+### v244: ilustrações com acabamento científico
+- Estruturas (RDKit): `fontes/estilo.py` é o único lugar com o estilo (traço de 1,7 px, rótulos maiores, heteroátomos em tons discretos por variáveis `--at-n`, `--at-o`, `--at-s`, `--at-x`, `--at-br`, `--at-i`, que mudam no tema escuro). Todos os geradores (`build3`, `build_app`, `compostos`, `gf_tabela`, `arrows`, `msfrag`) chamam `estilo.opts(o)` e `estilo.pos(svg)`.
+- Modelos de seta da teoria de MS: regerados por `svgmodels.py` e colocados no `template.html` (fonte Plex Sans, traço de 1,6 a 1,9 px, cartão com borda).
+- Ensaios: tubos com vidro translúcido, menisco, brilho e escala; chamas em três camadas; ícones de vidraria com traço mais fino (`analorg5.js`, `analorg4.js`). Figuras dentro de cartão (`analorg5.css`). Variáveis `--glass` e `--glass-edge` no `template.html`.
+- Os desenhos de lousa em `fontes/mech/*.webp` não foram alterados (são o material do professor).

@@ -1,6 +1,7 @@
 """Tabela de grupos funcionais da Orgânica Básica: exemplo desenhado, com o grupo funcional em destaque."""
 import re
 from rdkit import Chem
+import estilo
 from rdkit.Chem.Draw import rdMolDraw2D
 
 # (grupo, estrutura geral, exemplo, SMILES do exemplo, SMARTS do grupo em destaque, sufixo ou prefixo do nome)
@@ -31,14 +32,14 @@ def _svg(smi, patt, w=150, h=84):
     for b in m.GetBonds():
         if b.GetBeginAtomIdx() in hit and b.GetEndAtomIdx() in hit: hb.add(b.GetIdx())
     d = rdMolDraw2D.MolDraw2DSVG(w, h); o = d.drawOptions()
-    o.clearBackground = False; o.fixedBondLength = 26; o.padding = 0.1; o.bondLineWidth = 2
+    o.clearBackground = False; o.fixedBondLength = 26; o.padding = 0.1; o.bondLineWidth = 2; estilo.opts(o)
     o.setHighlightColour((0.99, 0.82, 0.40, 0.9)); o.highlightBondWidthMultiplier = 9
     d.DrawMolecule(m, highlightAtoms=list(hit), highlightBonds=list(hb))
     d.FinishDrawing()
     t = d.GetDrawingText()
     t = re.sub(r'<\?xml.*?\?>', '', t)
     t = re.sub(r"<rect[^>]*?style='opacity:1\.0;fill:#FFFFFF[^>]*?/>", '', t)
-    t = t.replace('#000000', 'currentColor').replace('#FF0000', 'var(--lost)').replace('#0000FF', 'var(--blue)')
+    t = estilo.pos(t)
     t = re.sub(r"<svg[^>]*>", f'<svg viewBox="0 0 {w} {h}" xmlns="http://www.w3.org/2000/svg" role="img">', t, count=1)
     t = re.sub(r'<!--.*?-->', '', t); t = re.sub(r'\s+', ' ', t)
     return t.strip()

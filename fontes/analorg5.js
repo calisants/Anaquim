@@ -1,18 +1,20 @@
 /* ---- ilustrações dos ensaios (Preliminares, Solubilidade, Análise elementar, funcional de nitro, ácido e cloro) ----
    Os desenhos são esquemas (traço em currentColor, líquidos em cor fixa). As cores vêm do texto de cada ensaio. */
 const E5={
- svg(w,h,body,al){return '<svg class="ens5" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+al+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+body+'</svg>';},
+ svg(w,h,body,al){return '<svg class="ens5" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+al+'" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+body+'</svg>';},
  tx(x,y,t,o){o=o||{};return '<text x="'+x+'" y="'+y+'" text-anchor="'+(o.a||'middle')+'" font-size="'+(o.s||9.5)+'" fill="currentColor" stroke="none"'+(o.b?' font-weight="700"':'')+'>'+String(t).split('|').map((l,i)=>'<tspan x="'+x+'" dy="'+(i?11:0)+'">'+l+'</tspan>').join('')+'</text>';},
  arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=5;return '<path d="M'+x1+' '+y1+'L'+x2+' '+y2+'M'+x2+' '+y2+'l'+(-h*Math.cos(a-0.5)).toFixed(1)+' '+(-h*Math.sin(a-0.5)).toFixed(1)+'M'+x2+' '+y2+'l'+(-h*Math.cos(a+0.5)).toFixed(1)+' '+(-h*Math.sin(a+0.5)).toFixed(1)+'" stroke-width="1.6"/>';},
  /* tubo de ensaio: x,y = canto superior esquerdo; o = {h, lvl (0-1), liq, layer (fase de baixo), pre (precipitado), solid, bub, cloud} */
- tube(x,y,o){o=o||{};const H=o.h||72,top=H*(1-(o.lvl==null?0.55:o.lvl));let s='<g transform="translate('+x+','+y+')">';
+ tube(x,y,o){o=o||{};const H=o.h||72,top=H*(1-(o.lvl==null?0.55:o.lvl));let s='<g transform="translate('+x+','+y+')"><path d="M0 0V'+(H-14)+'A14 14 0 0 0 28 '+(H-14)+'V0Z" fill="var(--glass)" stroke="none"/>';
   if(o.liq)s+='<path d="M1 '+top.toFixed(1)+'H27V'+(H-14)+'A13 13 0 0 1 1 '+(H-14)+'Z" fill="'+o.liq+'" stroke="none"/>';
   if(o.layer)s+='<path d="M1 '+(H-27)+'H27V'+(H-14)+'A13 13 0 0 1 1 '+(H-14)+'Z" fill="'+o.layer+'" stroke="none"/><path d="M1 '+(H-27)+'H27" stroke-width="1" stroke-dasharray="2 2"/>';
   if(o.pre)s+=[[7,H-5],[13,H-8],[19,H-5],[10,H-3],[17,H-10],[22,H-9],[14,H-4]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.1" fill="'+o.pre+'" stroke-width=".8"/>').join('');
   if(o.solid)s+='<path d="M5 '+(H-4)+'q9 -8 18 0q-9 4 -18 0z" fill="'+o.solid+'" stroke-width="1"/>';
   if(o.bub)for(let i=0;i<o.bub;i++)s+='<circle cx="'+(8+(i*7)%13)+'" cy="'+(top+8+i*9).toFixed(1)+'" r="'+(1.5+(i%2)*.8)+'" stroke-width="1"/>';
-  s+='<path d="M0 0V'+(H-14)+'A14 14 0 0 0 28 '+(H-14)+'V0"/><path d="M-3 0H31"/></g>';return s;},
- flame(x,y,k,c1,c2){return '<g transform="translate('+x+','+y+') scale('+k+')"><path d="M0 0C-11 -12 -8 -26 0 -42C8 -26 11 -12 0 0Z" fill="'+c1+'" stroke="none"/><path d="M0 0C-5 -6 -4 -13 0 -20C4 -13 5 -6 0 0Z" fill="'+c2+'" stroke="none"/></g>';},
+  if(o.liq)s+='<path d="M1 '+top.toFixed(1)+'Q14 '+(top+2.6).toFixed(1)+' 27 '+top.toFixed(1)+'" stroke-width=".9" opacity=".5"/>';
+  s+='<path d="M5 7V'+(H-17)+'" stroke="var(--glass-edge)" stroke-width="1.6" opacity=".9"/><path d="M23 '+(H*.3).toFixed(1)+'h-3M23 '+(H*.5).toFixed(1)+'h-4M23 '+(H*.7).toFixed(1)+'h-3" stroke-width=".8" opacity=".45"/>';
+  s+='<path d="M0 0V'+(H-14)+'A14 14 0 0 0 28 '+(H-14)+'V0"/><path d="M-2.5 0H30.5" stroke-width="1.8"/></g>';return s;},
+ flame(x,y,k,c1,c2){return '<g transform="translate('+x+','+y+') scale('+k+')"><path d="M0 0C-12 -12 -9 -27 0 -44C9 -27 12 -12 0 0Z" fill="'+c1+'" fill-opacity=".92" stroke="none"/><path d="M0 0C-7 -7 -6 -16 0 -26C6 -16 7 -7 0 0Z" fill="'+c2+'" fill-opacity=".85" stroke="none"/><path d="M0 0C-3 -3 -2.5 -7 0 -11C2.5 -7 3 -3 0 0Z" fill="#fff" fill-opacity=".6" stroke="none"/></g>';},
  paper(x,y,w,h,c){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="1.5" fill="'+c+'" stroke-width="1.5"/>';},
  /* microtubo de pirólise: reagente no fundo, papel na boca, chama embaixo */
  pirol(x,y,paper,lab){return '<g transform="translate('+x+','+y+')">'+E5.paper(-6,-4,24,7,paper)+'<path d="M0 3V52a6 6 0 0 0 12 0V3" /><path d="M1 36H11V52a5 5 0 0 1 -10 0Z" fill="#a98a5e" stroke="none"/><path d="M1 28H11V36H1Z" fill="#d9c9a3" stroke="none"/>'+E5.flame(6,76,.5,'#f4b400','#f08a1c')+E5.tx(6,92,lab,{s:8.5})+'</g>';},

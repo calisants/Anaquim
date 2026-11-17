@@ -3,29 +3,29 @@ def esc(s): return s.replace('&','&amp;').replace('<','&lt;')
 class S:
     def __init__(s,w=340,h=150): s.w,s.h,s.o=w,h,[]
     def text(s,x,y,t,size=15,anchor='middle',cls='',fill='currentColor',weight=400):
-        s.o.append(f'<text x="{x}" y="{y}" font-size="{size}" text-anchor="{anchor}" fill="{fill}" font-weight="{weight}" font-family="IBM Plex Mono,ui-monospace,monospace">{t}</text>')
-    def line(s,x1,y1,x2,y2,dash=False,w=1.8):
+        s.o.append(f'<text x="{x}" y="{y}" font-size="{size}" text-anchor="{anchor}" fill="{fill}" font-weight="{weight}" font-family="IBM Plex Sans,system-ui,sans-serif">{t}</text>')
+    def line(s,x1,y1,x2,y2,dash=False,w=1.6):
         s.o.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="currentColor" stroke-width="{w}" stroke-linecap="round"'+(' stroke-dasharray="3 4"' if dash else '')+'/>')
     def dbl(s,x1,y1,x2,y2,off=3):
         dx,dy=x2-x1,y2-y1;L=math.hypot(dx,dy);nx,ny=-dy/L*off,dx/L*off
         s.line(x1+nx,y1+ny,x2+nx,y2+ny);s.line(x1-nx,y1-ny,x2-nx,y2-ny)
-    def dot(s,x,y,r=2.4,fill='currentColor'):
+    def dot(s,x,y,r=2.2,fill='currentColor'):
         s.o.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{fill}"/>')
     def arrow(s,p0,c,p1,full=False,n=None):
         col='var(--arrow)'
-        s.o.append(f'<path d="M{p0[0]} {p0[1]} Q{c[0]} {c[1]} {p1[0]} {p1[1]}" fill="none" stroke="{col}" stroke-width="2" stroke-linecap="round"/>')
+        s.o.append(f'<path d="M{p0[0]} {p0[1]} Q{c[0]} {c[1]} {p1[0]} {p1[1]}" fill="none" stroke="{col}" stroke-width="1.9" stroke-linecap="round"/>')
         tx,ty=p1[0]-c[0],p1[1]-c[1];L=math.hypot(tx,ty);tx,ty=tx/L,ty/L
         def rot(a):
             ca,sa=math.cos(a),math.sin(a);return (tx*ca-ty*sa,tx*sa+ty*ca)
-        b1=rot(math.radians(155));b2=rot(math.radians(-155));k=9
+        b1=rot(math.radians(152));b2=rot(math.radians(-152));k=8.5
         if full:
             s.o.append(f'<path d="M{p1[0]} {p1[1]} L{p1[0]+b1[0]*k:.1f} {p1[1]+b1[1]*k:.1f} L{p1[0]+b2[0]*k:.1f} {p1[1]+b2[1]*k:.1f}Z" fill="{col}"/>')
         else:
-            s.o.append(f'<path d="M{p1[0]} {p1[1]} L{p1[0]+b1[0]*k:.1f} {p1[1]+b1[1]*k:.1f}" stroke="{col}" stroke-width="2" stroke-linecap="round" fill="none"/>')
+            s.o.append(f'<path d="M{p1[0]} {p1[1]} L{p1[0]+b1[0]*k:.1f} {p1[1]+b1[1]*k:.1f}" stroke="{col}" stroke-width="1.9" stroke-linecap="round" fill="none"/>')
         if n: s.text(c[0],c[1]-4 if c[1]<p0[1]+20 else c[1]+14,str(n),12,fill='var(--arrow)',weight=600)
     def big(s,x,y,t='→'): s.text(x,y,t,22,fill='var(--muted)')
     def svg(s,label):
-        return (f'<svg viewBox="0 0 {s.w} {s.h}" role="img" aria-label="{esc(label)}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-width:520px">'+''.join(s.o)+'</svg>')
+        return (f'<svg viewBox="0 0 {s.w} {s.h}" role="img" aria-label="{esc(label)}" xmlns="http://www.w3.org/2000/svg" class="mdl2" style="width:100%;height:auto;max-width:520px">'+''.join(s.o)+'</svg>')
 
 def m_ioniz():
     s=S(340,118)

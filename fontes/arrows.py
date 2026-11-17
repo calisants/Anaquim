@@ -6,6 +6,7 @@ Especificação: ARW[(ex,pico)] = dict(v=[(rótulo, mark, [setas])], n=nota)
 """
 import math, re
 from rdkit import Chem
+import estilo
 from rdkit.Chem.Draw import rdMolDraw2D
 
 T_ALFA=['O elétron sozinho forma a ligação dupla (anzol 1).','Um elétron da ligação vai com o grupo que sai, que vira radical (anzol 2).']
@@ -74,15 +75,15 @@ def _arrow(p0,p1,cen,full,n=None):
     mx,my=(p0[0]+p1[0])/2,(p0[1]+p1[1])/2
     if (mx+nx-cen[0])**2+(my+ny-cen[1])**2 < (mx-nx-cen[0])**2+(my-ny-cen[1])**2: nx,ny=-nx,-ny
     off=max(14,min(34,L*0.55));c=(mx+nx*off,my+ny*off)
-    col='var(--arrow)';o=[f'<path d="M{p0[0]:.1f} {p0[1]:.1f} Q{c[0]:.1f} {c[1]:.1f} {p1[0]:.1f} {p1[1]:.1f}" fill="none" stroke="{col}" stroke-width="2.2" stroke-linecap="round"/>']
+    col='var(--arrow)';o=[f'<path d="M{p0[0]:.1f} {p0[1]:.1f} Q{c[0]:.1f} {c[1]:.1f} {p1[0]:.1f} {p1[1]:.1f}" fill="none" stroke="{col}" stroke-width="1.9" stroke-linecap="round"/>']
     tx,ty=p1[0]-c[0],p1[1]-c[1];Lt=math.hypot(tx,ty) or 1;tx,ty=tx/Lt,ty/Lt
     def rot(a):
         ca,sa=math.cos(a),math.sin(a);return (tx*ca-ty*sa,tx*sa+ty*ca)
-    b1=rot(math.radians(155));b2=rot(math.radians(-155));k=10
+    b1=rot(math.radians(152));b2=rot(math.radians(-152));k=9
     if full: o.append(f'<path d="M{p1[0]:.1f} {p1[1]:.1f} L{p1[0]+b1[0]*k:.1f} {p1[1]+b1[1]*k:.1f} L{p1[0]+b2[0]*k:.1f} {p1[1]+b2[1]*k:.1f}Z" fill="{col}"/>')
-    else: o.append(f'<path d="M{p1[0]:.1f} {p1[1]:.1f} L{p1[0]+b1[0]*k:.1f} {p1[1]+b1[1]*k:.1f}" stroke="{col}" stroke-width="2.2" stroke-linecap="round" fill="none"/>')
+    else: o.append(f'<path d="M{p1[0]:.1f} {p1[1]:.1f} L{p1[0]+b1[0]*k:.1f} {p1[1]+b1[1]*k:.1f}" stroke="{col}" stroke-width="1.9" stroke-linecap="round" fill="none"/>')
     if n is not None:
-        qx,qy=(mx+nx*(off*0.5+9)+nx*off*0.0, my+ny*(off*0.5+9));o.append(f'<text x="{(c[0]+nx*7):.1f}" y="{(c[1]+ny*7+4):.1f}" font-size="12" font-weight="700" text-anchor="middle" fill="{col}" font-family="IBM Plex Mono,ui-monospace,monospace">{n}</text>')
+        qx,qy=(mx+nx*(off*0.5+9)+nx*off*0.0, my+ny*(off*0.5+9));o.append(f'<text x="{(c[0]+nx*7):.1f}" y="{(c[1]+ny*7+4):.1f}" font-size="12" font-weight="700" text-anchor="middle" fill="{col}" font-family="IBM Plex Sans,system-ui,sans-serif">{n}</text>')
     return o
 
 def build(smi, mark, rec):
@@ -108,7 +109,7 @@ def build(smi, mark, rec):
     else:
         rdDepictor.Compute2DCoords(m)
     d=rdMolDraw2D.MolDraw2DSVG(W,Hh);op=d.drawOptions()
-    op.clearBackground=False;op.fixedBondLength=44;op.padding=0.18;op.bondLineWidth=2;op.useBWAtomPalette();op.addAtomIndices=False
+    op.clearBackground=False;op.fixedBondLength=44;op.padding=0.18;op.bondLineWidth=2;estilo.opts(op);op.addAtomIndices=False
     d.DrawMolecule(m);d.FinishDrawing()
     s=d.GetDrawingText()
     pos={i:(d.GetDrawCoords(i).x,d.GetDrawCoords(i).y) for i in range(m.GetNumAtoms())}
@@ -136,13 +137,13 @@ def build(smi, mark, rec):
     extra=[]
     if mark is not None:
         x,y=away(mark,15);extra.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="2.8" fill="currentColor"/>')
-        x2,y2=away(mark,27);extra.append(f'<text x="{x2:.1f}" y="{y2+4:.1f}" font-size="14" text-anchor="middle" fill="currentColor" font-family="IBM Plex Mono,ui-monospace,monospace">+</text>')
+        x2,y2=away(mark,27);extra.append(f'<text x="{x2:.1f}" y="{y2+4:.1f}" font-size="14" text-anchor="middle" fill="currentColor" font-family="IBM Plex Sans,system-ui,sans-serif">+</text>')
     for k,(t,a,b) in enumerate(arrows):
         p0=pt(a);p1=pt(b,toward=p0)
         extra+=_arrow(p0,p1,cen,t=='f',k+1 if len(arrows)>1 else None)
     if lay:
         (x0,y0),(x1,y1)=pos[lay[0]],pos[hidx[lay[4]]];extra.insert(0,f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 4" opacity=".6"/>')
-    s=s.replace('#000000','currentColor')
-    s=re.sub(r"<svg[^>]*>",f'<svg viewBox="0 0 {W} {Hh}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estrutura com setas do mecanismo" style="width:100%;height:auto;max-width:400px">',s,count=1)
+    s = estilo.pos(s)
+    s=re.sub(r"<svg[^>]*>",f'<svg viewBox="0 0 {W} {Hh}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estrutura com setas do mecanismo" class="mdl2" style="width:100%;height:auto;max-width:400px">',s,count=1)
     s=re.sub(r'<!--.*?-->','',s);s=re.sub(r'\s+',' ',s).strip()
     return s.replace('</svg>',''.join(extra)+'</svg>')

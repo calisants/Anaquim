@@ -209,8 +209,8 @@ const FUN=[
   c:['#efefef','#4a3f9a'],l:['incolor','azul-violeta']}
 ];
 function fuTubo(a){
-  const t=(x,cor,rot)=>'<g transform="translate('+x+',0)"><path d="M14 6v52a14 14 0 0 0 28 0V6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 34h26v24a13 13 0 0 1-26 0z" fill="'+cor+'" stroke="none"/><text x="28" y="92" text-anchor="middle" font-size="10" fill="currentColor">'+rot+'</text></g>';
-  return '<svg class="futb" viewBox="0 0 240 100" role="img" aria-label="Tubo do reagente e tubo positivo: '+a.l[0]+' passa a '+a.l[1]+'">'+t(40,a.c[0],a.l[0])+'<path d="M96 40h40m-8-8 8 8-8 8" fill="none" stroke="currentColor" stroke-width="2"/>'+t(158,a.c[1],a.l[1])+'</svg>';
+  const t=(x,cor,rot)=>'<g transform="translate('+x+',0)"><path d="M14 6v52a14 14 0 0 0 28 0V6z" fill="var(--glass)" stroke="none"/><path d="M15 34h26v24a13 13 0 0 1-26 0z" fill="'+cor+'" stroke="none"/><path d="M15 34q13 2.5 26 0" fill="none" stroke="currentColor" stroke-width=".9" opacity=".5"/><path d="M19 12v42" stroke="var(--glass-edge)" stroke-width="1.6" fill="none" opacity=".9"/><path d="M14 6v52a14 14 0 0 0 28 0V6M11.5 6h33" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="28" y="92" text-anchor="middle" font-size="10" fill="currentColor">'+rot+'</text></g>';
+  return '<svg class="futb" viewBox="0 0 240 100" role="img" aria-label="Tubo do reagente e tubo positivo: '+a.l[0]+' passa a '+a.l[1]+'">'+t(40,a.c[0],a.l[0])+'<path d="M96 40h40m-7-7 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"/>'+t(158,a.c[1],a.l[1])+'</svg>';
 }
 /* ---- vidraria e utensílios: ícones simples (traço em currentColor) ---- */
 const FUI={
@@ -228,7 +228,7 @@ const FUI={
  capela:['Capela de exaustão','<rect x="8" y="10" width="48" height="46" rx="3"/><path d="M8 24h48"/><path d="M16 34h32v14H16z"/><path d="M26 17h12" /><path d="M24 54v-6M40 54v-6"/>'],
  oculos:['Óculos de proteção e luvas','<path d="M8 28h48v8a8 8 0 0 1-8 8h-8a6 6 0 0 1-6-6h-4a6 6 0 0 1-6 6h-8a8 8 0 0 1-8-8z"/><path d="M8 30l-3-4M56 30l3-4"/>']
 };
-function fuIc(k){const d=FUI[k];return '<svg class="fuic" viewBox="0 0 64 64" role="img" aria-label="'+d[0]+'" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'+d[1]+'</svg>';}
+function fuIc(k){const d=FUI[k];return '<svg class="fuic" viewBox="0 0 64 64" role="img" aria-label="'+d[0]+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+d[1]+'</svg>';}
 /* os materiais saem do texto do próprio procedimento: só aparece o que a apostila manda usar */
 function fuMat(a){
   const t=(a.st.join(' ')+' '+a.rg.map(r=>r[1]).join(' ')).toLowerCase(),m=[];
@@ -250,7 +250,7 @@ function fuMat(a){
 /* cena do banho-maria: só nos ensaios que pedem aquecimento assim */
 function fuCena(a){
   if(!/banho-maria/.test(a.st.join(' ').toLowerCase()))return '';
-  return '<figure class="fucena"><svg viewBox="0 0 220 120" role="img" aria-label="Tubo de ensaio mergulhado em béquer com água quente sobre um bico de Bunsen" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 40v46a4 4 0 0 0 4 4h60a4 4 0 0 0 4-4V40"/><path d="M56 40h76"/><path d="M60 56q10-5 20 0t20 0 20 0 14 0" /><path d="M92 10v62a8 8 0 0 0 16 0V10"/><path d="M88 10h24"/><path d="M92 62h16" fill="none" stroke-dasharray="2 3"/><path d="M96 92v10M92 102h8M160 100l-2 6M190 100l2 6"/><path d="M94 100c-4-3-4-6 0-11 4 5 4 8 0 11z" fill="currentColor" fill-opacity=".3"/><path d="M140 50h30M164 44l6 6-6 6" /></svg><figcaption>Banho-maria: o tubo fica dentro do béquer com água quente, preso por uma garra. A água não deve ferver dentro do tubo.</figcaption></figure>';
+  return '<figure class="fucena"><svg viewBox="0 0 220 120" role="img" aria-label="Tubo de ensaio mergulhado em béquer com água quente sobre um bico de Bunsen" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M60 40v46a4 4 0 0 0 4 4h60a4 4 0 0 0 4-4V40"/><path d="M56 40h76"/><path d="M60 56q10-5 20 0t20 0 20 0 14 0" /><path d="M92 10v62a8 8 0 0 0 16 0V10"/><path d="M88 10h24"/><path d="M92 62h16" fill="none" stroke-dasharray="2 3"/><path d="M96 92v10M92 102h8M160 100l-2 6M190 100l2 6"/><path d="M94 100c-4-3-4-6 0-11 4 5 4 8 0 11z" fill="currentColor" fill-opacity=".3"/><path d="M140 50h30M164 44l6 6-6 6" /></svg><figcaption>Banho-maria: o tubo fica dentro do béquer com água quente, preso por uma garra. A água não deve ferver dentro do tubo.</figcaption></figure>';
 }
 function fuCard(a){
   const mat=fuMat(a);

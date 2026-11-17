@@ -9,6 +9,7 @@ A massa usada é a nominal (C 12, H 1, N 14, O 16...). Dois caminhos diferentes 
 por isso o app chama de "proposta", nunca de mecanismo medido."""
 import re
 from rdkit import Chem
+import estilo
 from rdkit.Chem.Draw import rdMolDraw2D
 
 NOM = {"C": 12, "H": 1, "N": 14, "O": 16, "F": 19, "Cl": 35, "Br": 79, "S": 32, "I": 127, "P": 31, "Si": 28}
@@ -90,11 +91,11 @@ def svg_ion(mm, w=180, h=110, bond=32):
         if a.GetSymbol() == "C" and a.GetFormalCharge() == 1:
             n = a.GetTotalNumHs(); a.SetProp("atomLabel", "C" + ("H" + ("<sub>%d</sub>" % n if n > 1 else "") if n else "") + "<sup>+</sup>")
     d = rdMolDraw2D.MolDraw2DSVG(w, h); o = d.drawOptions()
-    o.clearBackground = False; o.fixedBondLength = bond; o.padding = 0.22; o.bondLineWidth = 2; o.annotationFontScale = 0.8
+    o.clearBackground = False; o.fixedBondLength = bond; o.padding = 0.22; o.bondLineWidth = 2; o.annotationFontScale = 0.8; estilo.opts(o)
     rdMolDraw2D.PrepareAndDrawMolecule(d, mm); d.FinishDrawing()
     t = re.sub(r'<\?xml.*?\?>', '', d.GetDrawingText())
     t = re.sub(r"<rect[^>]*?style='opacity:1\.0;fill:#FFFFFF[^>]*?/>", '', t)
-    t = t.replace('#000000', 'currentColor').replace('#FF0000', 'var(--lost)').replace('#0000FF', 'var(--blue)')
+    t = estilo.pos(t)
     t = re.sub(r"<svg[^>]*>", '<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" role="img">' % (w, h), t, count=1)
     return re.sub(r'\s+', ' ', re.sub(r'<!--.*?-->', '', t)).strip()
 
@@ -102,14 +103,14 @@ AMB = (1, 165 / 255, 0); KEEPC = (0, 170 / 255, 1 / 255); LOSTC = (204 / 255, 0,
 def _limpa(t, w, h):
     t = re.sub(r'<\?xml.*?\?>', '', t)
     t = re.sub(r"<rect[^>]*?style='opacity:1\.0;fill:#FFFFFF[^>]*?/>", '', t)
-    t = t.replace('#000000', 'currentColor').replace('#FF0000', 'var(--lost)').replace('#0000FF', 'var(--blue)')
+    t = estilo.pos(t)
     t = t.replace('#00AA01', 'var(--keep-soft)').replace('#CC0002', 'var(--lost-soft)').replace('#FFA500', 'var(--amber)')
     t = re.sub(r"<svg[^>]*>", '<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" role="img">' % (w, h), t, count=1)
     return re.sub(r'\s+', ' ', re.sub(r'<!--.*?-->', '', t)).strip()
 
 def svg_mapa(m, keep, atomo=None, w=210, h=140):
     d = rdMolDraw2D.MolDraw2DSVG(w, h); o = d.drawOptions()
-    o.clearBackground = False; o.fixedBondLength = 30; o.padding = 0.12; o.bondLineWidth = 2; o.useBWAtomPalette(); o.highlightRadius = 0.5
+    o.clearBackground = False; o.fixedBondLength = 30; o.padding = 0.12; o.bondLineWidth = 2; estilo.opts(o); o.highlightRadius = 0.5
     ats = {i: (KEEPC if i in keep else LOSTC) for i in range(m.GetNumAtoms())}
     if atomo is not None: ats[atomo] = AMB
     bds = {b.GetIdx(): AMB for b in m.GetBonds() if (b.GetBeginAtomIdx() in keep) != (b.GetEndAtomIdx() in keep)}
