@@ -1,15 +1,18 @@
 """Sincronização entre aparelhos, contra um servidor de mentira (testes/servidor_falso.js) que imita as funções do Supabase.
 Dois ou três "aparelhos" = três contextos do navegador, cada um com o seu armazenamento."""
+import re as _re
 import sys,os,json,re,subprocess,time,urllib.request;sys.path.insert(0,os.path.dirname(__file__))
 from playwright.sync_api import sync_playwright
 from _nav import abrir
 PORTA=8791
 AQUI=os.path.dirname(os.path.abspath(__file__))
 html=open('/home/claude/massas/index.html',encoding='utf-8').read()
-assert "let SY_URL='';" in html and "let SY_ANON='';" in html
-cfg=html.replace("let SY_URL='';","let SY_URL='http://127.0.0.1:%d';"%PORTA).replace("let SY_ANON='';","let SY_ANON='chave-de-teste';")
+assert _re.search(r"let SY_URL='[^']*';",html) and _re.search(r"let SY_ANON='[^']*';",html)
+cfg=_re.sub(r"let SY_URL='[^']*';","let SY_URL='http://127.0.0.1:%d';"%PORTA,html,count=1)
+cfg=_re.sub(r"let SY_ANON='[^']*';","let SY_ANON='chave-de-teste';",cfg,count=1)
 open('/tmp/anaquim_teste_sync.html','w',encoding='utf-8').write(cfg)
-open('/tmp/anaquim_teste_sync_off.html','w',encoding='utf-8').write(html)
+open('/tmp/anaquim_teste_sync_off.html','w',encoding='utf-8').write(
+    _re.sub(r"let SY_ANON='[^']*';","let SY_ANON='';",_re.sub(r"let SY_URL='[^']*';","let SY_URL='';",html,count=1),count=1))
 URL='file:///tmp/anaquim_teste_sync.html'
 srv=subprocess.Popen(['node',os.path.join(AQUI,'servidor_falso.js'),str(PORTA)],stdout=subprocess.PIPE,text=True)
 srv.stdout.readline()
@@ -42,7 +45,7 @@ try:
       LS.set('massas-stud',['ex1','ex2']);LS.set('massas-nota-1-0','nota privada do A');}""")
     A.evaluate("go('p-sy')");A.click('[data-sy=cria]');A.wait_for_timeout(1500)
     cod=A.evaluate('SYE.cod')
-    chk('código no formato XXXX-XXXX-XXXX-XXXX '+cod,bool(re.fullmatch(r'[0-9A-HJKMNP-TV-Z]{4}(-[0-9A-HJKMNP-TV-Z]{4}){3}',cod)))
+    chk('código no formato XXXX-XXXX-XXXX '+cod,bool(re.fullmatch(r'[0-9A-HJKMNP-TV-Z]{4}(-[0-9A-HJKMNP-TV-Z]{4}){2}',cod)))
     dump=api('dump')
     chk('servidor guarda uma linha só',len(dump)==1 and dump[0]['rev']>=1)
     chk('o id no servidor é um SHA-256 (64 hex), não o código',bool(re.fullmatch(r'[0-9a-f]{64}',dump[0]['id'])) and cod.replace('-','') not in json.dumps(dump))
@@ -132,16 +135,16 @@ try:
     # 11) código errado e código inexistente
     D=novo();D.evaluate("go('p-sy')")
     D.fill('#syCod','ABCD-1234');D.click('[data-sy=conecta]');D.wait_for_timeout(500)
-    chk('código curto: mensagem clara',not D.evaluate('!!SYE.cod') and '16 letras e números' in D.inner_text('#syErro'))
-    D.fill('#syCod','2222-2222-2222-2222');D.click('[data-sy=conecta]');D.wait_for_timeout(1000)
+    chk('código curto: mensagem clara',not D.evaluate('!!SYE.cod') and '12 letras e números' in D.inner_text('#syErro'))
+    D.fill('#syCod','2222-2222-2222');D.click('[data-sy=conecta]');D.wait_for_timeout(1000)
     chk('código que não existe: não liga e avisa',not D.evaluate('!!SYE.cod') and 'Não achei esse código' in D.inner_text('#syErro'))
     D.context.close()
 
     # 12) dados corrompidos na nuvem (chave errada): avisa, não apaga nada local
     dump=api('dump')
     E=novo();E.evaluate("go('p-sy')")
-    E.evaluate("""async()=>{SYE={cod:'2222-2222-2222-2222',rev:0,meta:{},primeira:false};
-       const id=await syId('2222-2222-2222-2222');
+    E.evaluate("""async()=>{SYE={cod:'2222-2222-2222',rev:0,meta:{},primeira:false};
+       const id=await syId('2222-2222-2222');
        const lixo=await syCifra('3333-3333-3333-3333',{v:1,d:{}});
        await syRpc('anaquim_gravar',{p_id:id,p_data:{c:lixo},p_rev:0});}""")
     E.evaluate("LS.set('massas-stud',['meu'])");E.evaluate('syRodar()');E.wait_for_timeout(1500)

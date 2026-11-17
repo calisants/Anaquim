@@ -1,5 +1,5 @@
 /* ================= ANALORG v7: sincronização entre aparelhos =================
-   Sem conta, sem e-mail, sem nome. O app cria um CÓDIGO (80 bits aleatórios, ex.: K7QF-93XM-2PDA-WH8T). Quem digita o mesmo código em
+   Sem conta, sem e-mail, sem nome. O app cria um CÓDIGO (60 bits aleatórios, ex.: K7QF-93XM-2PDA). Quem digita o mesmo código em
    outro aparelho vê os mesmos dados.
    O código nunca sai do aparelho. O que vai para o servidor:
      - id    = SHA-256 do código (não dá para voltar ao código);
@@ -8,8 +8,8 @@
    Cada chave sincronizada guarda a hora da última alteração; na sincronização vence a mais recente (LWW), exceto aulas e revisões, que são juntadas.
    Na primeira ligação de um aparelho a um código existente, tudo é JUNTADO (nada que já estava no aparelho se perde).
    O servidor (Supabase) só expõe 3 funções: anaquim_ler, anaquim_gravar, anaquim_apagar (ver fontes/sync_supabase.sql). */
-let SY_URL='';   /* endereço do projeto, ex.: https://xxxx.supabase.co  (vazio = sincronização desligada e escondida) */
-let SY_ANON=''; /* chave publicável do projeto: só abre as 3 funções acima */
+let SY_URL='https://fddurglmuxbwwyaycnah.supabase.co';   /* endereço do projeto, ex.: https://xxxx.supabase.co  (vazio = sincronização desligada e escondida) */
+let SY_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkZHVyZ2xtdXhid3d5YXljbmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0MTM3MTAsImV4cCI6MjEwOTk4OTcxMH0.-GYC3_WuLFyTljtxxyTman3vtmexAsmeLW4eWW2cgJI'; /* chave publicável do projeto: só abre as 3 funções acima */
 const SY_LS='anaquim-sync';
 const SY_MERGE=['massas-aulas','massas-rep','massas-repq'];
 const SY_LWW=['massas-stud','massas-perg','massas-an','massas-fav','massas-ic'];
@@ -22,9 +22,9 @@ let syAplicando=false,syRodando=false,syDeNovo=false,syTT=0,syMsg='';
 
 /* ---- código ---- */
 const SY_ALF='0123456789ABCDEFGHJKMNPQRSTVWXYZ';
-function syNovoCodigo(){const b=new Uint8Array(16);crypto.getRandomValues(b);let s='';for(let i=0;i<16;i++)s+=SY_ALF[b[i]&31];return s.replace(/(.{4})/g,'$1-').slice(0,-1);}
+function syNovoCodigo(){const b=new Uint8Array(12);crypto.getRandomValues(b);let s='';for(let i=0;i<12;i++)s+=SY_ALF[b[i]&31];return s.replace(/(.{4})/g,'$1-').slice(0,-1);}
 function syNorm(c){return String(c||'').toUpperCase().replace(/[\s-]/g,'').replace(/O/g,'0').replace(/[IL]/g,'1');}
-function syValido(c){return /^[0-9A-HJKMNP-TV-Z]{16}$/.test(syNorm(c));}
+function syValido(c){return /^[0-9A-HJKMNP-TV-Z]{12}$/.test(syNorm(c));}
 function syFmt(c){return syNorm(c).replace(/(.{4})/g,'$1-').slice(0,-1);}
 
 /* ---- cifra (WebCrypto) ---- */
@@ -149,7 +149,7 @@ async function syCria(){
   syEstSalva();syDraw();await syRodar();return c;
 }
 async function syConecta(c){
-  if(!syValido(c))return {ok:false,m:'O código tem 16 letras e números, em 4 grupos de 4. Confira o que digitou.'};
+  if(!syValido(c))return {ok:false,m:'O código tem 12 letras e números, em 3 grupos de 4. Confira o que digitou.'};
   const n=syFmt(c);
   try{
     const r=await syLer(n);
@@ -182,7 +182,7 @@ function syDraw(){
   if(box.querySelector('input:focus'))return;
   if(!SYE.cod){
     box.innerHTML='<div class="el"><h3>Primeiro aparelho</h3><p>O app cria um código. Você anota o código e digita o mesmo nos outros aparelhos.</p><button type="button" class="btn" data-sy="cria">Criar meu código</button></div>'
-     +'<div class="el"><h3>Já tenho um código</h3><label class="aplb">Código<input type="text" id="syCod" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX"></label><button type="button" class="btn" data-sy="conecta">Conectar este aparelho</button><div id="syErro" role="status" class="fb bad" hidden></div></div>';
+     +'<div class="el"><h3>Já tenho um código</h3><label class="aplb">Código<input type="text" id="syCod" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX"></label><button type="button" class="btn" data-sy="conecta">Conectar este aparelho</button><div id="syErro" role="status" class="fb bad" hidden></div></div>';
     return;
   }
   const c=SYE.cod;

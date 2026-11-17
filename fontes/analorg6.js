@@ -140,6 +140,58 @@ function apRelTexto(a,comProc){
   return L.join('\n');
 }
 
+
+/* ---- PDF próprio: window.print() não faz nada no app instalado do iPhone, então o PDF é montado aqui e entregue pelo menu de compartilhar ---- */
+function apPdfBytes(texto){
+  const W=595,H=842,M=52,TAM=11,LH=15,AREA=W-2*M;
+  const cp={'–':'\x96','—':'\x97','‘':'\x91','’':'\x92','“':'\x93','”':'\x94','•':'\x95','…':'\x85','₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9','⁺':'+','⁻':'-','→':'->','≥':'>=','≤':'<=','°':'\xb0','×':'\xd7','·':'\xb7','µ':'\xb5','μ':'\xb5','Δ':'delta ','−':'-'};
+  function l1(t){let o='';for(const ch of t){const c=ch.charCodeAt(0);if(cp[ch]!==undefined)o+=cp[ch];else if(c<256)o+=ch;else o+='?';}return o;}
+  const cv=document.createElement('canvas').getContext('2d');
+  function larg(t,neg){cv.font=(neg?'bold ':'')+TAM+'px Helvetica, Arial, sans-serif';return cv.measureText(t).width;}
+  const linhas=[];
+  String(texto).split('\n').forEach((raw,i)=>{
+    const neg=i===0||(raw.length>2&&raw===raw.toUpperCase()&&/[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(raw)&&!/^\s/.test(raw));
+    const ind=/^\s+/.exec(raw);const pad=ind?Math.min(ind[0].length,6)*4:0;
+    const pal=raw.trim().split(/\s+/);let cur='';
+    if(!raw.trim()){linhas.push({t:'',neg:false,x:0});return;}
+    pal.forEach(w=>{const t2=cur?cur+' '+w:w;if(larg(t2,neg)+pad>AREA&&cur){linhas.push({t:cur,neg:neg,x:pad});cur=w;}else cur=t2;});
+    if(cur)linhas.push({t:cur,neg:neg,x:pad});
+  });
+  const porPag=Math.floor((H-2*M)/LH),pags=[];
+  for(let i=0;i<linhas.length;i+=porPag)pags.push(linhas.slice(i,i+porPag));
+  if(!pags.length)pags.push([]);
+  const esc=t=>l1(t).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
+  const obj=[];
+  obj[1]='<< /Type /Catalog /Pages 2 0 R >>';
+  const n=pags.length,kids=pags.map((_,i)=>(5+2*i)+' 0 R').join(' ');
+  obj[2]='<< /Type /Pages /Kids ['+kids+'] /Count '+n+' >>';
+  obj[3]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+  obj[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+  pags.forEach((pg,i)=>{
+    let c='BT\n';let y=H-M-TAM;
+    pg.forEach(l=>{if(l.t)c+='/'+(l.neg?'F2':'F1')+' '+(l.neg&&false?13:TAM)+' Tf 1 0 0 1 '+(M+l.x)+' '+y+' Tm ('+esc(l.t)+') Tj\n';y-=LH;});
+    c+='ET';
+    obj[5+2*i]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents '+(6+2*i)+' 0 R >>';
+    obj[6+2*i]='<< /Length '+c.length+' >>\nstream\n'+c+'\nendstream';
+  });
+  let out='%PDF-1.4\n',off=[];
+  for(let i=1;i<obj.length;i++){off[i]=out.length;out+=i+' 0 obj\n'+obj[i]+'\nendobj\n';}
+  const x=out.length;out+='xref\n0 '+obj.length+'\n0000000000 65535 f \n';
+  for(let i=1;i<obj.length;i++)out+=String(off[i]).padStart(10,'0')+' 00000 n \n';
+  out+='trailer\n<< /Size '+obj.length+' /Root 1 0 R >>\nstartxref\n'+x+'\n%%EOF';
+  const b=new Uint8Array(out.length);for(let i=0;i<out.length;i++)b[i]=out.charCodeAt(i)&255;return b;
+}
+async function apPdfEntrega(a,comProc,msg){
+  const t=apRelTexto(a,comProc),nome=('Anaquim - '+(a.t||'aula')).replace(/[^\w\- À-ÿ]/g,'').trim()+'.pdf';
+  let blob;try{blob=new Blob([apPdfBytes(t)],{type:'application/pdf'});}catch(e){msg.textContent='Não consegui montar o PDF neste aparelho. Use Copiar texto.';return;}
+  try{const f=new File([blob],nome,{type:'application/pdf'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:a.t||'Aula prática'});msg.textContent='';return;}}
+  catch(e){if(e&&e.name==='AbortError'){msg.textContent='';return;}}
+  try{const u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download=nome;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);msg.textContent='PDF salvo nos downloads do aparelho.';}
+  catch(e){msg.textContent='Não consegui entregar o PDF. Use Copiar texto.';}
+}
+function apSoPdf(){try{return !!(navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));}catch(e){return true;}}
+
 /* ---- plano de aula para compartilhar: só o nome e a lista de ensaios (nada de resultado nem anotação) ---- */
 function apPlanoGera(a){return 'ANQ1.'+pgEnc({anaquim:'plano',v:1,t:a.t,e:a.ens.map(x=>x.id)});}
 function apPlanoLe(txt){
@@ -281,6 +333,7 @@ function apInit(){
       const ok=()=>{m.textContent='Copiado.';};
       const fail=()=>{const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();let r=false;try{r=document.execCommand('copy');}catch(e){}ta.remove();m.textContent=r?'Copiado.':'Não consegui copiar sozinho. Selecione o relatório acima e copie.';};
       try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fail);else fail();}catch(e){fail();}return;}
+    if(k==='imprime'&&apSoPdf()){const a=apAtiva(apGet());if(!a)return;apPdfEntrega(a,document.getElementById('apProc').checked,document.getElementById('apRelMsg'));return;}
     if(k==='imprime'){document.body.classList.add('ap-print');const f=()=>{document.body.classList.remove('ap-print');window.removeEventListener('afterprint',f);};window.addEventListener('afterprint',f);setTimeout(()=>{try{window.print();}catch(e){}if(!('onafterprint' in window))f();},50);return;}
   });
 }
