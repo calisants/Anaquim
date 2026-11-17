@@ -3,7 +3,7 @@
    Cada problema tem passos que aparecem um a um e um quiz curto. O quiz usa miniQuiz, então os erros entram na revisão espaçada (1, 3 e 7 dias).
    Os dados (δ, multiplicidade) foram lidos das fotos das páginas; onde o valor é de tabela e não do gráfico, o texto diz. */
 (function(){
-const TG={g:'<span class="tag sv">Lido do gráfico:</span>',t:'<span class="tag sm">Valor de tabela:</span>'};
+const TG={l:'<span class="tag sv">Do seu livro:</span>',g:'<span class="tag sv">Lido do gráfico:</span>',t:'<span class="tag sm">Valor de tabela:</span>'};
 const tb=(h,r)=>'<div class="tbl"><table class="obt"><thead><tr>'+h.map(x=>'<th style="text-transform:none">'+x+'</th>').join('')+'</tr></thead><tbody>'+r.map(l=>'<tr>'+l.map((c,i)=>'<td'+(/^[−\-]?[\d≈<>][\d,.≈ –−\-]*$/.test(c)?' class="n"':'')+'>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
 const P=s=>'<p>'+s+'</p>';
 /* quiz: q, [certa, erradas...], explicação */
@@ -18,7 +18,7 @@ const RES=[
  ['Integração',P('A única proporção inteira que soma 12 H e acompanha as multiplicidades é <b>2 : 3 : 2 : 2 : 3</b> (2,45 · 2,14 · 1,55 · 1,30 · 0,90). Foi o que usei; confira com a altura dos degraus no seu livro.')],
  ['Multiplicidade (n + 1)',tb(['δ','H','Sinal','Vizinhos','Leitura'],[['2,45','2','t','2 H','CH₂ ao lado de outro CH₂, deslocado pelo C=O'],['2,14','3','s','0','CH₃ colado no C=O, sem vizinho'],['1,55','2','quint','4 H','CH₂ entre dois CH₂'],['1,30','2','sext','5 H','CH₂ entre CH₂ e CH₃'],['0,90','3','t','2 H','CH₃ da cadeia']])+P('O livro rotula o sinal de 1,30 como "sept". Pela regra n + 1, 5 vizinhos dão <b>sexteto</b>; segui a regra e deixo a divergência anotada.')],
  ['Montagem',P('CH₃–C(=O)–CH₂–CH₂–CH₂–CH₃. Cada CH₂ está encaixado entre os vizinhos que a multiplicidade pediu. O CH₂ em 2,45 é o único ao lado do C=O; o CH₃ em 2,14 também.')],
- ['¹³C (problema 5.6)',P('6 C, 6 sinais (nenhum equivalente). Esperado, '+TG.t+': C=O ≈209 (s) · CH₂ α ≈43 (t) · CH₃CO ≈30 (q) · CH₂ ≈26 (t) · CH₂ ≈22 (t) · CH₃ ≈14 (q). O C=O é o sinal mais à esquerda e é um singleto, porque não tem H.')]],
+ ['¹³C (problema 5.6)',P('6 C, 6 sinais (nenhum equivalente). Pela tabela 5.3 do livro (cetona terminal, COR: α +30, β +1, γ −2) sobre o butano da tabela 5.2 (13,4 · 25,2 · 25,2 · 13,4): CH₂ α = 13,4 + 30 = <b>43,4</b> (t) · CH₂ β = 25,2 + 1 = <b>26,2</b> (t) · CH₂ γ = 25,2 − 2 = <b>23,2</b> (t) · CH₃ final = <b>13,4</b> (q). O CH₃CO é <b>30,6</b> (q), como na acetona (tabela 5.15). O C=O fica entre a acetona (206,7) e a 3-pentanona (211,0), perto de <b>209</b> (s, estimativa): é o sinal mais à esquerda e é um singleto, porque não tem H. '+TG.l+' tabelas 5.2, 5.3 e 5.15.')]],
  resp:'2-hexanona',
  q:[Q('Problema 4.3 A (C₆H₁₂O, cetona): qual é a estrutura?',['2-hexanona','3-hexanona','4-metil-2-pentanona','2-metil-3-pentanona'],'O singleto de 3 H em 2,14 é CH₃–C=O. A cadeia t (2 H), quint, sext, t (3 H) só fecha com uma cadeia linear de quatro carbonos depois do C=O.'),
     Q('Problema 4.3 A: por que o CH₂ em 1,55 é um quinteto?',['Tem 4 H vizinhos (dois CH₂), e 4 + 1 = 5 linhas','Tem 5 H vizinhos','Tem 1 H vizinho','Está acoplado ao C=O'],'Está entre dois CH₂ (2 + 2 H). O C=O não tem H, então não acopla.')]},
@@ -31,7 +31,7 @@ const RES=[
  ['Quatro H aromáticos em dois grupos de 2',P('Dois multipletos simétricos (AA′BB′) com 2 H cada indicam anel <b>para</b>-dissubstituído. Confirmação pelo ¹³C: 8 C com 6 linhas, porque no anel para só há 4 C diferentes (2 pares equivalentes + 2 com substituinte), mais os 2 C da cadeia.')],
  ['Os singletos',P('3,8 (3 H, s) é O–CH₃ de éter aromático. 4,5 (2 H, s) é Ar–CH₂–OH: o CH₂ sem vizinho com H. 2,5 (1 H, s) é o O–H, que não acopla (troca rápida) e muda de posição com a concentração.')],
  ['Cálculo de δ',P('<b>Shoolery para o CH₂:</b> δ = 0,23 + σ(Ph) 1,83 + σ(OH) 2,56 = <b>4,62</b>. Medido ≈4,5. <br><b>H aromático por aditividade</b> (benzeno 7,27; tabela D.1): H orto ao OCH₃ = 7,27 + (7,00 − 7,27) + (7,15 − 7,27) = <b>6,88</b>; H orto ao CH₂OH = 7,27 + (7,15 − 7,27) + (7,35 − 7,27) = <b>7,23</b>. Bate com 6,9 e 7,2.')],
- ['Montagem e ¹³C',P('HO–CH₂–C₆H₄–OCH₃ (para): <b>álcool 4-metoxibenzílico</b>. ¹³C esperado, '+TG.t+': C–O aromático ≈159 (s) · C–CH₂ ≈133 (s) · CH ≈129 (d, 2 C) · CH ≈114 (d, 2 C) · CH₂OH ≈65 (t) · OCH₃ ≈55 (q). Seis sinais, como no gráfico.')]],
+ ['Montagem e ¹³C',P('HO–CH₂–C₆H₄–OCH₃ (para): <b>álcool 4-metoxibenzílico</b>. ¹³C pela tabela 5.9 do livro (CH₂OH: +13,3 · −0,8 · −0,6 · −0,4; OCH₃: +31,4 · −14,4 · +1,0 · −7,7), anel para-dissubstituído a partir de 128,5: C–O = 128,5 − 0,4 + 31,4 = <b>159,5</b> (s) · C–CH₂ = 128,5 + 13,3 − 7,7 = <b>134,1</b> (s) · CH orto ao CH₂OH = 128,5 − 0,8 + 1,0 = <b>128,7</b> (d, 2 C) · CH orto ao OCH₃ = 128,5 − 0,6 − 14,4 = <b>113,5</b> (d, 2 C). Fora do anel: CH₂OH <b>64,5</b> (t) e OCH₃ <b>54,1</b> (q), da própria tabela. Seis sinais, como no gráfico. '+TG.l+' tabela 5.9.')]],
  resp:'álcool 4-metoxibenzílico',
  q:[Q('Problema 4.3 B (C₈H₁₀O₂): o que o par de multipletos de 2 H cada na região aromática indica?',['Anel para-dissubstituído (AA′BB′)','Anel monossubstituído','Anel orto-dissubstituído com grupos iguais','Dois anéis'],'Um anel monossubstituído daria 5 H aromáticos (2 + 2 + 1). Dois grupos de 2 H que se repetem é a assinatura do para.'),
     Q('Problema 4.3 B: pela regra de Shoolery, qual o δ esperado do CH₂ em C₆H₅–CH₂–OH? (σ Ph = 1,83; σ OH = 2,56)',['≈ 4,6','≈ 3,3','≈ 2,4','≈ 5,4'],'δ = 0,23 + 1,83 + 2,56 = 4,62.')]},
@@ -44,7 +44,7 @@ const RES=[
  ['Etila de éster',P('Quarteto de 2 H em ≈4,2 com tripleto de 3 H em ≈1,3 é um –O–CH₂–CH₃. O CH₂ em 4,2 está ligado ao oxigênio do éster (compare com o acetato de etila do app, 4,12).')],
  ['Os três H do vinil (sistema AMX)',P('Cada um acopla com os outros dois com J diferente, por isso cada sinal é um dubleto de dubletos. J trans ≈ 17 Hz, J cis ≈ 10 Hz, J gem ≈ 1,5 Hz. O H do CH (geminal ao COOR) abre em ≈17 e ≈10 Hz; os dois H do =CH₂ têm um acoplamento grande e o gem pequeno.')],
  ['Cálculo pelas constantes Z (alceno)',P('δ = 5,25 + Z. Para R = COOR: gem 0,84 · cis 1,15 · trans 0,56.<br>H do CH= (gem): 5,25 + 0,84 = <b>6,09</b>.<br>H do =CH₂ trans ao COOR: 5,25 + 0,56 = <b>5,81</b>.<br>H do =CH₂ cis ao COOR: 5,25 + 1,15 = <b>6,40</b>.<br>No gráfico os três dd caem perto de 5,8, 6,1 e 6,4.')],
- ['Montagem e ¹³C',P('CH₂=CH–C(=O)–O–CH₂CH₃: <b>acrilato de etila</b>. ¹³C, '+TG.t+': C=O ≈166 (s) · CH₂= ≈130 (t) · =CH ≈128 (d) · OCH₂ ≈60 (t) · CH₃ ≈14 (q). Cinco sinais.')]],
+ ['Montagem e ¹³C',P('CH₂=CH–C(=O)–O–CH₂CH₃: <b>acrilato de etila</b>. ¹³C, '+TG.l+' C=O <b>164,5</b> (s), =CH₂ e =CH em <b>129,9</b> e <b>128,7</b> (acrilato de metila, tabela 5.16; o livro não marca qual é qual) · OCH₂ <b>60,0</b> (t) e CH₃ <b>13,8</b> (q), do acetato de etila (tabela 5.16). Cinco sinais.')]],
  resp:'acrilato de etila',
  q:[Q('Problema 4.3 C (C₅H₈O₂): qual a estrutura?',['Acrilato de etila','Propanoato de vinila','Acetato de alila','Metacrilato de metila'],'O vinil (3 dd entre 5,8 e 6,4) mais etila de éster (q 4,2 e t 1,3) fecham C₅H₈O₂. Metacrilato de metila teria CH₃ vinílico em ≈1,9 e OCH₃ singleto.'),
     Q('Problema 4.3 C: qual o δ calculado (Z) do H geminal ao COOR no CH=? (5,25 + Z gem = 0,84)',['≈ 6,09','≈ 5,81','≈ 6,40','≈ 4,41'],'Z gem do COOR é 0,84: 5,25 + 0,84 = 6,09.')]},
@@ -56,7 +56,7 @@ const RES=[
  ['Integração',P('1 + 1 + 6 = 8 H. Um dubleto de 6 H são dois CH₃ equivalentes.')],
  ['9,7 ppm',P('Um H em 9 a 10 ppm é H–C=O de aldeído. Aparece como dubleto com J pequena (≈1,5 Hz): acopla com o CH vizinho.')],
  ['Septeto de dubletos',P('O CH em ≈2,4 vê 6 H (dois CH₃) com J ≈ 7 Hz: 6 + 1 = <b>7 linhas</b> (septeto), e vê o H do CHO com J ≈ 1,5 Hz: cada linha vira dubleto. Os dois CH₃ em ≈1,1 são um dubleto (1 vizinho), 6 H.')],
- ['Montagem e ¹³C',P('(CH₃)₂CH–CHO: <b>2-metilpropanal</b> (isobutiraldeído). ¹³C, '+TG.t+': CHO ≈205 (d) · CH ≈41 (d) · 2 CH₃ ≈16 (q). Três sinais para 4 C, porque os dois CH₃ são equivalentes.')]],
+ ['Montagem e ¹³C',P('(CH₃)₂CH–CHO: <b>2-metilpropanal</b> (isobutiraldeído). ¹³C: a tabela 5.3 do livro só traz o incremento de CHO terminal, então não dá para calcular o CH interno. Por analogia com o acetaldeído (199,7) e o butanal (202,5, tabela 5.15), cada alquila em α soma de 2 a 3 ppm: CHO perto de <b>204 a 205</b> (d). Os 2 CH₃ saem perto do propano (15,8), cerca de <b>16</b> (q), e o CH perto de <b>41</b> (d, valor típico, sem tabela do livro). Três sinais para 4 C, porque os dois CH₃ são equivalentes.')]],
  resp:'2-metilpropanal',
  q:[Q('Problema 4.3 D: por que o CH em ≈2,4 é um "septeto de dubletes"?',['6 H vizinhos dos CH₃ (septeto) e 1 H do CHO (dubleto)','7 H vizinhos no total','Dois CH₂ vizinhos','Acopla com o O–H'],'Os dois CH₃ dão 6 H vizinhos: 6 + 1 = 7 linhas. O H do aldeído divide cada uma em duas.'),
     Q('Problema 4.3 D: o que um sinal de 1 H em 9,7 ppm sugere?',['Aldeído (H–C=O)','Ácido carboxílico (H de OH ≈ 11)','Fenol','Alceno terminal'],'H ligado direto a C=O de aldeído aparece entre 9 e 10 ppm.')]},
@@ -68,7 +68,7 @@ const RES=[
  ['Integração',P('2 + 2 + 3 = 7 H. O singleto de 3 H é um CH₃ ligado ao anel (≈2,4).')],
  ['Anel dissubstituído',P('7 C e <b>5 sinais de ¹³C</b>: simetria. Os isômeros orto e meta dariam 7 sinais de ¹³C e 4 H aromáticos diferentes; só o <b>para</b> dá 4 C aromáticos + CH₃ = 5, e dois pares de H (2 + 2).')],
  ['Cálculo de δ aromático',P('Tabela D.1: NO₂ orto 8,25, meta 7,55; CH₃ 7,15. H orto ao NO₂ = 7,27 + (8,25 − 7,27) + (7,15 − 7,27) = <b>8,13</b>. H orto ao CH₃ = 7,27 + (7,15 − 7,27) + (7,55 − 7,27) = <b>7,43</b>. Medido ≈8,1 e ≈7,3.')],
- ['Montagem e ¹³C',P('<b>4-nitrotolueno</b>. ¹³C, '+TG.t+': C–NO₂ ≈147 (s) · C–CH₃ ≈146 (s) · CH ≈130 (d, 2 C) · CH ≈124 (d, 2 C) · CH₃ ≈22 (q).')]],
+ ['Montagem e ¹³C',P('<b>4-nitrotolueno</b>. ¹³C pela tabela 5.9 (CH₃: +9,3 · +0,7 · −0,1 · −2,9; NO₂: +19,6 · −5,3 · +0,9 · +6,0): C–NO₂ = 128,5 − 2,9 + 19,6 = <b>145,2</b> (s) · C–CH₃ = 128,5 + 9,3 + 6,0 = <b>143,8</b> (s) · CH orto ao CH₃ = 128,5 + 0,7 + 0,9 = <b>130,1</b> (d, 2 C) · CH orto ao NO₂ = 128,5 − 0,1 − 5,3 = <b>123,1</b> (d, 2 C) · CH₃ <b>21,3</b> (q, da própria tabela). '+TG.l+' tabela 5.9.')]],
  resp:'4-nitrotolueno',
  q:[Q('Problema 4.3 E (C₇H₇NO₂, 5 sinais de ¹³C): qual a estrutura?',['4-nitrotolueno','2-nitrotolueno','3-nitrotolueno','Benzoato de metila'],'Só o isômero para tem simetria que reduz 7 C a 5 sinais. Orto e meta dão 7.'),
     Q('Problema 4.3 E: GDH de C₇H₇NO₂?',['5','4','6','3'],'(2·7 + 2 + 1 − 7) ÷ 2 = 5. O N entra somando 1.')]},
@@ -81,7 +81,7 @@ const RES=[
  ['Anel monossubstituído',P('Três multipletos com 2 : 2 : 1 H: orto, meta, para. O substituinte é N–H amida: tabela D.1, NHC(=O)R, orto 7,60 · meta 7,30 · para 7,15. Medido ≈7,6 · 7,3 · 7,0.')],
  ['N–H e CH₃',P('O sinal largo em ≈9,9 é N–H de amida: largo por troca e pelo quadrupolo do ¹⁴N, e em DMSO fica bem à esquerda por ligação de H com o solvente. O singleto de 3 H em ≈2,1 é CH₃–C(=O): não tem vizinho com H.')],
  ['Solvente',P('Em DMSO-d₆ o ¹H residual está em 2,50 (quinteto) e o ¹³C em 39,5 (<b>septeto</b>: o C está ligado a 3 D, 2·3·1 + 1 = 7 linhas). O septeto em ≈39,5 no gráfico de ¹³C não é do composto.')],
- ['Montagem e ¹³C',P('C₆H₅–NH–C(=O)–CH₃: <b>acetanilida</b>. ¹³C, '+TG.t+': C=O ≈169 (s) · C ipso ≈140 (s) · CH ≈129 (d, 2 C) · CH ≈123 (d) · CH ≈119 (d, 2 C) · CH₃ ≈24 (q). Seis sinais para 8 C.')]],
+ ['Montagem e ¹³C',P('C₆H₅–NH–C(=O)–CH₃: <b>acetanilida</b>. ¹³C, anel pela tabela 5.9 (NHCOCH₃: +11,1 · −9,9 · +0,2 · −5,6): C ipso = 128,5 + 11,1 = <b>139,6</b> (s) · CH orto = 128,5 − 9,9 = <b>118,6</b> (d, 2 C) · CH meta = 128,5 + 0,2 = <b>128,7</b> (d, 2 C) · CH para = 128,5 − 5,6 = <b>122,9</b> (d). O C=O de amida, pelo livro: acetamida 172,7; a alquila no N desloca alguns ppm para a direita, então <b>≈170</b> (s), e o CH₃ fica perto de 24 (q, valor típico). Seis sinais para 8 C. '+TG.l+' tabelas 5.9 e 5.16.')]],
  resp:'acetanilida',
  q:[Q('Problema 4.3 F: por que o gráfico de ¹³C tem um septeto perto de 39,5 ppm?',['É o DMSO-d₆: C ligado a 3 D dá 7 linhas','É um CH₂ do composto','É o TMS','É o C=O da amida'],'Linhas = 2nI + 1 = 2·3·1 + 1 = 7, com I(D) = 1. É sinal do solvente.'),
     Q('Problema 4.3 F (C₈H₉NO, amida): qual a estrutura?',['Acetanilida','Benzamida N-metilada','4-aminoacetofenona','Fenilacetamida'],'Anel monossubstituído (5 H), CH₃ singleto em 2,1 e N–H largo em ≈9,9: C₆H₅–NH–CO–CH₃.')]},
@@ -93,7 +93,7 @@ const RES=[
  ['Integração',P('1 + 1 + 1 + 2 + 3 = 8 H. Os três dd de 1 H cada são o vinil; o q de 2 H e o t de 3 H são uma etila ligada a O.')],
  ['Z para o vinil',P('R = OR alifático: gem 1,18 · cis −1,06 · trans −1,28.<br>H do O–CH=: 5,25 + 1,18 = <b>6,43</b> (obs ≈6,5, dd).<br>H do =CH₂ cis ao OR: 5,25 − 1,06 = <b>4,19</b> (obs ≈4,2).<br>H do =CH₂ trans ao OR: 5,25 − 1,28 = <b>3,97</b> (obs ≈4,0).')],
  ['J do vinil',P('O H do =CH₂ cis ao O tem J trans com o H do CH (≈14 Hz) e o outro, J cis (≈6,5 Hz). A J geminal entre os dois H do =CH₂ é ≈2 Hz.')],
- ['Montagem e ¹³C',P('CH₂=CH–O–CH₂CH₃: <b>éter etil vinílico</b>. O OCH₂ fica em ≈3,7, mais alto que um éter saturado (≈3,4), porque o O está conjugado com a C=C. ¹³C, '+TG.t+': O–CH= ≈152 (d) · =CH₂ ≈86 (t) · OCH₂ ≈63 (t) · CH₃ ≈15 (q). O =CH₂ fica em 86 porque o O doa elétrons e blinda o carbono β.')]],
+ ['Montagem e ¹³C',P('CH₂=CH–O–CH₂CH₃: <b>éter etil vinílico</b>. O OCH₂ fica em ≈3,7, mais alto que um éter saturado (≈3,4), porque o O está conjugado com a C=C. ¹³C: no éter metil vinílico do livro (tabela 5.7), O–CH= é <b>153,2</b> (d) e =CH₂ é <b>84,2</b> (t); no etil vinil éter devem ficar perto disso. O =CH₂ está tão à direita porque o O doa elétrons por ressonância e blinda o carbono β. O OCH₂ e o CH₃ do etil: no etil metil éter (tabela 5.12) são 67,9 e 14,7; aqui o par do O está em ressonância com a C=C, então o OCH₂ sai um pouco mais à direita, perto de <b>63</b> (t, estimativa), e o CH₃ perto de <b>15</b> (q). '+TG.l+' tabelas 5.7 e 5.12.')]],
  resp:'éter etil vinílico',
  q:[Q('Problema 4.3 G: o H do =CH₂ trans ao OR calculado por Z (OR: trans −1,28) fica em:',['≈ 3,97','≈ 4,19','≈ 6,43','≈ 6,53'],'5,25 − 1,28 = 3,97.'),
     Q('Problema 4.3 G (C₄H₈O, éter): qual a estrutura?',['Etil vinil éter','Éter metil alílico','Tetraidrofurano','Éter dietílico'],'Três dd de 1 H (vinil), quarteto de 2 H + tripleto de 3 H (etila em O). O THF e o éter dietílico não têm H vinílico.')]},
@@ -105,7 +105,7 @@ const RES=[
  ['Integração',P('2 + 1 + 2 + 2 + 2 + 3 = 12 H. Aromáticos 5 H (anel monossubstituído) e cadeia propila.')],
  ['Aromático',P('Tabela D.1, C(=O)OR: orto 8,15 · meta 7,45 · para 7,55. O sinal de 2 H em ≈8,05 são os H orto ao C=O (muito desblindados). 1 H em 7,5 é o para; 2 H em 7,4 são os meta.')],
  ['A cadeia',P('Tripleto de 2 H em ≈4,3: O–CH₂ (parecido com o 4,12 do acetato de etila, mais alto porque o C=O é de benzoato). Tripleto de 3 H em 1,0: CH₃ terminal. O CH₂ do meio em ≈1,8 tem 2 + 3 = 5 vizinhos: <b>sexteto</b>. O livro rotula "sept"; segui a regra n + 1.')],
- ['Montagem e ¹³C',P('C₆H₅–C(=O)–O–CH₂CH₂CH₃: <b>benzoato de propila</b>. ¹³C, '+TG.t+': C=O ≈166 (s) · C ipso ≈130 (s) · CH ≈133 (d) · CH ≈129,5 (d, 2 C) · CH ≈128 (d, 2 C) · OCH₂ ≈66 (t) · CH₂ ≈22 (t) · CH₃ ≈10 (q). Oito sinais para 10 C.')]],
+ ['Montagem e ¹³C',P('C₆H₅–C(=O)–O–CH₂CH₂CH₃: <b>benzoato de propila</b>. ¹³C, anel pela tabela 5.9 (COOCH₃: +2,0 · +1,2 · −0,1 · +4,8): C ipso = <b>130,5</b> (s) · CH orto = <b>129,7</b> (d, 2 C) · CH meta = <b>128,4</b> (d, 2 C) · CH para = <b>133,3</b> (d). C=O <b>166,8</b> (s, benzoato de metila). Cadeia propila pela tabela 5.3 (OCOR terminal: α +51, β +6, γ −3) sobre o propano (15,8 · 16,3 · 15,8): OCH₂ = 15,8 + 51 = <b>66,8</b> (t) · CH₂ = 16,3 + 6 = <b>22,3</b> (t) · CH₃ = 15,8 − 3 = <b>12,8</b> (q). Oito sinais para 10 C. '+TG.l+' tabelas 5.3, 5.9 e 5.16.')]],
  resp:'benzoato de propila',
  q:[Q('Problema 4.3 H (C₁₀H₁₂O₂): qual a estrutura?',['Benzoato de propila','Fenilacetato de etila','Propanoato de fenila','Benzoato de isopropila'],'O OCH₂ é tripleto (precisa de CH₂ vizinho). Benzoato de isopropila teria um septeto de 1 H em ≈5,2 e um dubleto de 6 H.'),
     Q('Problema 4.3 H: quantos vizinhos tem o CH₂ do meio da propila (O–CH₂–CH₂–CH₃)?',['5 (resultando em sexteto)','3 (quarteto)','2 (tripleto)','6 (septeto)'],'2 H do OCH₂ + 3 H do CH₃ = 5 vizinhos, 5 + 1 = 6 linhas.')]},
@@ -207,7 +207,7 @@ const RES=[
  passos:[
  ['GDH',P('(2·12 + 2 − 14) ÷ 2 = <b>6</b>: anel (4) + C=O de aldeído + C=O de éster.')],
  ['¹H esperado',tb(['δ','H','Sinal','Quem'],[['≈9,9','1','s','CHO'],['≈7,8','2','d, J ≈ 9 Hz','H orto ao CHO'],['≈7,0','2','d, J ≈ 9 Hz','H orto ao O'],['≈4,1','2','t','O–CH₂'],['3,7','3','s','O–CH₃ do éster'],['≈2,5','2','t','CH₂–C=O'],['≈2,1','2','quint','CH₂ do meio']])+P('Total 14 H. Aditividade aromática (tabela D.1): H orto ao CHO = 7,27 + 0,68 + 0,08 = 8,03; H orto ao O = 7,27 − 0,27 + 0,23 = 7,23. Para doador e receptor em para (efeito push-pull) o real fica mais separado, em ≈7,8 e ≈7,0.')],
- ['¹³C esperado',P(TG.t+' <b>10 sinais</b> para 12 C (os 4 CH do anel dão 2). CHO ≈191 (d) · C=O éster ≈173 (s) · C–O ≈164 (s) · CH ≈132 (d, 2 C) · C–CHO ≈130 (s) · CH ≈115 (d, 2 C) · OCH₂ ≈67 (t) · OCH₃ ≈52 (q) · CH₂C=O ≈30 (t) · CH₂ ≈24 (t).')]],
+ ['¹³C esperado',P(TG.l+' <b>10 sinais</b> para 12 C (os 4 CH do anel dão 2). Anel pela tabela 5.9 (CHO: +8,2 · +1,2 · +0,6 · +5,8; OR, usando OCH₃: +31,4 · −14,4 · +1,0 · −7,7): C–O = 128,5 + 5,8 + 31,4 = <b>165,7</b> (s) · C–CHO = 128,5 + 8,2 − 7,7 = <b>129,0</b> (s) · CH orto ao CHO = 128,5 + 1,2 + 1,0 = <b>130,7</b> (d, 2 C) · CH orto ao O = 128,5 + 0,6 − 14,4 = <b>114,7</b> (d, 2 C). CHO <b>192,0</b> (d, tabela 5.9). C=O do éster <b>173,3</b> (s, propanoato de metila, tabela 5.16) e OCH₃ <b>50,8</b> (q). Cadeia O–CH₂–CH₂–CH₂–C(=O) pela tabela 5.3 sobre o propano (15,8 · 16,3 · 15,8), com OR terminal (+58 · +8 · −4) e COOR terminal (+20 · +3 · −2): OCH₂ = 15,8 + 58 − 2 = <b>71,8</b> (t) · CH₂ = 16,3 + 8 + 3 = <b>27,3</b> (t) · CH₂C=O = 15,8 + 20 − 4 = <b>31,8</b> (t). O incremento OR da tabela é de éter alquílico; num éter aril-alquílico o OCH₂ real fica alguns ppm abaixo do calculado.')]],
  resp:'10 sinais de ¹³C; 7 de ¹H',
  q:[Q('Problema 5.1 a: quantos sinais de ¹³C tem o 4-(4-formilfenoxi)butanoato de metila (C₁₂)?',['10','12','8','6'],'Os 4 CH do anel dão 2 sinais (2 pares): 12 − 2 = 10.'),
     Q('Problema 5.1 a: como se vê o H do CHO no ¹H?',['Singleto de 1 H em ≈9,9','Tripleto de 1 H em ≈4,1','Dubleto de 2 H em ≈7,8','Singleto de 3 H em 3,7'],'O H de aldeído sem vizinho com H em 9 a 10 ppm.')]},
@@ -217,7 +217,7 @@ const RES=[
  passos:[
  ['GDH',P('(2·6 + 2 − 10) ÷ 2 = <b>2</b>: C=C + C=O do ácido.')],
  ['¹H esperado',tb(['δ','H','Sinal','Quem'],[['≈11,5','1','s largo','COOH'],['≈5,8','1','ddd (J ≈ 17, 10, 7 Hz)','CH='],['≈5,0','2','2 dd (J ≈ 17 e 10; geminal ≈ 1,5)','=CH₂'],['≈2,8','1','m','CH(CH₃)'],['≈2,3','2','m (H diastereotópicos)','CH₂C=O'],['≈1,1','3','d (J ≈ 7)','CH₃']])+P('Os 2 H do CH₂ estão ao lado de um carbono quiral (o CH): são diastereotópicos e podem aparecer como dois dd, e não como um d simples.')],
- ['¹³C esperado',P(TG.t+' <b>6 sinais</b> para 6 C: C=O ≈179 (s) · CH= ≈142 (d) · =CH₂ ≈114 (t) · CH₂ ≈41 (t) · CH ≈35 (d) · CH₃ ≈19 (q).')]],
+ ['¹³C esperado',P(TG.l+' <b>6 sinais</b> para 6 C. C=O <b>≈178</b> (s, ácido acético 178,1, tabela 5.16). Alceno pelas constantes do livro (p. 226): =CH recebe α = 1 (CH), β = 2 (CH₃ e CH₂), γ = 1 (COOH): 123,3 + 10,6 + 2·7,2 − 1,5 = <b>146,8</b> (d); =CH₂ recebe α′ = 1, β′ = 2, γ′ = 1: 123,3 − 7,9 − 2·1,8 − 1,5 = <b>110,3</b> (t). A conta superestima o =CH em alguns ppm (o próprio livro chama a concordância de razoável). Para os três carbonos sp³ (CH₂, CH, CH₃) o livro não traz um caso comparável, e ficam nos valores típicos: CH₂ ≈41 (t) · CH ≈35 (d) · CH₃ ≈19 (q).')]],
  resp:'6 sinais de ¹³C',
  q:[Q('Problema 5.1 b: por que os 2 H do CH₂C(=O) podem não ser equivalentes?',['Estão ao lado de um C quiral (diastereotópicos)','Porque têm J diferentes com o OH','São de grupos funcionais diferentes','Não são equivalentes nunca'],'O CH(CH₃) é um centro quiral; os H do CH₂ vizinho ficam em ambientes diferentes.'),
     Q('Problema 5.1 b: GDH do C₆H₁₀O₂?',['2','1','3','0'],'(2·6 + 2 − 10) ÷ 2 = 2.')]},
@@ -227,7 +227,7 @@ const RES=[
  passos:[
  ['GDH',P('(2·6 + 2 + 1 − 15) ÷ 2 = <b>0</b>.')],
  ['¹H esperado',tb(['δ','H','Sinal','Quem'],[['≈2,6','4','t','N–CH₂'],['≈1,5','4','sexteto','CH₂ do meio'],['≈0,9','6','t','CH₃'],['≈1 (varia)','1','s largo','N–H']])+P('A simetria reduz os 14 H de C–H a 3 sinais. O N–H varia com concentração e troca.')],
- ['¹³C esperado',P(TG.t+' <b>3 sinais</b> para 6 C: N–CH₂ ≈52 (t) · CH₂ ≈23 (t) · CH₃ ≈12 (q).')]],
+ ['¹³C esperado',P(TG.l+' <b>3 sinais</b> para 6 C. Tabela 5.3, NHR terminal (α +37, β +8, γ −4) sobre o propano (15,8 · 16,3 · 15,8): N–CH₂ = 15,8 + 37 = <b>52,8</b> (t) · CH₂ = 16,3 + 8 = <b>24,3</b> (t) · CH₃ = 15,8 − 4 = <b>11,8</b> (q).')]],
  resp:'3 sinais de ¹³C; 4 de ¹H',
  q:[Q('Problema 5.1 c: quantos sinais de ¹³C tem a dipropilamina?',['3','6','4','2'],'As duas propilas são equivalentes: 3 tipos de C.'),
     Q('Problema 5.1 c: o N–CH₂ da dipropilamina aparece como:',['Tripleto em ≈2,6','Sexteto em 1,5','Singleto em 0,9','Quarteto em 3,4'],'Vizinho = CH₂ (2 H) → t. O δ é alto por estar ligado a N.')]},
@@ -237,7 +237,7 @@ const RES=[
  passos:[
  ['GDH',P('(2·6 + 2 + 1 − 7) ÷ 2 = <b>4</b>: anel pirrol (2 C=C + anel = 3) + C=O (1).')],
  ['¹H esperado',tb(['δ','H','Sinal','Quem'],[['≈9–10','1','s largo','N–H'],['≈9,5','1','s','CHO'],['≈6,9','1','m (J ≈ 2,5 a 3 Hz)','H5 (α ao N)'],['≈6,1','1','m','H4'],['≈2,3','3','s','CH₃']])+P(TG.t+' A multiplicidade de H4 e H5 vem de J ≈ 2,5 a 3 Hz entre si e com o N–H.')],
- ['¹³C esperado',P(TG.t+' <b>6 sinais</b>: CHO ≈177 (d) · C3 ≈133 (s) · C2 ≈130 (s) · C5 ≈125 (d) · C4 ≈112 (d) · CH₃ ≈11 (q).')]],
+ ['¹³C esperado',P(TG.l+' <b>6 sinais</b>. O livro não traz o 3-metilpirrol-2-carbaldeído; a tabela 5.10 traz o pirrol-2-carbaldeído: C-2 134,0 · C-3 123,0 · C-4 112,0 · C-5 129,0 · CHO 178,9, e o 2-metilpirrol (CH₃ 12,4). O CH₃ em C-3 desloca o C-3 para a esquerda em uns 9 ppm (como o CH₃ ipso de um benzeno, tabela 5.9, só como aproximação), e o resto muda pouco. Então: CHO ≈179 (d) · C-3 ≈132 (s) · C-2 ≈134 (s) · C-5 ≈129 (d) · C-4 ≈112 (d) · CH₃ ≈12 (q).')]],
  resp:'6 sinais de ¹³C; 5 de ¹H',
  q:[Q('Problema 5.1 d: o CHO ligado a pirrol aparece em ¹³C como:',['d perto de 177','s perto de 177','t perto de 60','q perto de 177'],'C=O de aldeído tem 1 H: dubleto no fora de ressonância, e fica entre 175 e 190.'),
     Q('Problema 5.1 d: quantos sinais de ¹H dá o 3-metil-1H-pirrol-2-carbaldeído?',['5','7','3','6'],'N–H, CHO, H5, H4 e CH₃: 5 sinais, sem equivalência.')]},
@@ -247,7 +247,7 @@ const RES=[
  passos:[
  ['GDH',P('(2·8 + 2 − 8) ÷ 2 = <b>5</b>.')],
  ['¹H esperado',tb(['δ','H','Sinal','Quem'],[['≈7,95','2','m (dd)','H orto ao C=O'],['≈7,55','1','m (t)','H para'],['≈7,45','2','m (t)','H meta'],['≈2,6','3','s','CH₃']])+P('Tabela D.1, C(=O)CH₃: orto 7,90 · meta 7,55 · para 7,55.')],
- ['¹³C esperado',P(TG.t+' <b>6 sinais</b> para 8 C: C=O ≈198 (s) · C ipso ≈137 (s) · CH para ≈133 (d) · CH ≈128,6 (d, 2 C) · CH ≈128,3 (d, 2 C) · CH₃ ≈27 (q).')]],
+ ['¹³C esperado',P(TG.l+' tabela 5.15, <b>6 sinais</b> para 8 C: C=O <b>197,6</b> (s) · C ipso <b>137,1</b> (s) · CH para <b>132,9</b> (d) · CH <b>128,4</b> (d, 2 C) · CH <b>128,2</b> (d, 2 C) · CH₃ <b>26,3</b> (q). O livro não diz qual dos dois 128 é orto e qual é meta.')]],
  resp:'6 sinais de ¹³C; 4 de ¹H',
  q:[Q('Problema 5.1 e: quantos sinais de ¹³C tem a acetofenona?',['6','8','4','5'],'Os 6 C do anel dão 4 sinais, mais C=O e CH₃: 6.'),
     Q('Problema 5.1 e: no fora de ressonância, o C ipso do anel aparece como:',['Singleto','Dubleto','Tripleto','Quarteto'],'O C ipso não tem H.')]},
@@ -258,7 +258,7 @@ const RES=[
  ['GDH',P('(2·5 + 2 − 8) ÷ 2 = <b>2</b>.')],
  ['Cálculo Z',P('H do carbono β (com CH₃): gem alquila 0,44 + cis COOR 1,15 = 5,25 + 1,59 = <b>6,84</b>. H do carbono α: gem COOR 0,84 + cis alquila (−0,26) = 5,25 + 0,58 = <b>5,83</b>.')],
  ['¹H esperado',tb(['δ','H','Sinal','Quem'],[['≈6,95','1','dq (J ≈ 15,6 e 6,9)','H β'],['≈5,85','1','dq (J ≈ 15,6 e 1,7)','H α'],['3,7','3','s','OCH₃'],['≈1,9','3','dd (J ≈ 6,9 e 1,7)','CH₃']])+P('J ≈ 15,6 Hz entre os H da dupla é <b>trans</b> (cis fica em 6 a 12 Hz).')],
- ['¹³C esperado',P(TG.t+' <b>5 sinais</b>: C=O ≈167 (s) · CH β ≈145 (d) · CH α ≈122 (d) · OCH₃ ≈51 (q) · CH₃ ≈18 (q).')]],
+ ['¹³C esperado',P(TG.l+' <b>5 sinais</b>. OCH₃ <b>≈51</b> (q, ésteres metílicos da tabela 5.16: 50,8 · 51,0 · 51,1). C=O <b>≈165</b> (s, acrilato de metila 164,5). Em α,β-insaturados o carbono β vai para a esquerda e o α para a direita, como na 2-ciclo-hexenona (C-3 150,7 e C-2 129,3, tabela 5.7), pela ressonância: CH β ≈145 (d, valor típico) · CH α ≈122 (d, valor típico) · CH₃ ≈18 (q, o CH₃ do propeno é 18,7).')]],
  resp:'5 sinais de ¹³C; 4 de ¹H',
  q:[Q('Problema 5.1 f: uma J de ≈15,6 Hz entre dois H de uma dupla indica:',['Configuração trans (E)','Configuração cis (Z)','Acoplamento geminal','Acoplamento a longa distância'],'Trans: 12 a 18 Hz; cis: 6 a 12 Hz.'),
     Q('Problema 5.1 f: δ calculado (Z) do H α: 5,25 + 0,84 (gem COOR) − 0,26 (cis alquila):',['≈5,83','≈6,84','≈4,0','≈6,4'],'5,25 + 0,84 − 0,26 = 5,83.')]},
@@ -269,7 +269,7 @@ const RES=[
  ['GDH',P('(2·4 + 2 − 8) ÷ 2 = <b>1</b>.')],
  ['Cálculo Z',P('H do O–CH=: gem OR 1,18 + cis alquila (−0,26): 5,25 + 0,92 = <b>6,17</b>. H do =CH–CH₃: gem alquila 0,44 + cis OR (−1,06): 5,25 − 0,62 = <b>4,63</b>.')],
  ['¹H esperado',tb(['δ','H','Sinal','Quem'],[['≈6,2','1','dq (J ≈ 12,7 e 1,5)','O–CH='],['≈4,7','1','dq (J ≈ 12,7 e 6,7)','=CH–CH₃'],['3,5','3','s','OCH₃'],['≈1,55','3','dd (J ≈ 6,7 e 1,5)','CH₃']])],
- ['¹³C esperado',P(TG.t+' <b>4 sinais</b>: O–CH= ≈147 (d) · =CH ≈101 (d) · OCH₃ ≈55 (q) · CH₃ ≈13 (q). O C β ao O (≈101) é blindado pela doação do oxigênio.')]],
+ ['¹³C esperado',P(TG.l+' <b>4 sinais</b>. O éter metil vinílico (tabela 5.7) dá O–CH= em 153,2 e =CH₂ em 84,2. Aqui o carbono β traz um CH₃, que o desloca para a esquerda, então ficam: O–CH= ≈147 (d) · =CH ≈101 (d) · OCH₃ ≈55 (q) · CH₃ ≈13 (q), valores típicos sem tabela do livro. O carbono β ao O (≈101) é blindado pela doação do oxigênio, como o 84,2 do éter vinílico.')]],
  resp:'4 sinais de ¹³C; 4 de ¹H',
  q:[Q('Problema 5.1 g: por que o =CH–CH₃ de um enol éter fica perto de 4,7 e não em 5,3?',['O oxigênio doa elétrons e blinda o C β (Z cis OR = −1,06)','O CH₃ blinda mais','Por causa do solvente','Porque é trans'],'5,25 + 0,44 − 1,06 = 4,63.'),
     Q('Problema 5.1 g: quantos sinais de ¹H dá o (E)-1-metoxipropeno?',['4','3','5','2'],'OCH=, =CH, OCH₃ e CH₃.')]},
@@ -279,7 +279,7 @@ const RES=[
  passos:[
  ['GDH',P('(2·4 + 2 − 6) ÷ 2 = <b>2</b>: uma ligação tripla.')],
  ['¹H esperado',tb(['δ','H','Sinal','Quem'],[['≈3,7','2','t (J ≈ 6)','CH₂–OH'],['≈2,45','2','td (J ≈ 6 e 2,7)','C≡C–CH₂'],['≈2,0','1','t (J ≈ 2,7)','≡C–H'],['≈2 (varia)','1','s largo','O–H']])+P('O H do alcino acopla a longa distância (4 ligações, J ≈ 2,7 Hz) com o CH₂: por isso é um tripleto e o CH₂ vira td.')],
- ['¹³C esperado',P(TG.t+' <b>4 sinais</b>: C≡ (interno) ≈82 (s) · ≡C–H ≈70 (d) · CH₂O ≈61 (t) · CH₂ ≈23 (t).')]],
+ ['¹³C esperado',P(TG.l+' <b>4 sinais</b>. Alquino pela tabela 5.8: 1-butino C-2 84,7 e C-1 67,0; 1-hexino 84,5 e 68,1. Então C≡ interno ≈ <b>82 a 85</b> (s) e ≡C–H ≈ <b>67 a 70</b> (d). Cadeia pela tabela 5.3 sobre o etano (5,7): CH₂OH = 5,7 + 48 (OH α terminal) + 5,5 (C≡CH β terminal) = <b>59,2</b> (t) · CH₂ propargílico = 5,7 + 4,5 (C≡CH α terminal) + 10 (OH β terminal) = <b>20,2</b> (t).')]],
  resp:'4 sinais de ¹³C; 4 de ¹H',
  q:[Q('Problema 5.1 h: por que o H do alcino terminal é um tripleto?',['Acoplamento a longa distância (4J ≈ 2,7 Hz) com o CH₂','Dois H vizinhos diretos','Acopla com o O–H','É um erro de desenho'],'C≡C–CH₂ tem 4 ligações entre os H; a J é pequena mas visível.'),
     Q('Problema 5.1 h: o carbono ≡C–H no fora de ressonância é:',['Dubleto (≈70)','Singleto (≈70)','Tripleto','Quarteto'],'Tem 1 H.')]},
@@ -301,7 +301,7 @@ const RES=[
  passos:[
  ['GDH',P('(2·6 + 2 − 8) ÷ 2 = <b>3</b>: pode ser 1 anel + 2 C=C.')],
  ['Contar H',P('Um CH (1 H por C) e um CH₂ (2 H por C). Com 8 H e 6 C: se CH = a carbonos e CH₂ = b: a + b = 6 e a + 2b = 8, então <b>b = 2 e a = 4</b>. Quatro CH e dois CH₂.')],
- ['Montagem',P('Quatro CH em sp² (as duas C=C) e dois CH₂ sp³ em um anel de 6: <b>1,4-ciclo-hexadieno</b>. Cada C=C é simétrica à outra, e os dois CH₂ também: 2 sinais. ¹³C, '+TG.t+': CH= ≈125 (d, 4 C) · CH₂ ≈26 (t, 2 C).')],
+ ['Montagem',P('Quatro CH em sp² (as duas C=C) e dois CH₂ sp³ em um anel de 6: <b>1,4-ciclo-hexadieno</b>. Cada C=C é simétrica à outra, e os dois CH₂ também: 2 sinais. ¹³C, '+TG.l+' tabela 5.6 (desenho do 1,4-ciclo-hexadieno): CH= <b>124,5</b> (d, 4 C) · CH₂ <b>26,0</b> (t, 2 C).')],
  ['Por que não o 1,3?',P('O 1,3-ciclo-hexadieno tem só um eixo C₂ e daria 3 sinais (C1/C4, C2/C3, C5/C6), com 4 CH e 2 CH₂ em tipos diferentes. O benzeno tem GDH 4.')]],
  resp:'1,4-ciclo-hexadieno',
  q:[Q('Problema 5.3: com C₆H₈, 2 sinais, 1 CH e 1 CH₂ (DEPT), quantos C são CH?',['4 (os outros 2 são CH₂)','3','2','6'],'a + b = 6 C e a + 2b = 8 H dão b = 2 e a = 4.'),
@@ -323,7 +323,7 @@ const RES=[
  passos:[
  ['Simetria (texto do livro)',P('O isômero <b>para</b> tem dois eixos e dois planos de simetria. <b>Orto</b> e <b>meta</b> têm um eixo e um plano; no meta, esses elementos passam por dois C do anel. O plano do anel existe nos três e não afeta os C do anel.')],
  ['Carbonos',tb(['Isômero','C do anel','Todos os sinais','Sinais'],[['orto','C1/C2 · C3/C6 · C4/C5','C=O · 3 do anel · OCH₂ · CH₃','6'],['meta','C1/C3 · C2 · C4/C6 · C5','C=O · 4 do anel · OCH₂ · CH₃','7'],['para','C1/C4 · C2/C3/C5/C6','C=O · 2 do anel · OCH₂ · CH₃','5']])],
- ['Hidrogênios',tb(['Isômero','H aromáticos','Sinais de ¹H (com OCH₂ e CH₃)'],[['orto','H3/H6 · H4/H5','4'],['meta','H2 · H4/H6 · H5','5'],['para','todos os 4 equivalentes','3']])+P('Fora de ressonância: os C do anel com substituinte são s; os CH, d; OCH₂ t; CH₃ q; o C=O é s. O δ típico: C=O ≈166 · C aromáticos 128 a 135 · OCH₂ ≈61 · CH₃ ≈14 ('+TG.t+').')]],
+ ['Hidrogênios',tb(['Isômero','H aromáticos','Sinais de ¹H (com OCH₂ e CH₃)'],[['orto','H3/H6 · H4/H5','4'],['meta','H2 · H4/H6 · H5','5'],['para','todos os 4 equivalentes','3']])+P('Fora de ressonância: os C do anel com substituinte são s; os CH, d; OCH₂ t; CH₃ q; o C=O é s. Valores do livro: C=O ≈166,8 (benzoato de metila, tabela 5.16) · C aromáticos entre 128,4 e 133,3 (tabela 5.9, COOCH₃) · OCH₂ 60,0 e CH₃ 13,8 (acetato de etila, tabela 5.16). '+TG.l+' tabelas 5.9 e 5.16.')]],
  resp:'orto 6 · meta 7 · para 5 sinais de ¹³C',
  q:[Q('Problema 5.5: quantos sinais de ¹³C tem o p-ftalato de dietila?',['5','6','7','4'],'C=O, C1/C4, os 4 CH iguais, OCH₂ e CH₃: 5.'),
     Q('Problema 5.5: quantos sinais de ¹³C tem o m-ftalato de dietila?',['7','5','6','8'],'C=O, C1/C3, C2, C4/C6, C5, OCH₂ e CH₃: 7.'),
