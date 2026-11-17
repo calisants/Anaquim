@@ -94,3 +94,8 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - v239: sincronização ligada ao projeto Supabase "Anaquim" (sa-east-1, só dele). Código encurtado para 12 caracteres (3 grupos de 4, 60 bits). SQL aplicado e testado com as funções reais (gravar, conflito de versão, ler, apagar, tabela fechada, CORS). Os avisos do Supabase sobre funções `security definer` executáveis por `anon` são intencionais: é por elas que o app acessa os dados, e a tabela segue fechada.
 - v240: "Imprimir ou salvar em PDF" não fazia nada no app instalado do iPhone (window.print não funciona ali). Em celular e app instalado o botão agora monta um PDF no próprio app e abre o menu de compartilhar (Salvar em Arquivos, Imprimir, enviar). No computador continua abrindo a impressão normal.
 - Modo professor: continua sem tela e sem servidor; só os documentos e os identificadores fixos dos ensaios.
+
+### v241: novo layout do PDF do relatório
+- Cabeçalho verde com título, quadro de data/amostra/turma/nome, resumo (quantos positivos, negativos...), tabela com colunas N°, Ensaio (com a categoria embaixo), Amostra, Resultado (etiqueta colorida) e O que observei, depois Anotações, Conclusão e Procedimentos (opcional), rodapé com número da página.
+- Cada ensaio da aula ganhou o campo "Amostra testada neste ensaio" (`s` no dado). A aula ganhou "Turma ou disciplina" (`tu`) e "Seu nome no relatório" (`nm`), os dois opcionais e só usados no relatório.
+- A coluna Amostra, o texto copiado e o relatório da tela também mostram a amostra de cada ensaio.

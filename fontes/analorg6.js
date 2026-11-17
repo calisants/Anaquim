@@ -112,15 +112,15 @@ function apAlterna(id){
 /* ---- relatório ---- */
 function apResRot(x){const r=AP_RES.find(q=>q[0]===x.r);return r?r[1]:(x.f?'Feito, sem resultado marcado':'Não realizado');}
 function apRelDados(a,comProc){
-  return {t:a.t,d:apData(a.d),am:a.am,no:a.no,co:a.co,it:a.ens.map(x=>{const e=apPorId(x.id);
-    return {n:e?e.n:'(ensaio que saiu do app)',g:e?(e.sg||e.g):'',res:apResRot(x),o:(x.o||'').trim(),pr:comProc&&e?apProc(e):null};})};
+  return {t:a.t,d:apData(a.d),am:a.am,tu:(a.tu||'').trim(),nm:(a.nm||'').trim(),no:a.no,co:a.co,it:a.ens.map(x=>{const e=apPorId(x.id);
+    return {n:e?e.n:'(ensaio que saiu do app)',g:e?(e.sg||e.g):'',s:(x.s||'').trim(),rc:x.r||'',fz:x.f?1:0,res:apResRot(x),o:(x.o||'').trim(),pr:comProc&&e?apProc(e):null};})};
 }
 function apRelHtml(a,comProc){
   const r=apRelDados(a,comProc);
-  let h='<h3>'+esc(r.t)+'</h3><p>'+(r.d?'Data: '+esc(r.d)+'. ':'')+(r.am?'Amostra: '+esc(r.am)+'.':'')+'</p>';
+  let h='<h3>'+esc(r.t)+'</h3><p>'+[r.nm?'Nome: '+esc(r.nm):'',r.tu?'Turma: '+esc(r.tu):'',r.d?'Data: '+esc(r.d):'',r.am?'Amostra: '+esc(r.am):''].filter(Boolean).join('. ')+'</p>';
   if(r.it.length){
-    h+='<h4>Ensaios e resultados</h4><table><thead><tr><th>Ensaio</th><th>Resultado</th><th>O que observei</th></tr></thead><tbody>'
-      +r.it.map(x=>'<tr><td>'+esc(x.n)+'</td><td>'+esc(x.res)+'</td><td>'+esc(x.o)+'</td></tr>').join('')+'</tbody></table>';
+    h+='<h4>Ensaios e resultados</h4><table><thead><tr><th>Ensaio</th><th>Amostra</th><th>Resultado</th><th>O que observei</th></tr></thead><tbody>'
+      +r.it.map(x=>'<tr><td>'+esc(x.n)+'</td><td>'+esc(x.s||'-')+'</td><td>'+esc(x.res)+'</td><td>'+esc(x.o)+'</td></tr>').join('')+'</tbody></table>';
     if(comProc){const com=r.it.filter(x=>x.pr&&(x.pr.pas.length||x.pr.pos));
       if(com.length)h+='<h4>Procedimentos</h4>'+com.map(x=>'<p><b>'+esc(x.n)+'</b></p>'+(x.pr.pas.length?'<ol>'+x.pr.pas.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>':'')+(x.pr.pos?'<p>Resultado esperado: '+esc(x.pr.pos)+'</p>':'')).join('');}
   }
@@ -130,9 +130,9 @@ function apRelHtml(a,comProc){
 }
 function apRelTexto(a,comProc){
   const r=apRelDados(a,comProc),L=[r.t];
-  if(r.d||r.am)L.push([r.d?'Data: '+r.d:'',r.am?'Amostra: '+r.am:''].filter(Boolean).join('. '));
+  if(r.nm||r.tu||r.d||r.am)L.push([r.nm?'Nome: '+r.nm:'',r.tu?'Turma: '+r.tu:'',r.d?'Data: '+r.d:'',r.am?'Amostra: '+r.am:''].filter(Boolean).join('. '));
   if(r.it.length){L.push('','ENSAIOS E RESULTADOS');
-    r.it.forEach((x,i)=>{L.push((i+1)+'. '+x.n+': '+x.res+(x.o?'. '+x.o:''));});
+    r.it.forEach((x,i)=>{L.push((i+1)+'. '+x.n+(x.s?' (amostra '+x.s+')':'')+': '+x.res+(x.o?'. '+x.o:''));});
     if(comProc){const com=r.it.filter(x=>x.pr&&(x.pr.pas.length||x.pr.pos));
       if(com.length){L.push('','PROCEDIMENTOS');com.forEach(x=>{L.push(x.n);x.pr.pas.forEach((s,i)=>L.push('  '+(i+1)+') '+s));if(x.pr.pos)L.push('  Resultado esperado: '+x.pr.pos);});}}}
   if(r.no.trim())L.push('','ANOTAÇÕES DA AULA',r.no.trim());
@@ -142,48 +142,93 @@ function apRelTexto(a,comProc){
 
 
 /* ---- PDF próprio: window.print() não faz nada no app instalado do iPhone, então o PDF é montado aqui e entregue pelo menu de compartilhar ---- */
-function apPdfBytes(texto){
-  const W=595,H=842,M=52,TAM=11,LH=15,AREA=W-2*M;
+function apPdfBytes(r,comProc){
+  const W=595,H=842,M=46,AREA=W-2*M,MB=58;
+  const VERDE=[0.086,0.2,0.125],ACE=[0.45,0.78,0.32],CINZA=[0.38,0.42,0.38],TXT=[0.1,0.12,0.1],LIN=[0.82,0.86,0.82],ZEB=[0.955,0.97,0.955],FUNDO=[0.93,0.96,0.92];
   const cp={'–':'\x96','—':'\x97','‘':'\x91','’':'\x92','“':'\x93','”':'\x94','•':'\x95','…':'\x85','₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9','⁺':'+','⁻':'-','→':'->','≥':'>=','≤':'<=','°':'\xb0','×':'\xd7','·':'\xb7','µ':'\xb5','μ':'\xb5','Δ':'delta ','−':'-'};
-  function l1(t){let o='';for(const ch of t){const c=ch.charCodeAt(0);if(cp[ch]!==undefined)o+=cp[ch];else if(c<256)o+=ch;else o+='?';}return o;}
-  const cv=document.createElement('canvas').getContext('2d');
-  function larg(t,neg){cv.font=(neg?'bold ':'')+TAM+'px Helvetica, Arial, sans-serif';return cv.measureText(t).width;}
-  const linhas=[];
-  String(texto).split('\n').forEach((raw,i)=>{
-    const neg=i===0||(raw.length>2&&raw===raw.toUpperCase()&&/[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(raw)&&!/^\s/.test(raw));
-    const ind=/^\s+/.exec(raw);const pad=ind?Math.min(ind[0].length,6)*4:0;
-    const pal=raw.trim().split(/\s+/);let cur='';
-    if(!raw.trim()){linhas.push({t:'',neg:false,x:0});return;}
-    pal.forEach(w=>{const t2=cur?cur+' '+w:w;if(larg(t2,neg)+pad>AREA&&cur){linhas.push({t:cur,neg:neg,x:pad});cur=w;}else cur=t2;});
-    if(cur)linhas.push({t:cur,neg:neg,x:pad});
-  });
-  const porPag=Math.floor((H-2*M)/LH),pags=[];
-  for(let i=0;i<linhas.length;i+=porPag)pags.push(linhas.slice(i,i+porPag));
-  if(!pags.length)pags.push([]);
+  function l1(t){let o='';for(const ch of String(t)){const c=ch.charCodeAt(0);if(cp[ch]!==undefined)o+=cp[ch];else if(c<256)o+=ch;else o+='?';}return o;}
   const esc=t=>l1(t).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
+  const cv=document.createElement('canvas').getContext('2d'),FN={F1:'',F2:'bold ',F3:'italic '};
+  const larg=(t,f,sz)=>{cv.font=FN[f]+sz+'px Helvetica, Arial, sans-serif';return cv.measureText(t).width;};
+  const cor=c=>c.map(v=>v.toFixed(3)).join(' ');
+  const pages=[];let pg,y;
+  const ret=(x,yy,w,h,c)=>pg.push(cor(c)+' rg '+x.toFixed(2)+' '+yy.toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re f');
+  const lin=(x1,y1,x2,y2,c,lw)=>pg.push(lw+' w '+cor(c)+' RG '+x1.toFixed(2)+' '+y1.toFixed(2)+' m '+x2.toFixed(2)+' '+y2.toFixed(2)+' l S');
+  const txt=(t,x,yy,f,sz,c)=>pg.push('BT '+cor(c)+' rg /'+f+' '+sz+' Tf 1 0 0 1 '+x.toFixed(2)+' '+yy.toFixed(2)+' Tm ('+esc(t)+') Tj ET');
+  function quebra(t,w,f,sz){const out=[];String(t).split('\n').forEach(par=>{const pal=par.trim().split(/\s+/).filter(Boolean);if(!pal.length){out.push('');return;}let cur='';
+    pal.forEach(p0=>{let p=p0;while(larg(p,f,sz)>w&&p.length>1){let k=p.length;while(k>1&&larg(p.slice(0,k),f,sz)>w)k--;if(cur){out.push(cur);cur='';}out.push(p.slice(0,k));p=p.slice(k);}
+      const t2=cur?cur+' '+p:p;if(cur&&larg(t2,f,sz)>w){out.push(cur);cur=p;}else cur=t2;});if(cur)out.push(cur);});return out;}
+  function nova(){pg=[];pages.push(pg);y=H-M;}
+  function garante(h,depois){if(y-h<MB){nova();if(depois)depois();}}
+  /* cabeçalho */
+  nova();
+  const tl=quebra(r.t||'Aula prática',AREA,'F2',20).slice(0,2),hb=62+22*tl.length;
+  ret(0,H-hb,W,hb,VERDE);ret(0,H-hb-4,W,4,ACE);
+  tl.forEach((l,i)=>txt(l,M,H-38-22*i,'F2',20,[1,1,1]));
+  txt('RELATÓRIO DE AULA PRÁTICA · ANÁLISE ORGÂNICA',M,H-hb+14,'F1',8.5,[0.7,0.88,0.62]);
+  y=H-hb-26;
+  /* quadro de informações */
+  const info=[['DATA',r.d||'-'],['AMOSTRA DA AULA',r.am||'-']];if(r.tu)info.push(['TURMA OU DISCIPLINA',r.tu]);if(r.nm)info.push(['NOME',r.nm]);
+  const cw=AREA/info.length,cel=info.map(c=>quebra(c[1],cw-18,'F1',10.5).slice(0,3)),hi=Math.max(...cel.map(l=>l.length))*13+34;
+  ret(M,y-hi,AREA,hi,FUNDO);ret(M,y-hi,3,hi,ACE);
+  info.forEach((c,i)=>{const x=M+i*cw+12;txt(c[0],x,y-15,'F2',7.5,CINZA);cel[i].forEach((l,k)=>txt(l,x,y-30-13*k,'F1',10.5,TXT));if(i>0)lin(M+i*cw,y-8,M+i*cw,y-hi+8,LIN,0.7);});
+  y-=hi+16;
+  /* resumo */
+  if(r.it.length){
+    const c={p:0,n:0,i:0,f:0,nr:0};r.it.forEach(x=>{if(x.rc==='p')c.p++;else if(x.rc==='n')c.n++;else if(x.rc==='i')c.i++;else if(x.fz)c.f++;else c.nr++;});
+    const pt=[r.it.length+(r.it.length===1?' ensaio':' ensaios')];if(c.p)pt.push(c.p+(c.p===1?' positivo':' positivos'));if(c.n)pt.push(c.n+(c.n===1?' negativo':' negativos'));if(c.i)pt.push(c.i+(c.i===1?' inconclusivo':' inconclusivos'));if(c.f)pt.push(c.f+' sem resultado marcado');if(c.nr)pt.push(c.nr+(c.nr===1?' não realizado':' não realizados'));
+    txt(pt.join('  ·  '),M,y-4,'F1',9.5,CINZA);y-=24;
+    secao('Ensaios e resultados');
+    /* tabela */
+    const col=[{t:'N°',w:24},{t:'Ensaio',w:152},{t:'Amostra',w:72},{t:'Resultado',w:78},{t:'O que observei',w:AREA-326}];
+    const xs=[];let ax=M;col.forEach(q=>{xs.push(ax);ax+=q.w;});
+    const cab=()=>{ret(M,y-20,AREA,20,VERDE);col.forEach((q,i)=>txt(q.t.toUpperCase(),xs[i]+6,y-13.5,'F2',7.5,[1,1,1]));y-=20;};
+    garante(60);cab();
+    const PIL={p:{bg:[0.84,0.94,0.82],fg:[0.1,0.38,0.12],t:'Positivo'},n:{bg:[0.9,0.92,0.94],fg:[0.28,0.33,0.4],t:'Negativo'},i:{bg:[1,0.93,0.74],fg:[0.55,0.36,0],t:'Inconclusivo'},f:{bg:[0.88,0.93,0.97],fg:[0.15,0.32,0.5],t:'Feito'},nr:{bg:[0.95,0.95,0.95],fg:[0.45,0.45,0.45],t:'Não feito'}};
+    r.it.forEach((x,k)=>{
+      const nl=quebra(x.n,col[1].w-12,'F2',9.5),gl=x.g?quebra(x.g,col[1].w-12,'F1',7.5).slice(0,1):[],sl=quebra(x.s||'-',col[2].w-12,'F1',9.5),ol=quebra(x.o||'-',col[4].w-12,'F1',9.5);
+      const hn=nl.length*12+(gl.length?10:0),h=Math.max(hn,sl.length*12,ol.length*12,16)+14;
+      garante(h,cab);
+      if(k%2===0)ret(M,y-h,AREA,h,ZEB);
+      lin(M,y-h,M+AREA,y-h,LIN,0.5);
+      txt(String(k+1),xs[0]+6,y-15,'F1',9.5,CINZA);
+      nl.forEach((l,q)=>txt(l,xs[1]+6,y-15-12*q,'F2',9.5,TXT));gl.forEach(l=>txt(l,xs[1]+6,y-15-12*nl.length+1,'F1',7.5,CINZA));
+      sl.forEach((l,q)=>txt(l,xs[2]+6,y-15-12*q,'F1',9.5,x.s?TXT:CINZA));
+      const pl=PIL[x.rc]||(x.fz?PIL.f:PIL.nr),pw=larg(pl.t,'F2',8)+12;
+      ret(xs[3]+6,y-20,pw,15,pl.bg);txt(pl.t,xs[3]+12,y-15.5,'F2',8,pl.fg);
+      ol.forEach((l,q)=>txt(l,xs[4]+6,y-15-12*q,'F1',9.5,x.o?TXT:CINZA));
+      y-=h;
+    });
+    y-=10;
+  }
+  function secao(t){garante(46);ret(M,y-13,3,15,ACE);txt(t,M+10,y-10,'F2',12,VERDE);y-=28;}
+  function par(t,f,sz,ind,cr){quebra(t,AREA-ind,f,sz).forEach(l=>{garante(sz+5);if(l)txt(l,M+ind,y-sz,f,sz,cr||TXT);y-=sz+4.5;});}
+  if(r.no.trim()){secao('Anotações da aula');par(r.no.trim(),'F1',10.5,0);y-=8;}
+  if(r.co.trim()){secao('Conclusão');par(r.co.trim(),'F1',10.5,0);y-=8;}
+  if(comProc){const com=r.it.filter(x=>x.pr&&(x.pr.pas.length||x.pr.pos));
+    if(com.length){secao('Procedimentos');com.forEach(x=>{garante(40);par(x.n,'F2',10.5,0,VERDE);x.pr.pas.forEach((p0,i)=>par((i+1)+') '+p0,'F1',9.5,12));if(x.pr.pos)par('Resultado esperado: '+x.pr.pos,'F3',9.5,12,CINZA);y-=8;});}}
+  /* rodapé em todas as páginas */
+  const n=pages.length;
+  pages.forEach((p,i)=>{pg=p;lin(M,44,M+AREA,44,LIN,0.6);txt('Gerado pelo Anaquim',M,30,'F1',8,CINZA);const t='Página '+(i+1)+' de '+n;txt(t,M+AREA-larg(t,'F1',8),30,'F1',8,CINZA);});
   const obj=[];
   obj[1]='<< /Type /Catalog /Pages 2 0 R >>';
-  const n=pags.length,kids=pags.map((_,i)=>(5+2*i)+' 0 R').join(' ');
-  obj[2]='<< /Type /Pages /Kids ['+kids+'] /Count '+n+' >>';
+  obj[2]='<< /Type /Pages /Kids ['+pages.map((_,i)=>(6+2*i)+' 0 R').join(' ')+'] /Count '+n+' >>';
   obj[3]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
   obj[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
-  pags.forEach((pg,i)=>{
-    let c='BT\n';let y=H-M-TAM;
-    pg.forEach(l=>{if(l.t)c+='/'+(l.neg?'F2':'F1')+' '+(l.neg&&false?13:TAM)+' Tf 1 0 0 1 '+(M+l.x)+' '+y+' Tm ('+esc(l.t)+') Tj\n';y-=LH;});
-    c+='ET';
-    obj[5+2*i]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents '+(6+2*i)+' 0 R >>';
-    obj[6+2*i]='<< /Length '+c.length+' >>\nstream\n'+c+'\nendstream';
-  });
+  obj[5]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding >>';
+  pages.forEach((p,i)=>{const c=p.join('\n');
+    obj[6+2*i]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents '+(7+2*i)+' 0 R >>';
+    obj[7+2*i]='<< /Length '+c.length+' >>\nstream\n'+c+'\nendstream';});
   let out='%PDF-1.4\n',off=[];
   for(let i=1;i<obj.length;i++){off[i]=out.length;out+=i+' 0 obj\n'+obj[i]+'\nendobj\n';}
-  const x=out.length;out+='xref\n0 '+obj.length+'\n0000000000 65535 f \n';
+  const xr=out.length;out+='xref\n0 '+obj.length+'\n0000000000 65535 f \n';
   for(let i=1;i<obj.length;i++)out+=String(off[i]).padStart(10,'0')+' 00000 n \n';
-  out+='trailer\n<< /Size '+obj.length+' /Root 1 0 R >>\nstartxref\n'+x+'\n%%EOF';
+  out+='trailer\n<< /Size '+obj.length+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF';
   const b=new Uint8Array(out.length);for(let i=0;i<out.length;i++)b[i]=out.charCodeAt(i)&255;return b;
 }
 async function apPdfEntrega(a,comProc,msg){
-  const t=apRelTexto(a,comProc),nome=('Anaquim - '+(a.t||'aula')).replace(/[^\w\- À-ÿ]/g,'').trim()+'.pdf';
-  let blob;try{blob=new Blob([apPdfBytes(t)],{type:'application/pdf'});}catch(e){msg.textContent='Não consegui montar o PDF neste aparelho. Use Copiar texto.';return;}
+  const nome=('Anaquim - '+(a.t||'aula')).replace(/[^\w\- À-ÿ]/g,'').trim()+'.pdf';
+  let blob;try{blob=new Blob([apPdfBytes(apRelDados(a,comProc),comProc)],{type:'application/pdf'});}catch(e){msg.textContent='Não consegui montar o PDF neste aparelho. Use Copiar texto.';return;}
   try{const f=new File([blob],nome,{type:'application/pdf'});
     if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:a.t||'Aula prática'});msg.textContent='';return;}}
   catch(e){if(e&&e.name==='AbortError'){msg.textContent='';return;}}
@@ -215,6 +260,7 @@ function apItemHtml(x,i,n,abertos){
   return '<details class="el ap-e" data-id="'+esc(x.id)+'"'+(abertos&&abertos[x.id]?' open':'')+'><summary><span class="apn">'+esc(nome)+'<span class="apg">'+esc(sub)+'</span></span><span class="apbd-w">'+apBadge(x)+'</span></summary>'
    +'<label class="apck"><input type="checkbox" data-a="f"'+(x.f?' checked':'')+'><span>Já fiz este ensaio</span></label>'
    +'<div class="sgm" role="group" aria-label="Resultado">'+AP_RES.map(r=>'<button type="button" data-a="r" data-v="'+r[0]+'" aria-pressed="'+(x.r===r[0]?'true':'false')+'">'+r[1]+'</button>').join('')+'</div>'
+   +'<label class="aplb">Amostra testada neste ensaio<input type="text" class="apin" data-a="s" value="'+esc(x.s||'')+'" maxlength="60" placeholder="Ex.: 5A, amostra B, branco"></label>'
    +'<label class="aplb">O que observei (cor, bolhas, cheiro, tempo)<textarea class="apta" data-a="o" rows="3">'+esc(x.o||'')+'</textarea></label>'
    +'<div class="apacts">'+(e?'<button type="button" class="btn ghost" data-a="abrir">Ver procedimento</button>':'')
    +(i>0?'<button type="button" class="btn ghost" data-a="sobe" aria-label="Subir na lista">↑</button>':'')+(i<n-1?'<button type="button" class="btn ghost" data-a="desce" aria-label="Descer na lista">↓</button>':'')
@@ -248,6 +294,8 @@ function apDraw(){
    +'<label class="aplb">Nome da aula<input type="text" id="apTit" value="'+esc(a.t)+'" maxlength="80"></label>'
    +'<label class="aplb">Data<input type="date" id="apDat" value="'+esc(a.d||'')+'"></label>'
    +'<label class="aplb">Amostra ou código do composto desconhecido<input type="text" id="apAm" value="'+esc(a.am||'')+'" maxlength="80" placeholder="Ex.: amostra 7"></label>'
+   +'<label class="aplb">Turma ou disciplina (opcional)<input type="text" id="apTu" value="'+esc(a.tu||'')+'" maxlength="60" placeholder="Ex.: Análise Orgânica I, turma 2"></label>'
+   +'<label class="aplb">Seu nome no relatório (opcional)<input type="text" id="apNm" value="'+esc(a.nm||'')+'" maxlength="60" autocomplete="off"></label><p class="hint">O nome só aparece no relatório que você gerar. Se preferir, deixe em branco.</p>'
    +'<h2 class="mh">Ensaios da aula</h2><div id="apLista"></div>'+apPickHtml(a)
    +'<h2 class="mh">Anotações da aula</h2><textarea class="apta" id="apNo" rows="5" aria-label="Anotações da aula" placeholder="O que o professor disse, cuidados, dúvidas, medidas.">'+esc(a.no||'')+'</textarea>'
    +'<h2 class="mh">Conclusão</h2><textarea class="apta" id="apCo" rows="4" aria-label="Conclusão" placeholder="O que os resultados indicam sobre a amostra.">'+esc(a.co||'')+'</textarea>'
@@ -282,6 +330,9 @@ function apInit(){
     if(id==='apTit')apTexto(a=>{a.t=t.value.trim()||'Aula prática';});
     else if(id==='apDat')apTexto(a=>{a.d=t.value;});
     else if(id==='apAm')apTexto(a=>{a.am=t.value;});
+    else if(id==='apTu')apTexto(a=>{a.tu=t.value;});
+    else if(id==='apNm')apTexto(a=>{a.nm=t.value;});
+    else if(t.dataset&&t.dataset.a==='s'){const eid=t.closest('.ap-e').dataset.id,v=t.value;apTexto(a=>{const x=a.ens.find(q=>q.id===eid);if(x)x.s=v;});}
     else if(id==='apNo')apTexto(a=>{a.no=t.value;});
     else if(id==='apCo')apTexto(a=>{a.co=t.value;});
     else if(t.dataset&&t.dataset.a==='o'){const eid=t.closest('.ap-e').dataset.id,v=t.value;apTexto(a=>{const x=a.ens.find(q=>q.id===eid);if(x)x.o=v;});}
