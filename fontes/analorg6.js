@@ -133,7 +133,7 @@ function apRelHtml(a,comProc){
   let h='<h3>'+esc(r.t)+'</h3><p>'+[r.nm?'Nome: '+esc(r.nm):'',r.tu?'Turma: '+esc(r.tu):'',r.d?'Data: '+esc(r.d):'',r.am?'Amostra: '+esc(r.am):''].filter(Boolean).join('. ')+'</p>';
   if(r.it.length){
     h+='<h4>Ensaios e resultados</h4><table><thead><tr><th>Ensaio</th><th>Amostra</th><th>Resultado</th><th>O que observei</th></tr></thead><tbody>'
-      +r.it.map(x=>x.lin.map((l,j)=>'<tr><td>'+(j?'':esc(x.n)+(x.rg?'<br><small>Reagente: '+esc(x.rg)+'</small>':'')+(x.ha?'<br><small>Tempo: '+esc(x.ha)+'</small>':''))+'</td><td>'+esc(l.s||'-')+'</td><td>'+esc(l.res)+'</td><td>'+esc(l.o)+'</td></tr>').join('')).join('')+'</tbody></table>';
+      +r.it.map(x=>x.lin.map((l,j)=>'<tr'+(j?' class="ap2"':'')+'><td data-l="Ensaio" class="apn1">'+(j?'':esc(x.n)+(x.rg?'<br><small>Reagente: '+esc(x.rg)+'</small>':'')+(x.ha?'<br><small>Tempo: '+esc(x.ha)+'</small>':''))+'</td><td data-l="Amostra">'+esc(l.s||'-')+'</td><td data-l="Resultado">'+esc(l.res)+'</td><td data-l="O que observei">'+esc(l.o)+'</td></tr>').join('')).join('')+'</tbody></table>';
     const fx=r.it.filter(x=>x.ft.length);
     if(fx.length)h+='<h4>Fotos</h4>'+fx.map(x=>'<p><b>'+esc(x.n)+'</b></p><p>'+x.ft.map(f=>'<img class="apft" src="'+f.d+'" alt="Foto: '+esc(x.n)+'">').join(' ')+'</p>').join('');
     if(comProc){const com=r.it.filter(x=>x.pr&&(x.pr.pas.length||x.pr.pos));

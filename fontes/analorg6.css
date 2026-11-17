@@ -58,3 +58,18 @@
 .apfw button{position:absolute;top:-6px;right:-6px;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1rem;line-height:1;padding:0}
 .apfbtn{display:inline-flex;align-items:center;min-height:44px;cursor:pointer}
 #apRel small{color:var(--muted)}
+
+#apRel{overflow-wrap:anywhere}
+#apRel table{table-layout:fixed}
+@media(max-width:600px){
+  #apRel table,#apRel thead,#apRel tbody,#apRel tr,#apRel td{display:block;width:auto}
+  #apRel thead{display:none}
+  #apRel tr{border:1px solid var(--line);border-radius:8px;margin:0 0 8px;padding:6px 10px}
+  #apRel tr.ap2{margin-top:-4px;border-top-style:dashed;border-top-left-radius:0;border-top-right-radius:0}
+  #apRel td{border:0;padding:3px 0}
+  #apRel td:empty{display:none}
+  #apRel td::before{content:attr(data-l);display:block;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  #apRel td.apn1{font-weight:600}
+  #apRel td.apn1::before{display:none}
+}
+@media print{#apRel table{display:table}#apRel thead{display:table-header-group}#apRel tbody{display:table-row-group}#apRel tr{display:table-row;border:0;padding:0;margin:0}#apRel td{display:table-cell;border:1px solid #999;padding:6px 8px}#apRel td::before{display:none}#apRel td:empty{display:table-cell}}

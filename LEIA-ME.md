@@ -112,3 +112,7 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - Modelos de seta da teoria de MS: regerados por `svgmodels.py` e colocados no `template.html` (fonte Plex Sans, traço de 1,6 a 1,9 px, cartão com borda).
 - Ensaios: tubos com vidro translúcido, menisco, brilho e escala; chamas em três camadas; ícones de vidraria com traço mais fino (`analorg5.js`, `analorg4.js`). Figuras dentro de cartão (`analorg5.css`). Variáveis `--glass` e `--glass-edge` no `template.html`.
 - Os desenhos de lousa em `fontes/mech/*.webp` não foram alterados (são o material do professor).
+
+### v245: tabelas no Android
+- A tabela do relatório da Aula prática passava da borda do cartão em tela estreita. Até 600 px de largura cada linha vira um cartão empilhado (rótulo pequeno acima de cada valor); a impressão e o PDF não mudam.
+- Varredura de todas as telas em 360 e 412 px de largura. Em 360 px, as tabelas de "Cola" (Notação ECGF e Consulta rápida) passavam da borda; agora as colunas quebram palavras compridas. Em 412 px nada passava. Script de varredura: ver `testes/` (não incluído, feito sob medida).
