@@ -163,7 +163,7 @@ const elCount=f=>{const m={};String(f).replace(/([A-Z][a-z]?)(\d*)/g,(a,e,n)=>{m
 const corFam=s=>{s=String(s||'').toLowerCase();const k=s.indexOf('('),main=k<0?s:s.slice(0,k),par=k<0?'':s.slice(k);
   const f=t=>{const r=new Set();if(/incolor|branc/.test(t))r.add('inc');if(/amarel/.test(t))r.add('amarelo');if(/laranj/.test(t))r.add('laranja');if(/verm|ros/.test(t))r.add('vermelho');if(/marrom|castanh/.test(t))r.add('marrom');if(/verde/.test(t))r.add('verde');if(/azul/.test(t))r.add('azul');if(/viole|roxo|purpur/.test(t))r.add('violeta');if(/preto|negro|cinza|escur/.test(t))r.add('preto');return r;};
   return [f(main),f(par)];};
-const IC_CAMPOS=['#icNome','#icPF','#icPE','#icTol','#icIV','#icMeio','#icM','#icP','#icH','#icC','#icHd','#icF','#icGDH','#icGF'];
+const IC_CAMPOS=['#icNome','#icPF','#icPE','#icTol','#icIV','#icMeio','#icM','#icP','#icH','#icC','#icHd','#icCd','#icF','#icGDH','#icGF'];
 /* Overtones: quem interpreta é o usuário. O padrão do anel (2000–1650) vem do texto dos overtones de cada composto */
 const RING=[['','Anel: não sei'],['mono','Monossubstituído'],['orto','Orto (1,2)'],['meta','Meta (1,3)'],['para','Para (1,4)'],['t123','1,2,3-tri'],['t124','1,2,4-tri'],['t135','1,3,5-tri'],['t4','4 ou mais substituintes'],['fund','Anel fundido (naftaleno)'],['nenhum','Sem anel benzênico']];
 const OTL=[['ald','Duas bandas fracas do C–H de aldeído, perto de 2820 e 2720 (Fermi)'],['co','Banda fraca em 3500–3350 sem ser O–H (dobro do C=O)'],['am','Banda de amina primária perto de 3200 (Fermi)']];
@@ -228,7 +228,7 @@ function icInputs(){
   return {est:icSt.est,cor:icSt.cor,g:icSt.g,F:v('#icF').replace(/\s+/g,''),gdh:num('#icGDH'),gf:v('#icGF'),
     els:ELORD.map(e=>[e,icSt.el[e]]).filter(e=>e[1]),ir:icSt.ir,sub:icSt.sub||{},ring:icSt.ring||'',ot:icSt.ot||{},
     pf:icRange('#icPF',tol),pe:icRange('#icPE',tol),
-    iv:numsInt(v('#icIV')),ivq:bdIvQuery(v('#icIV')),meio:$('#icMeio').value,M:num('#icM'),pk:bdPicos(v('#icP')).map(p=>p[0]),pki:bdPicos(v('#icP')),h:num('#icH'),c:num('#icC'),hd:nums(v('#icHd'))};
+    iv:numsInt(v('#icIV')),ivq:bdIvQuery(v('#icIV')),meio:$('#icMeio').value,M:num('#icM'),pk:bdPicos(v('#icP')).map(p=>p[0]),pki:bdPicos(v('#icP')),h:num('#icH'),c:num('#icC'),hd:nums(v('#icHd')),cd:nums(v('#icCd'))};
 }
 const gauss=(d,t)=>Math.max(0.02,Math.exp(-0.5*Math.pow(d/t,2)));
 function icScore(c,x){
@@ -268,6 +268,7 @@ function icScore(c,x){
   if(x.h!=null&&!c.h1.length)add('h','nº de sinais de ¹H',0.5,'sem dado');else if(x.h!=null){const n=c.h1.length,ne=c.h1.filter(s=>/largo/.test(s.m)).length;const d=Math.min(Math.abs(n-x.h),Math.abs(n-ne-x.h));add('h','nº de sinais de ¹H',Math.pow(0.25,d),n+' sinais');}
   if(x.c!=null&&!c.c13.length)add('c','nº de sinais de ¹³C',0.5,'sem dado');else if(x.c!=null){const d=Math.abs(c.c13.length-x.c);add('c','nº de sinais de ¹³C',Math.pow(0.25,d),c.c13.length+' sinais');}
   if(x.hd.length&&!c.h1.length)add('hd','δ de ¹H',0.5,'sem dado');else if(x.hd.length){const ok=x.hd.filter(d=>c.h1.some(s=>d>=s.lo-0.3&&d<=s.hi+0.3)).length/x.hd.length;add('hd','δ de ¹H',0.1+0.9*ok,Math.round(ok*100)+'% dos δ dentro das faixas');}
+  if(x.cd.length&&!c.c13.length)add('cd','δ de ¹³C',0.5,'sem dado');else if(x.cd.length){const ok=x.cd.filter(d=>c.c13.some(s=>d>=s.lo-3&&d<=s.hi+3)).length/x.cd.length;add('cd','δ de ¹³C',0.1+0.9*ok,Math.round(ok*100)+'% dos δ dentro das faixas (±3 ppm)');}
   return {w,parts};
 }
 /* quais classes de composto sobram (grupo de solubilidade, elementos e bandas de IV marcados) */
@@ -424,6 +425,7 @@ function icDados(){
   add('Fórmula e massas',ms);
   const rm=[];if(x.h!=null)rm.push(['Sinais de ¹H',String(x.h)]);if(x.c!=null)rm.push(['Sinais de ¹³C',String(x.c)]);
   if(v('#icHd'))rm.push(['δ de ¹H (ppm)',lista(v('#icHd'))]);
+  if(v('#icCd'))rm.push(['δ de ¹³C (ppm)',lista(v('#icCd'))]);
   add('RMN',rm);
   return G;
 }

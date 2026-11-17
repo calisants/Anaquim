@@ -91,7 +91,10 @@
         <label for="icFile" style="grid-column:span 2">Ou importe um espectro de massas (.pdf, .jdx, .csv ou .txt)<input type="file" id="icFile" accept=".pdf,.jdx,.dx,.csv,.txt,.tsv,application/pdf"></label><p class="hint" id="icMsMsg" aria-live="polite" style="grid-column:span 2;margin:0">O app procura os picos e preenche o campo acima.</p>
         <label for="icH">Nº de sinais de ¹H<input type="number" id="icH" inputmode="numeric" min="1" max="30"></label>
         <label for="icC">Nº de sinais de ¹³C<input type="number" id="icC" inputmode="numeric" min="1" max="30"></label>
-        <label for="icHd" style="grid-column:span 2">δ de ¹H (ppm)<input type="text" id="icHd" placeholder="ex.: 2.1" autocomplete="off" style="font-family:var(--mono)"></label>
+        <label for="icHd" style="grid-column:span 2">δ de ¹H (ppm)<input type="text" id="icHd" placeholder="ex.: 2.45 2.14 1.06" autocomplete="off" style="font-family:var(--mono)"></label>
+        <label for="icHFile" style="grid-column:span 2">Ou importe o espectro de RMN de ¹H (.pdf, .jdx, .csv ou .txt)<input type="file" id="icHFile" accept=".pdf,.jdx,.dx,.csv,.txt,application/pdf,text/plain"></label><p class="hint" id="icHMsg" aria-live="polite" style="grid-column:span 2;margin:0">O app lê a posição de cada sinal no eixo de ppm e preenche o campo acima. Funciona com a impressão do SDBS em PDF.</p>
+        <label for="icCd" style="grid-column:span 2">δ de ¹³C (ppm)<input type="text" id="icCd" placeholder="ex.: 209.3 36.9 29.4 7.9" autocomplete="off" style="font-family:var(--mono)"></label>
+        <label for="icCFile" style="grid-column:span 2">Ou importe o espectro de RMN de ¹³C (.pdf, .jdx, .csv ou .txt)<input type="file" id="icCFile" accept=".pdf,.jdx,.dx,.csv,.txt,application/pdf,text/plain"></label><p class="hint" id="icCMsg" aria-live="polite" style="grid-column:span 2;margin:0">Preenche o campo acima e também o número de sinais de ¹³C.</p>
       </div>
       <p class="hint" style="margin:8px 0 0">A fórmula só conta se bater exata. O GDH sai da fórmula (calculadora em Orgânica Básica). Bandas acima de 1500 cm⁻¹ pesam mais.</p>
     </details>
@@ -152,6 +155,7 @@
       <button class="chip" type="button" data-rp="teo" aria-pressed="false">Teoria</button>
       <button class="chip" type="button" data-rp="treino" aria-pressed="false">Treinar</button>
       <button class="chip" type="button" data-rp="comp" aria-pressed="false">Compostos</button>
+      <button class="chip" type="button" data-rp="pdf" aria-pressed="false">Ler PDF</button>
     </div>
 
     <div data-rpane="ler">
@@ -274,6 +278,10 @@
     <div data-rpane="mac" hidden>
       <p class="scrsub">Atalhos que quem lê espectro usa o tempo todo. Cada um é uma regra de bolso: confirme com os quatro passos.</p>
       <div id="rmMac"></div>
+    </div>
+
+    <div data-rpane="pdf" hidden>
+      <div class="sppdf" data-sp="rmn"></div>
     </div>
 
     <div data-rpane="tab" hidden>

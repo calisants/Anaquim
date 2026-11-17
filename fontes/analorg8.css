@@ -1,0 +1,11 @@
+/* v8: painel "Ler um espectro em PDF" (Espectros) e leitura de RMN em PDF (Identificar) */
+.sppdf{margin:4px 0 8px}
+.sppdf h3.rmh{margin:0 0 6px}
+.sppdf input[type=file]{width:100%;margin-top:6px}
+.sppdf [data-sp-out]{margin-top:10px}
+.sppdf .spsvg{width:100%;max-width:420px;height:auto;display:block;margin:6px 0 10px}
+.sppdf .spsvg .ax{stroke:var(--muted);stroke-width:1}
+.sppdf .spsvg .tk{stroke:var(--muted);stroke-width:1}
+.sppdf .spsvg .tl{font-size:10px;fill:var(--muted)}
+.sppdf .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sppdf td i{color:var(--muted)}
