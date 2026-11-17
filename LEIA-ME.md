@@ -167,3 +167,6 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - Divergência anotada: os rótulos "sept" do 4.3 A e 4.3 H, pela regra n + 1, são sextetos.
 - Falta a foto do 4.3 I. O 5.6 está dentro dos itens do 4.3 (passo de ¹³C).
 - Teste novo: testes/teste_resolvidos.py.
+
+## v261: RMN, tabelas de ¹³C do cap. 5 (fontes/analorg10.js)
+Painel RMN > Tabelas ganhou `#c13Box`, desenhado por `window.c13Draw` (chamado em `rp('tab')`). Dados transcritos das págs. 224 a 238 do Silverstein (6ª ed., scan só de imagem, lido visualmente). Calculadoras: alcano (tab. 5.1), substituinte (5.3), alceno (constantes da pág. 226) e anel aromático até dissubstituído (5.9). Tabelas desenhadas (5.6, 5.7, 5.11, 5.12, 5.15, 5.16): só linhas com atribuição clara. Os ¹³C de 4.3, 5.1, 5.3 e 5.5 em analorg9.js usam a tag "Do seu livro" quando vêm dessas tabelas. Teste: testes/teste_c13.py. Tabelas de tipo largo usam `.obt.nostk` para não empilhar no celular.
