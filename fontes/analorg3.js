@@ -209,8 +209,6 @@ function fontesRecolher(root){
 (function(){let tm;new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>fontesRecolher(document),40);}).observe(document.body,{childList:true,subtree:true});})();
 
 /* ---------- Enviar sugestão ou erro (formulário do Google) ---------- */
-const FORM_URL='';
-function sugInit(){const a=$('#mSug');if(a&&FORM_URL){a.href=FORM_URL;a.hidden=false;}}
 
 /* ---------- Espectros de RMN simulados (didáticos) ---------- */
 const NMR_MULT={'s':[1],'s largo':[1],'d':[1,1],'t':[1,2,1],'q':[1,3,3,1],'quinteto':[1,4,6,4,1],'sexteto':[1,5,10,10,5,1],'septeto':[1,6,15,20,15,6,1],'m':[1,3,4,3,1]};
@@ -545,20 +543,6 @@ function zoomOpen(btn){
     T.innerHTML='<div class="tbl"><table class="obt nostk"><thead><tr><th>Aparelho</th><th>Sinal de '+fr(D,2)+' ppm, em Hz</th><th>J de '+fr(J,1)+' Hz, em ppm</th></tr></thead><tbody>'
       +[60,90,300,400,600].map(f=>'<tr><td>'+f+' MHz</td><td class="n">'+fr(D*f,0)+'</td><td class="n">'+fr(J/f,4)+'</td></tr>').join('')+'</tbody></table></div>';
   }
-  function calcI(){
-    const v=$('#cgI').value.split(/[\s;]+/).map(x=>parseFloat(x.replace(',','.'))).filter(x=>x>0),T=+$('#cgT').value,o=$('#cgOut');
-    if(!v.length){o.innerHTML='<p class="srcl">Digite os valores das integrais.</p>';return;}
-    const mn=Math.min(...v),r=v.map(x=>x/mn);let k=0;
-    for(let m=1;m<=8&&!k;m++)if(r.every(x=>Math.abs(x*m-Math.round(x*m))<0.15))k=m;
-    let h='<div class="tbl"><table class="obt nostk"><thead><tr><th>Sinal</th><th>Valor</th><th>÷ menor</th>'+(k>1?'<th>× '+k+'</th>':'')+(T>0?'<th>× '+T+' ÷ soma</th>':'')+'</tr></thead><tbody>';
-    const sum=v.reduce((a,b)=>a+b,0);
-    v.forEach((x,i)=>{h+='<tr><td>'+(i+1)+'</td><td class="n">'+fr(x,1)+'</td><td class="n">'+fr(r[i],2)+'</td>'+(k>1?'<td class="n">'+fr(r[i]*k,2)+'</td>':'')+(T>0?'<td class="n"><b>'+fr(x/sum*T,2)+'</b></td>':'')+'</tr>';});
-    h+='</tbody></table></div>';
-    if(k){const ints=r.map(x=>Math.round(x*k));h+='<p style="margin:8px 0 0"><b>Proporção: '+ints.join(' : ')+'</b> (soma '+ints.reduce((a,b)=>a+b,0)+').'+(T>0?(ints.reduce((a,b)=>a+b,0)===T?' Bate com os '+T+' H da fórmula.':' A fórmula tem '+T+' H: '+(T%ints.reduce((a,b)=>a+b,0)===0?'multiplique a proporção por '+T/ints.reduce((a,b)=>a+b,0)+'.':'confira se falta um sinal ou se a proporção está certa.')):'')+'</p>';}
-    else h+='<p class="srcl" style="margin-top:8px">Não deu proporção de números inteiros pequenos. Confira as medidas ou procure um sinal sobreposto.</p>';
-    if(T>0)h+='<p class="srcl">A última coluna distribui o total de H da fórmula na proporção das áreas. O valor mais próximo de um inteiro é o número de H do sinal.</p>';
-    o.innerHTML=h;
-  }
   function calcG(){
     const C=+$('#gdC').value,H=+$('#gdH').value,N=+$('#gdN').value,X=+$('#gdX').value,o=$('#gdOut'),g=(2*C+2+N-H-X)/2;
     let m;
@@ -652,14 +636,20 @@ function zoomOpen(btn){
       $('#trnPlacar').textContent='Acertos: '+TS.ok+' de '+TS.n+'.';$('#trnNx').onclick=trnDraw;$('#trnNx').focus();};
   }
   document.addEventListener('click',e=>{const b=e.target.closest('[data-tq]');if(!b)return;TQ=b.dataset.tq;document.querySelectorAll('[data-tq]').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));trnDraw();});
-  /* ---- troca de painel ---- */
+  /* ---- troca de painel: cada aba do RMN mostra um ou mais painéis, na ordem do grupo ---- */
+  const RGRP={ler:['ler'],apr:['teo','acop','mac'],calc:['calc','integ'],cons:['tab','comp'],pra:['res','treino'],pdf:['pdf']};
+  const RFROM={};Object.keys(RGRP).forEach(g=>RGRP[g].forEach(p=>{RFROM[p]=g;}));
   function rp(k){
-    document.querySelectorAll('[data-rpane]').forEach(d=>d.hidden=d.dataset.rpane!==k);
-    document.querySelectorAll('.rseg [data-rp]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.rp===k?'true':'false'));
-    if(k==='mac')macDraw();
-    if(k==='res'&&window.resDraw)window.resDraw();if(k==='tab'&&window.c13Draw)window.c13Draw();
-    if(k==='treino'&&!TCUR)trnDraw();
-    try{sessionStorage.setItem('massas-rp',k);}catch(e){}
+    const g=RGRP[k]?k:(RFROM[k]||'ler'),list=RGRP[g];
+    const panes=document.querySelectorAll('[data-rpane]'),pai=panes[0].parentNode;
+    panes.forEach(d=>{d.hidden=list.indexOf(d.dataset.rpane)<0;d.classList.remove('rgap');});
+    list.forEach((p,i)=>{const d=pai.querySelector(':scope > [data-rpane="'+p+'"]');if(d){pai.appendChild(d);if(i)d.classList.add('rgap');}});
+    document.querySelectorAll('.rseg [data-rp]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.rp===g?'true':'false'));
+    if(list.indexOf('mac')>=0)macDraw();
+    if(list.indexOf('res')>=0&&window.resDraw)window.resDraw();
+    if(list.indexOf('tab')>=0&&window.c13Draw)window.c13Draw();
+    if(list.indexOf('treino')>=0&&!TCUR)trnDraw();
+    try{sessionStorage.setItem('massas-rp',g);}catch(e){}
   }
   window.rmPane=rp;
   function init(){
@@ -672,7 +662,6 @@ function zoomOpen(btn){
     $('#lbPre').onclick=e=>{const b=e.target.closest('[data-pre]');if(!b)return;const p=PRE[+b.dataset.pre];$('#lbN1').value=p[1];$('#lbJ1').value=p[2];$('#lbN2').value=p[3];$('#lbJ2').value=p[4];lab();};
     ['lbN1','lbN2','lbJ1','lbJ2'].forEach(i=>$('#'+i).addEventListener('input',lab));lab();
     ['cxF','cxD','cxJ'].forEach(i=>$('#'+i).addEventListener('input',calcF));calcF();
-    ['cgI','cgT'].forEach(i=>$('#'+i).addEventListener('input',calcI));calcI();
     ['gdC','gdH','gdN','gdX'].forEach(i=>$('#'+i).addEventListener('input',calcG));calcG();
     tabSinais();
     document.querySelectorAll('.rseg [data-rp]').forEach(b=>b.onclick=()=>rp(b.dataset.rp));

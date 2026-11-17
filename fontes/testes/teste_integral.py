@@ -6,7 +6,7 @@ from _nav import abrir
 with sync_playwright() as p:
     b=abrir(p);pg=b.new_page(viewport={'width':390,'height':900});er=[];pg.on('pageerror',lambda e:er.append(str(e)))
     pg.goto('file:///home/claude/massas/index.html');pg.wait_for_timeout(1200)
-    pg.evaluate("go('p-rm')");pg.click('#p-rm [data-rp="integ"]')
+    pg.evaluate("go('p-rm')");pg.evaluate("rmPane('integ')")
     pg.fill('#igF','C4H8O');pg.fill('#igT','2.45 20.3\n2.14 30.4\n1.06 30.0')
     t=pg.inner_text('#igOut');assert '8 H' in t,t
     hs=[c.inner_text() for c in pg.locator('#igOut tbody tr td:nth-child(4)').all()];assert hs==['2','3','3'],hs

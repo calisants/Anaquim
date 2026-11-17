@@ -1,0 +1,29 @@
+/* ================= v263: Início, Ajustes e Teoria reorganizados ================= */
+/* Início: roteiro numerado e menus curtos */
+.roteiro{list-style:none;margin:0 0 6px;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.roteiro li{margin:0}
+.rot{font:inherit;width:100%;text-align:left;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:9px 12px 9px 46px;min-height:56px;cursor:pointer;position:relative;display:grid;gap:0;box-shadow:var(--sh)}
+.rot i{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:var(--keep-soft);color:var(--keep);font-style:normal;font-weight:600;font-size:.86rem;display:grid;place-items:center}
+.rot b{font-weight:600;font-size:.95rem;line-height:1.25}
+.rot span{color:var(--muted);font-size:.8rem;line-height:1.3}
+@media (min-width:560px){.roteiro{grid-template-columns:repeat(3,1fr)}}
+.menu-main{margin-top:18px}
+.mi-lead{background:var(--keep-soft);border-color:transparent}
+.mi-lead b{color:var(--keep);font-size:1.02rem}
+.mi-lead span{color:var(--ink);opacity:.8;-webkit-line-clamp:3}
+.menu-fim{margin-top:22px;grid-template-columns:1fr 1fr}
+.menu-fim .mi{min-height:0;padding:10px 12px;box-shadow:none;background:transparent}
+.menu-fim .mi::after{display:none}
+.menu-fim .mi span{font-size:.8rem}
+/* Ajustes */
+.sth{font-size:1.02rem;margin:28px 0 6px;padding-top:14px;border-top:1px solid var(--line)}
+h2.scr+.sth,.back+h2.scr+.sth{margin-top:14px;border-top:0;padding-top:0}
+.sth:first-of-type{border-top:0;padding-top:0;margin-top:14px}
+.stl{margin:12px 0 2px;color:var(--muted);font-size:.86rem;font-weight:500}
+.pgtxt{width:100%;margin:10px 0;font-family:var(--mono);font-size:.8rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px}
+/* Teoria de massas: três blocos que abrem e fecham */
+.tesec{margin:10px 0}
+.tesec>summary{font-size:1.05rem}
+.tesec .rule:first-child,.tesec .how:first-child{margin-top:10px}
+/* RMN: painéis empilhados dentro da mesma aba */
+[data-rpane].rgap{margin-top:30px;padding-top:20px;border-top:1px solid var(--line)}

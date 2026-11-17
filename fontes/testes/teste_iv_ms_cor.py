@@ -13,7 +13,7 @@ with sync_playwright() as p:
     chk('sem caixa Hoje',pg.evaluate("!document.getElementById('hoje')"))
     pg.evaluate("go('p-co')")
     chk('Astronomia de volta',pg.evaluate("[...document.querySelectorAll('#pals button')].some(b=>/Astronomia/.test(b.textContent))"))
-    chk('texto da tela Cor removido',pg.evaluate("!/Toque numa cor/.test(document.getElementById('p-co').innerText)"))
+    chk('texto da tela Cor removido',pg.evaluate("!/Toque numa cor/.test(document.getElementById('p-st').innerText)"))
     pg.evaluate("setPal('astro')");chk('paleta astro aplica',pg.evaluate("document.documentElement.dataset.pal==='astro'"));pg.evaluate("setPal('azul')")
     pg.evaluate("go('p-fo')")
     t=pg.evaluate("document.documentElement.innerHTML")

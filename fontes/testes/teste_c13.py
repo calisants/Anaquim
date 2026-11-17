@@ -7,7 +7,7 @@ with sync_playwright() as p:
     er=[];pg.on('pageerror',lambda e:er.append(str(e)))
     pg.goto('file:///home/claude/massas/index.html')
     pg.evaluate("go('p-rm')");pg.wait_for_timeout(200)
-    pg.click('[data-rp="tab"]');pg.wait_for_timeout(300)
+    pg.evaluate("rmPane('tab')");pg.wait_for_timeout(300)
     n=pg.locator('#c13Box > details.sec').count();assert n>=18,n
     pg.evaluate("document.querySelectorAll('#c13Box details').forEach(d=>d.open=true)")
     assert pg.locator('#c13Box .fonte, #c13Box .srcl').count()>=18

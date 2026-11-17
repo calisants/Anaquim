@@ -110,7 +110,7 @@ function syRefresca(){
   try{buildChips();}catch(e){}try{trLabel();}catch(e){}try{drawPerg();}catch(e){}
   try{if(typeof apStarsAtualiza==='function')apStarsAtualiza();if(CUR==='p-ap')apDraw();}catch(e){}
   try{if(CUR==='p-rv')rvDraw();}catch(e){}try{if(CUR==='p-an'&&typeof anDesenha==='function')anDesenha();}catch(e){}
-  try{if(CUR==='p-sy')syDraw();}catch(e){}
+  try{if(CUR==='p-st')syDraw();}catch(e){}
 }
 
 /* ---- um ciclo de sincronização ---- */
@@ -180,7 +180,7 @@ let syLink=(function(){try{const m=/^#\/sy\/([0-9A-Za-z-]+)/.exec(location.hash|
 function syUrlLink(c){return location.origin+location.pathname+'#/sy/'+syFmt(c);}
 function syDraw(){
   const box=document.getElementById('syBox');if(!box)return;
-  if(!syLiga()){box.innerHTML='<p class="hint">A sincronização ainda não está ligada neste app. Enquanto isso, use <b>Salvar e levar o progresso</b> para passar seus dados de um aparelho para outro.</p>';return;}
+  if(!syLiga()){box.innerHTML='<p class="hint">A sincronização ainda não está ligada neste app. Enquanto isso, use o texto copiado, logo abaixo, para passar seus dados de um aparelho para outro.</p>';return;}
   if(box.querySelector('input:focus'))return;
   if(!SYE.cod){
     box.innerHTML='<div class="el"><h3>Primeiro aparelho</h3><p>O app cria um código. Você anota o código e digita o mesmo nos outros aparelhos.</p><button type="button" class="btn" data-sy="cria">Criar meu código</button></div>'
@@ -199,8 +199,6 @@ function syDraw(){
 }
 function syInit(){
   if(syLink){try{history.replaceState(history.state,'',location.pathname+location.search);}catch(e){}}
-  const m=document.getElementById('mSy');if(m)m.hidden=!syLiga();
-  const ph=document.getElementById('pgSyHint');if(ph)ph.hidden=!syLiga();
   const box=document.getElementById('syBox');if(!box)return;
   box.addEventListener('click',async ev=>{
     const b=ev.target.closest('[data-sy]');if(!b)return;const k=b.dataset.sy;

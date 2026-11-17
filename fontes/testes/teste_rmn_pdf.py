@@ -48,7 +48,7 @@ try:
     pg.click('.sppdf[data-sp="iv"] [data-sp-go="iv"]');v=[int(x) for x in pg.input_value('#icIV').replace('l','').split()]
     assert any(abs(x-3384)<=15 for x in v),v;print('ok  Espectros > IV: lê, mostra a tabela e leva ao Identificar (',len(v),'bandas )')
     # ---- Espectros > Massas
-    pg.evaluate("go('p-an')");pg.evaluate("document.querySelector('#p-an details.sec').open=true")
+    pg.evaluate("go('p-an')");pg.evaluate("document.querySelectorAll('#p-an details.sec').forEach(d=>d.open=true)")
     pg.set_input_files('#spf-ms',F+'sdbs_anilina_ms.pdf');espera(pg,'.sppdf[data-sp="ms"] [data-sp-msg]')
     assert pg.locator('.sppdf[data-sp="ms"] table tbody tr').count()>=4
     pg.click('.sppdf[data-sp="ms"] [data-sp-go="msan"]');pg.wait_for_timeout(400)

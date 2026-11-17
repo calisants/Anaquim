@@ -5,14 +5,14 @@
 App de uma página (`index.html`, instalável no celular) de consulta e estudo de Análise Orgânica, para graduação e ensino médio. Endereço: https://calisants.github.io/massas/
 
 ## Telas (menu fixo embaixo)
-- **Início:** a ordem da análise em 6 passos e atalhos para Revisar, Orgânica Básica, Identificar, modo detetive e o bloco "O app" (Ajustes, Novidades, Salvar, Fontes).
+- **Início:** a ordem da análise em 6 passos e um roteiro curto com atalhos para Ensaios, Compostos, Espectros e Treinar.
 - **Compostos:** 110 fichas (busca por nome, fórmula ou CAS; filtro por estado e grupo de solubilidade) com estrutura, fórmula, massa, GDH, cor, estado, PF, PE, solubilidade, CAS, bandas de IV esperadas, picos de MS, RMN estimado de ¹H e ¹³C e link para o SDBS.
 - **Identificar:** uma tela só. Seções numeradas (aspecto, solubilidade, constantes físicas, análise elementar, IV, e fórmula/massas/RMN como opcional). Mostra as classes de compostos que sobram e o ranking de compostos do banco. O botão "Ver como funciona" preenche com um composto de exemplo. O que você digita fica salvo. Os campos de IV e de massas aceitam importar o espectro em .pdf, .jdx, .csv ou .txt: o PDF com texto é lido direto, e a impressão do SDBS (imagem) é lida pelo contorno da curva (IV) e pela altura das barras (MS). A leitura por imagem pode errar em 1 unidade de m/z ou trazer bandas a mais; sempre confira o campo preenchido. Os campos de RMN (δ de ¹H e δ de ¹³C, seção 6) também aceitam o espectro em PDF (ver v247). O leitor de PDF (pdf.js, na pasta `vendor/`) só é baixado quando você importa um PDF.
 - **IV em PDF com números escritos na vertical** (rótulos dos picos girados 90°, como no PDF "IV 5B"): o app lê os números de verdade, dígito a dígito, comparando com modelos tirados desse PDF, e confere com os vales da curva azul. Testado com o PDF de 16 picos (16 de 16 certos). Com JPEG muito comprimido, 6 e 8 podem se confundir; o app pede para conferir a lista. Só vale para esse formato (fonte lisa de tela).
 - **Overtones em opções:** no Identificar, seção 5, você diz o padrão do anel (mono, orto, meta, para, tri, sem anel) e marca as outras bandas fracas (aldeído 2820/2720, dobro do C=O, amina primária ~3200). O app compara com o padrão de cada composto, tirado do texto dos overtones. Não infere mais pelas bandas digitadas.
 - **Ensaios:** preliminares, solubilidade, análise elementar, análise funcional (todos os grupos: álcool, fenol, carbonila, éster, amina e amida, com reagente, passo a passo e cor do tubo; a ficha do composto sugere os ensaios do grupo), problemas resolvidos, consulta rápida e notação ECGF.
-- **Quatro abas:** Início, Compostos, Ensaios e Espectros (o antigo "Mais" virou seção "O app" do Início). A aba Espectros dá acesso a IV, Massas (MS) e RMN, e todas as páginas seguem o mesmo layout (voltar, título, subtítulo e barra de botões), tendo o RMN como referência. **IV:** qualquer um dos 106 compostos, espectro simulado e tabela de bandas numerada; Guia com a tabela completa. **Massas:** teoria, prática, livro e calculadora. **RMN:** quatro passos num espectro real, régua de deslocamento, laboratório de acoplamento, cálculos (Hz/ppm, integração, GDH), macetes, tabelas e espectros simulados por composto. Tocar num pico, banda ou sinal colore o trecho da molécula.
-- **Início > O app:** Ajustes (zoom com os dedos, treinos sem pistas), Revisar (erros de massa e perguntas de quiz voltam em 1, 3 e 7 dias, no máximo 10 por dia), Novidades, cor do app (6 opções, com Astronomia), salvar o progresso, fontes.
+- **Quatro abas:** Início, Compostos, Ensaios e Espectros (o antigo "Mais" foi dividido entre Início e a engrenagem de Ajustes). A aba Espectros dá acesso a IV, Massas (MS) e RMN, e todas as páginas seguem o mesmo layout (voltar, título, subtítulo e barra de botões), tendo o RMN como referência. **IV:** qualquer um dos 106 compostos, espectro simulado e tabela de bandas numerada; Guia com a tabela completa. **Massas:** quatro abas (Analisar, Treinar, Livro, Teoria); a calculadora fica dentro de Analisar. **RMN:** seis abas e quatro passos num espectro real, régua de deslocamento, laboratório de acoplamento, cálculos (Hz/ppm, integração, GDH), macetes, tabelas e espectros simulados por composto. Tocar num pico, banda ou sinal colore o trecho da molécula.
+- **Ajustes (engrenagem):** zoom com os dedos, treinos sem pistas, cor do app, salvar o progresso e fontes. Revisar (erros de massa e perguntas de quiz voltam em 1, 3 e 7 dias, no máximo 10 por dia).
 
 ## Avisos sobre os dados
 - A tela Análise funcional segue a apostila de Análise Orgânica do IFRJ Nilópolis (2016) e as receitas do Receituário da Plataforma QO é Vida. Não usei os textos das páginas de análise funcional da Plataforma (não abriram na hora da conferência): os passos e as cores dos tubos vêm da apostila e do Receituário. Onde as fontes divergem (KOH ou NaOH no hidróxido ferroso, pH da hidroxilamina, KIO4 ou KIO3, concentração do amido), a página diz qual usou.
@@ -28,7 +28,7 @@ cd fontes
 pip install rdkit
 python3 empacotar.py
 ```
-Isso gera `index.html`, sobe a versão em `sw.js` e mostra a versão em Início > O app > Fontes e avisos. Depois é só enviar para o GitHub.
+Isso gera `index.html`, sobe a versão em `sw.js` e mostra a versão em Ajustes > Sobre. Depois é só enviar para o GitHub.
 
 ## Testes (antes de cada envio ao GitHub)
 ```
@@ -37,9 +37,6 @@ python3 empacotar.py
 python3 testes/rodar.py
 ```
 `rodar.py` roda um teste de cada vez e para no primeiro que falhar. Se o Chromium do Playwright não estiver instalado, usa o Chrome do sistema. Só envie para o GitHub com "Tudo passou."
-
-## Formulário de sugestões (ainda não ligado)
-O botão em Início > O app só aparece quando `FORM_URL` (em `fontes/analorg3.js`) tem o link de um Google Formulário. Sugestão: formulário com tipo (sugestão ou erro), tela, texto e e-mail opcional; as respostas vão para uma planilha, e uma segunda planilha controla o que já foi resolvido.
 
 ## Instalar no celular
 Abra o endereço acima. Android: menu do Chrome, "Instalar app". iPhone: Safari, Compartilhar, "Adicionar à Tela de Início". Depois da primeira abertura com internet, o app funciona sem internet (as fontes do Google também ficam guardadas).

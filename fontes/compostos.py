@@ -152,7 +152,7 @@ MSK = {
 # Grupos funcionais -> bandas de IV esperadas. (SMARTS, rótulo do grupo, [(cm-1 baixo, cm-1 alto, atribuição, intensidade, chave?)])
 # Faixas da "Apostila de Interpretação de Espectros de IV" (a que está na pasta Analorg do Drive); onde a apostila não traz, usei tabela geral (Pavia) e marquei fonte "g".
 IVG = [
- ("[CH2X4][OX2H]", "álcool", [(3550,3200,"O–H (estiramento)","F, larga",1,"a"),(1090,1000,"C–O de álcool primário","F",0,"s")]),
+ ("[CX4;H2,H3][OX2H]", "álcool", [(3550,3200,"O–H (estiramento)","F, larga",1,"a"),(1090,1000,"C–O de álcool primário","F",0,"s")]),
  ("[CH1X4]([#6])([#6])[OX2H]", "álcool", [(3550,3200,"O–H (estiramento)","F, larga",1,"a"),(1150,1060,"C–O de álcool secundário","F",0,"s")]),
  ("[CX4;H0]([#6])([#6])([#6])[OX2H]", "álcool", [(3550,3200,"O–H (estiramento)","F, larga",1,"a"),(1205,1124,"C–O de álcool terciário","F",0,"s")]),
  ("c[OX2H]", "fenol", [(3550,3150,"O–H (estiramento)","F, larga",1,"a"),(1275,1200,"C–O (estiramento)","F",0,"s")]),

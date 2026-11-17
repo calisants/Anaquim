@@ -7,7 +7,7 @@ with sync_playwright() as p:
     b=abrir(p);pg=b.new_page(viewport={'width':390,'height':900})
     er=[];pg.on('pageerror',lambda e:er.append(str(e)))
     pg.goto('file:///home/claude/massas/index.html')
-    pg.evaluate("go('p-pq')");pg.locator('#p-pq .rule').first.screenshot(path=P+'ec_rule.png')
+    pg.evaluate("go('p-pq')");pg.locator('#p-te #te-pq .rule').first.screenshot(path=P+'ec_rule.png')
     pg.evaluate("go('p-se')");pg.wait_for_timeout(200)
     pg.locator('#se-anchor .mdl').nth(1).screenshot(path=P+'ec_alfa.png')
     pg.locator('#se-anchor .mdl').nth(3).screenshot(path=P+'ec_het.png')

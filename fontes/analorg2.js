@@ -375,10 +375,48 @@ function icRun(){setTimeout(()=>{if(typeof icBadges==="function")icBadges();},0)
     sum=' · primeiro: '+esc(res[0].c.n)+' ('+(res[0].p>=10?res[0].p.toFixed(0):res[0].p.toFixed(1)).replace('.',',')+'%, '+icBate(res[0])+' de '+res[0].parts.length+' batem)';
   }
   h+='</details>';
+  h+=icPistas(x);
   $('#icOut').innerHTML=h;
   ICLAST={x,cl,top:used?res.slice(0,5).filter((r,i)=>i<3||r.p>=1):[],used};icExpShow();
   $('#icSum').innerHTML=(cl.any?'<b>'+cl.ok.length+'</b> de '+IDCLS.length+' classes':'<b>'+used+'</b> critério'+(used>1?'s':''))+sum+' <span class="mut">· ver resultado ↓</span>';
   fontesRecolher($('#icOut'));
+}
+/* Pistas dos espectros: o que cada banda e cada pico costumam indicar. Lê os mesmos campos do Identificar (fórmula, M, picos de MS, bandas de IV). */
+function icPistas(x){
+  const out=[];
+  const F=x.F,M=x.M;
+  const peaks=[...new Set(x.pk)].filter(p=>p>0).sort((a,b)=>b-a);
+  const ir=(x.iv||[]).filter(v=>v>=400&&v<=4000);
+  if(F){const f=parseF(F);if(f){const X=(f.F||0)+(f.Cl||0)+(f.Br||0)+(f.I||0),idh=((2*(f.C||0)+2+(f.N||0)-(f.H||0)-X)/2);
+    out.push('<p><b>GDH = '+idh+'</b> (anéis + ligações π). '+(idh===0?'Sem anel, sem C=O, sem C=C.':idh===1?'1 anel ou 1 dupla (C=O, C=C).':idh>=4?'GDH ≥ 4 sugere anel aromático.':'')+(f.N?' Tem N: M ímpar é esperado.':'')+'</p>');}}
+  if(M)out.push('<p><b>Regra do nitrogênio:</b> M = '+M+' é '+(M%2?'ímpar, então o número de N é ímpar.':'par, então há zero ou um número par de N.')+'</p>');
+  if(ir.length){
+    const fl={};let h='<p><b>IV: o que cada banda sugere</b></p>';
+    ir.forEach(v=>{const m=irHits(v).slice(0,4);
+      h+='<p><span class="mono">'+v+'</span>: '+(m.length?m.map(r=>esc(r[2])+(r[3]?' <span class="mut">('+esc(r[3])+')</span>':'')).join('; '):esc(irNone(v)));
+      if(v>=1650&&v<=1850){const c=coHint(v);if(c)h+=' <b>Valor: '+esc(c)+'.</b>';fl.co=v;}
+      h+='</p>';
+      if(v>=2700&&v<=2730)fl.ald=1;if(v>=3200&&v<=3650)fl.oh=1;if(v>=1450&&v<=1610)fl.ar=1;});
+    const g=[];
+    if(fl.co&&fl.ald)g.push('C=O + C–H em ~2720: <b>aldeído</b>.');
+    else if(fl.co&&fl.co>=1735&&fl.co<=1750)g.push('C=O em ~1740, sem 2720: <b>éster</b> (confira C–O em ~1250 e ~1030).');
+    else if(fl.co&&fl.oh)g.push('C=O e O–H largo: <b>ácido carboxílico</b>, se o O–H for muito largo.');
+    else if(fl.co)g.push('C=O sem 2720 e sem O–H: <b>cetona</b> (ou amida, se menor que ~1690).');
+    else if(fl.oh)g.push('Sem C=O e com O–H: <b>álcool ou fenol</b>.');
+    if(fl.ar)g.push('Bandas de anel: <b>aromático</b>. Veja 900–690 para o padrão de substituição.');
+    out.push(h+(g.length?'<p class="ex"><b>Pistas combinadas.</b><br>'+g.join('<br>')+'</p>':''));
+  }
+  if(peaks.length){
+    let h='<p><b>Massas: íons conhecidos</b></p>',any=false;
+    peaks.forEach(p=>{if(MSD[p]){any=true;h+='<p><span class="mono">'+p+'</span>: '+MSD[p]+'</p>';}});
+    if(!any)h+='<p>Nenhum dos picos está na lista curta de íons diagnósticos. Use Espectros > Analisar para o Apêndice B.</p>';
+    out.push(h);
+    if(M){let h2='<p><b>Massas: perdas a partir de M</b></p>',any2=false;
+      peaks.filter(p=>p<M).forEach(p=>{const d=M-p;if(MSL[d]){any2=true;h2+='<p><span class="mono">M − '+p+' = '+d+'</span>: '+MSL[d]+'</p>';}});
+      if(!any2)h2+='<p>Nenhuma perda da lista curta. Espectros > Analisar usa o Apêndice C completo.</p>';
+      out.push(h2);}
+  }
+  return out.length?'<details class="sec"><summary>Pistas dos espectros</summary><div class="rule">'+out.join('')+'<p class="hint">Pistas gerais. Elas não substituem a lousa nem o Apêndice B e C.</p></div></details>':'';
 }
 function icClear(){icReset();if($('#icObs'))$('#icObs').value='';icDraw();ICLAST=null;icExpShow();$('#icOut').innerHTML='<p class="empty">Marque pelo menos um dado acima.</p>';$('#icSum').textContent='Marque pelo menos um dado.';$('#icBandOut').innerHTML='';icSave();}
 function icFill(i){

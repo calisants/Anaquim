@@ -33,12 +33,11 @@ try:
 
     # 0) sem configuração: item do menu escondido e tela explica
     off=novo('file:///tmp/anaquim_teste_sync_off.html')
-    chk('sem servidor configurado o item do menu fica escondido',off.evaluate("document.getElementById('mSy').hidden")==True)
     off.evaluate("go('p-sy')");chk('tela mostra que ainda não está ligada','ainda não está ligada' in off.inner_text('#syBox'))
     off.context.close()
 
     A=novo();B=novo()
-    chk('com servidor configurado o item aparece',A.evaluate("document.getElementById('mSy').hidden")==False)
+    A.evaluate("go('p-sy')");chk('com servidor configurado a tela de Ajustes mostra criar código',A.query_selector('[data-sy=cria]') is not None)
 
     # 1) A cria dados e o código
     A.evaluate("""()=>{const d=apGet();const a=apNova(d,'Aula do A');a.ens.push({id:'pf-ign',f:1,r:'p',o:'chama amarela segredo123'});apSave(d);

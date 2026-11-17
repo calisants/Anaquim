@@ -48,7 +48,7 @@ with sync_playwright() as p:
     chk('sem "escrito por mim"','escrito por mim' not in txt.lower())
     # menus
     chk('Início sem ferramentas de massas',pg.evaluate("go('p-in'),document.getElementById('p-in').innerText.indexOf('Calculadora')<0"))
-    chk('Massas com ferramentas de massas',pg.evaluate("go('p-ca'),document.getElementById('p-ca').innerText.indexOf('Calculadora')>=0"))
+    chk('Massas com ferramentas de massas',pg.evaluate("go('p-ca'),document.getElementById('p-an').innerText.indexOf('Calculadora')>=0 && CUR==='p-an'"))
     for sc in ['p-in','p-en','p-sp','p-ic','p-st','p-rv','p-co','p-fo','p-cf','p-cp','p-ob','p-rm','p-iv']:
         pg.evaluate(f"go('{sc}')");w=pg.evaluate("document.documentElement.scrollWidth")
         if w>360:chk('sem estouro em '+sc+' ('+str(w)+')',False)

@@ -8,7 +8,7 @@ with sync_playwright() as p:
     er=[];pg.on('pageerror',lambda e:er.append(str(e)))
     pg.goto('file:///home/claude/massas/index.html')
     pg.evaluate("go('p-rm')");pg.wait_for_timeout(200)
-    pg.click('[data-rp="res"]');pg.wait_for_timeout(200)
+    pg.evaluate("rmPane('res')");pg.wait_for_timeout(200)
     n=pg.locator('#resBox details.sec').count();assert n==len(pg.evaluate("RES_BANCO")),n
     assert n==28,n
     # passo a passo

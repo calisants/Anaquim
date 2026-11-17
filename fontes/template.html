@@ -276,6 +276,7 @@ button.back{border-radius:10px}
 /*@@ANALORG7_CSS@@*/
 /*@@ANALORG8_CSS@@*/
 /*@@ANALORG9_CSS@@*/
+/*@@ANALORG10_CSS@@*/
 /* BEGIN temas */
 :root[data-pal="quimica"]{--bg:#F2F7F8;--surface:#FFFFFF;--ink:#142629;--muted:#536B6E;--line:#D0DFE2;--keep:#0A6F7A;--focus:#0A6F7A;--keep-soft:#DDF0F3;--pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%230A6F7A' stroke-opacity='.16' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate%2822 24%29 rotate%286%29'%3E%3Cpath d='M-5-13h10M-3-13v9l-9 17a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-17v-9M-9 8h18'/%3E%3C/g%3E%3Cg transform='translate%2882 18%29 rotate%288%29'%3E%3Ccircle r='3'/%3E%3Ccircle cx='9' cy='-8' r='2'/%3E%3Ccircle cx='-8' cy='-9' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2852 52%29 rotate%28-20%29'%3E%3Cpath d='M-4-14v22a4 4 0 0 0 8 0v-22M-5-14h10M-4 2h8'/%3E%3C/g%3E%3Cg transform='translate%28104 62%29 rotate%2814%29'%3E%3Cpath d='M0-12l10.4 6v12L0 12l-10.4-6v-12z'/%3E%3Cpath d='M0-7l6 3.5v7L0 7l-6-3.5v-7z'/%3E%3C/g%3E%3Cg transform='translate%2820 86%29 rotate%2818%29'%3E%3Ccircle r='3'/%3E%3Ccircle cx='9' cy='-8' r='2'/%3E%3Ccircle cx='-8' cy='-9' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2874 100%29 rotate%28-2%29'%3E%3Cpath d='M-5-13h10M-3-13v9l-9 17a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-17v-9M-9 8h18'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"])[data-pal="quimica"]{--bg:#0D1617;--surface:#152123;--ink:#E1EDEF;--muted:#9DB5B8;--line:#2B3D40;--keep:#7BD3E0;--focus:#7BD3E0;--keep-soft:#1C3F45;--pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%237BD3E0' stroke-opacity='.2' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate%2822 24%29 rotate%286%29'%3E%3Cpath d='M-5-13h10M-3-13v9l-9 17a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-17v-9M-9 8h18'/%3E%3C/g%3E%3Cg transform='translate%2882 18%29 rotate%288%29'%3E%3Ccircle r='3'/%3E%3Ccircle cx='9' cy='-8' r='2'/%3E%3Ccircle cx='-8' cy='-9' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2852 52%29 rotate%28-20%29'%3E%3Cpath d='M-4-14v22a4 4 0 0 0 8 0v-22M-5-14h10M-4 2h8'/%3E%3C/g%3E%3Cg transform='translate%28104 62%29 rotate%2814%29'%3E%3Cpath d='M0-12l10.4 6v12L0 12l-10.4-6v-12z'/%3E%3Cpath d='M0-7l6 3.5v7L0 7l-6-3.5v-7z'/%3E%3C/g%3E%3Cg transform='translate%2820 86%29 rotate%2818%29'%3E%3Ccircle r='3'/%3E%3Ccircle cx='9' cy='-8' r='2'/%3E%3Ccircle cx='-8' cy='-9' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2874 100%29 rotate%28-2%29'%3E%3Cpath d='M-5-13h10M-3-13v9l-9 17a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-17v-9M-9 8h18'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}}
@@ -297,41 +298,35 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
   <section id="p-in" role="tabpanel" aria-labelledby="t-in">
     <h2 class="scr">Início</h2>
     <p class="scrsub">Consulta e estudo de Análise Orgânica, do básico aos espectros.</p>
-    <h2 class="mh">Ordem da análise</h2>
-    <div class="passos" role="group" aria-label="Passos da análise">
-      <button class="chip" type="button" data-go="p-pf">1 Preliminares</button>
-      <button class="chip" type="button" data-go="p-so">2 Solubilidade</button>
-      <button class="chip" type="button" data-go="p-el">3 Elementar</button>
-      <button class="chip" type="button" data-go="p-iv">4 IV</button>
-      <button class="chip" type="button" data-go="p-an">5 Massas</button>
-      <button class="chip" type="button" data-go="p-rm">6 RMN</button>
+    <h2 class="mh">Roteiro da análise</h2>
+    <ol class="roteiro" aria-label="Passos da análise">
+      <li><button class="rot" type="button" data-go="p-pf"><i>1</i><b>Preliminares</b><span>cor, chama, PF e PE</span></button></li>
+      <li><button class="rot" type="button" data-go="p-so"><i>2</i><b>Solubilidade</b><span>fluxograma dos grupos</span></button></li>
+      <li><button class="rot" type="button" data-go="p-el"><i>3</i><b>Elementar</b><span>N, S e halogênios</span></button></li>
+      <li><button class="rot" type="button" data-go="p-iv"><i>4</i><b>IV</b><span>bandas dos grupos</span></button></li>
+      <li><button class="rot" type="button" data-go="p-an"><i>5</i><b>Massas</b><span>M e fragmentos</span></button></li>
+      <li><button class="rot" type="button" data-go="p-rm"><i>6</i><b>RMN</b><span>sinais, δ, J e integral</span></button></li>
+    </ol>
+    <div class="menu menu-main">
+      <button class="mi mi-lead" type="button" data-go="p-ic"><b>Identificar o composto</b><span>Junta o que você mediu (ensaios, IV, massas, RMN) e mostra as classes, os compostos mais compatíveis e pistas dos espectros.</span></button>
     </div>
     <h2 class="mh">Estudar</h2>
     <div class="menu">
       <button class="mi" type="button" data-go="p-rv"><b>Revisar</b><span>Erros e perguntas que voltam em 1, 3 e 7 dias.</span></button>
       <button class="mi" type="button" data-go="p-ob"><b>Orgânica Básica</b><span>Grupos funcionais, hibridização, GDH, Lewis, acidez e forças intermoleculares.</span></button>
     </div>
-    <h2 class="mh">Descobrir um composto</h2>
-    <div class="menu">
-      <button class="mi" type="button" data-go="p-ic"><b>Identificar o composto</b><span>Junta o que você mediu e mostra as classes e os compostos mais compatíveis.</span></button>
-      <button class="mi" type="button" data-go="p-es"><b>Espectro novo (modo detetive)</b><span>Fórmula, picos e bandas de IV de um composto desconhecido: o app dá pistas.</span></button>
-    </div>
-    <h2 class="mh">O app</h2>
-    <div class="menu">
-      <button class="mi" type="button" data-go="p-st"><b>Ajustes</b><span>Cor do app, zoom e treinos sem pistas.</span></button>
-      <a class="mi" id="mSug" href="#" target="_blank" rel="noopener" hidden><b>Enviar sugestão ou erro</b><span>Abre o formulário. As respostas vão para uma planilha.</span></a>
-      <button class="mi" id="mSy" type="button" data-go="p-sy" hidden><b>Sincronizar entre aparelhos</b><span>Use o mesmo código no celular e no computador para ver os mesmos dados.</span></button>
-      <button class="mi" type="button" data-go="p-pg"><b>Salvar e levar o progresso</b><span>Gere um código para passar o que você estudou para outro aparelho.</span></button>
-      <button class="mi" type="button" data-go="p-av"><b>Avisar erro ou sugestão</b><span>Achou algo errado ou quer pedir uma mudança? Mande daqui.</span></button>
-      <button class="mi" type="button" data-go="p-fo"><b>Fontes, avisos e créditos</b><span>De onde vêm as tabelas e o que ainda precisa de conferência.</span></button>
+    <div class="menu menu-fim">
+      <button class="mi" type="button" data-go="p-st"><b>Ajustes</b><span>Cor, letra, seus dados e aparelhos.</span></button>
+      <button class="mi" type="button" data-go="p-fo"><b>Sobre</b><span>Fontes, créditos e avisar um erro.</span></button>
     </div>
   </section>
+
 
   <section id="p-en" role="tabpanel" aria-labelledby="t-en" hidden>
     <h2 class="scr">Análise de Ensaios</h2>
     <p class="scrsub">Os ensaios de bancada (via úmida), na ordem em que são feitos.</p>
     <div class="menu">
-      <button class="mi" type="button" data-go="p-ap"><b>Aula prática</b><span>Escolha os ensaios da aula, anote o resultado de cada um e monte o relatório.</span></button>
+      <button class="mi mi-lead" type="button" data-go="p-ap"><b>Aula prática</b><span>Escolha os ensaios da aula, anote o resultado de cada um e monte o relatório.</span></button>
     </div>
     <h2 class="mh">Ensaios</h2>
     <div class="menu">
@@ -340,9 +335,8 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
       <button class="mi" type="button" data-go="p-el"><b>Análise elementar</b><span>Testes para C, H, O, N, S, halogênios e P, com as cores.</span></button>
       <button class="mi" type="button" data-go="p-fu"><b>Análise funcional</b><span>Todos os grupos funcionais: reagente, passo a passo e cor do tubo.</span></button>
     </div>
-    <h2 class="mh">Ferramentas</h2>
+    <h2 class="mh">Consulta e treino</h2>
     <div class="menu">
-      <button class="mi" type="button" data-go="p-ic"><b>Identificar o composto</b><span>Junta o que você mediu e mostra as classes e os compostos mais compatíveis.</span></button>
       <button class="mi" type="button" data-go="p-pb"><b>Problemas resolvidos</b><span>Cinco casos de &ldquo;descobrir o composto&rdquo;, passo a passo.</span></button>
       <button class="mi" type="button" data-go="p-cs"><b>Consulta rápida</b><span>Uma folha com grupos, cores, bandas de IV e constantes.</span></button>
       <button class="mi" type="button" data-go="p-ec"><b>Notação ECGF</b><span>Código de cada grupo funcional, com treino.</span></button>
@@ -350,11 +344,12 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <p class="hint" style="margin-top:14px">Ferramenta de busca Analor (por elementos, PF, PEb, CAS e grupo funcional): <a href="https://analor.com.br/" target="_blank" rel="noopener">analor.com.br</a>. Texto e tabelas dos ensaios: <a href="https://analor.com.br/plataforma.html" target="_blank" rel="noopener">Plataforma QO é Vida</a>.</p>
   </section>
 
+
   <section id="p-pf" role="region" aria-label="Preliminares e propriedades físicas" hidden>
     <button class="back" type="button" data-go="p-en">← Ensaios</button>
     <h2 class="scr">Preliminares e propriedades físicas</h2>
     <p class="scrsub">Primeiros dados do composto desconhecido.</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Ensaios"><button class="chip" type="button" data-go="p-pf" aria-pressed="false">Preliminares</button><button class="chip" type="button" data-go="p-so" aria-pressed="false">Solubilidade</button><button class="chip" type="button" data-go="p-el" aria-pressed="false">Elementar</button><button class="chip" type="button" data-go="p-fu" aria-pressed="false">Funcional</button><button class="chip" type="button" data-go="p-pb" aria-pressed="false">Problemas</button><button class="chip" type="button" data-go="p-cs" aria-pressed="false">Consulta rápida</button><button class="chip" type="button" data-go="p-ec" aria-pressed="false">ECGF</button></div>
+    <div class="chipbar rseg msub" role="group" aria-label="Ensaios" data-bar="ens"></div>
 
     <div class="el"><h3>Cor</h3>
       <p>Muitos compostos orgânicos são incolores. A cor aparece quando há <b>cromóforos</b>, que são ligações múltiplas (C=C, C≡C, C=O, C=N, N=N, N=O, C≡N) que absorvem luz no UV/visível.</p>
@@ -433,7 +428,7 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <button class="back" type="button" data-go="p-en">← Ensaios</button>
     <h2 class="scr">Solubilidade</h2>
     <p class="scrsub">A marcha de solubilidade coloca o composto em um de <b>10 grupos</b>, pela polaridade, pela acidez ou basicidade e pela reatividade. Junto com a análise elementar, ela reduz o número de possibilidades e de ensaios funcionais.</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Ensaios"><button class="chip" type="button" data-go="p-pf" aria-pressed="false">Preliminares</button><button class="chip" type="button" data-go="p-so" aria-pressed="false">Solubilidade</button><button class="chip" type="button" data-go="p-el" aria-pressed="false">Elementar</button><button class="chip" type="button" data-go="p-fu" aria-pressed="false">Funcional</button><button class="chip" type="button" data-go="p-pb" aria-pressed="false">Problemas</button><button class="chip" type="button" data-go="p-cs" aria-pressed="false">Consulta rápida</button><button class="chip" type="button" data-go="p-ec" aria-pressed="false">ECGF</button></div>
+    <div class="chipbar rseg msub" role="group" aria-label="Ensaios" data-bar="ens"></div>
     <div class="sgm" role="group" aria-label="Partes da solubilidade">
       <button type="button" data-so="flow" aria-pressed="true">Fluxograma</button>
       <button type="button" data-so="grp" aria-pressed="false">Grupos</button>
@@ -475,7 +470,7 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <button class="back" type="button" data-go="p-en">← Ensaios</button>
     <h2 class="scr">Análise elementar</h2>
     <p class="scrsub">Como saber quais elementos o composto tem. Cada teste vira o elemento em um gás ou íon que mancha um papel com um reagente.</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Ensaios"><button class="chip" type="button" data-go="p-pf" aria-pressed="false">Preliminares</button><button class="chip" type="button" data-go="p-so" aria-pressed="false">Solubilidade</button><button class="chip" type="button" data-go="p-el" aria-pressed="false">Elementar</button><button class="chip" type="button" data-go="p-fu" aria-pressed="false">Funcional</button><button class="chip" type="button" data-go="p-pb" aria-pressed="false">Problemas</button><button class="chip" type="button" data-go="p-cs" aria-pressed="false">Consulta rápida</button><button class="chip" type="button" data-go="p-ec" aria-pressed="false">ECGF</button></div>
+    <div class="chipbar rseg msub" role="group" aria-label="Ensaios" data-bar="ens"></div>
     <div class="sgm" role="group" aria-label="Partes da análise elementar">
       <button type="button" data-el="ele" aria-pressed="true">Elementos</button>
       <button type="button" data-el="hal" aria-pressed="false">Halogênios</button>
@@ -511,7 +506,7 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <button class="back" type="button" data-go="p-en">← Ensaios</button>
     <h2 class="scr">Análise funcional</h2>
     <p class="scrsub">Todos os ensaios de grupo funcional em uma tela: escolha o grupo, abra o ensaio e veja o passo a passo, a cor do tubo e como preparar o reagente. Antes da amostra, faça sempre o <b>branco</b> (tudo menos a amostra) e o <b>positivo</b> (um composto que você sabe que responde).</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Ensaios"><button class="chip" type="button" data-go="p-pf" aria-pressed="false">Preliminares</button><button class="chip" type="button" data-go="p-so" aria-pressed="false">Solubilidade</button><button class="chip" type="button" data-go="p-el" aria-pressed="false">Elementar</button><button class="chip" type="button" data-go="p-fu" aria-pressed="false">Funcional</button><button class="chip" type="button" data-go="p-pb" aria-pressed="false">Problemas</button><button class="chip" type="button" data-go="p-cs" aria-pressed="false">Consulta rápida</button><button class="chip" type="button" data-go="p-ec" aria-pressed="false">ECGF</button></div>
+    <div class="chipbar rseg msub" role="group" aria-label="Ensaios" data-bar="ens"></div>
     <div class="sgm fusg" role="group" aria-label="Grupo funcional">
       <button type="button" data-fu="nit" aria-pressed="false">Nitrocomposto</button>
       <button type="button" data-fu="aci" aria-pressed="false">Ácido carboxílico</button>
@@ -653,7 +648,6 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <button class="back" type="button" data-go="p-en">← Ensaios</button>
     <h2 class="scr">Problemas resolvidos</h2>
     <p class="scrsub">Cinco problemas do tipo &ldquo;descobrir o composto&rdquo;. Tente primeiro; depois abra a resolução e compare o raciocínio.</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Ensaios"><button class="chip" type="button" data-go="p-pf" aria-pressed="false">Preliminares</button><button class="chip" type="button" data-go="p-so" aria-pressed="false">Solubilidade</button><button class="chip" type="button" data-go="p-el" aria-pressed="false">Elementar</button><button class="chip" type="button" data-go="p-fu" aria-pressed="false">Funcional</button><button class="chip" type="button" data-go="p-pb" aria-pressed="false">Problemas</button><button class="chip" type="button" data-go="p-cs" aria-pressed="false">Consulta rápida</button><button class="chip" type="button" data-go="p-ec" aria-pressed="false">ECGF</button></div>
     <p class="hint">Problemas e resoluções sem fonte conferida. Os pontos de fusão e de ebulição são valores de memória: confirme na <a href="https://analor.com.br/" target="_blank" rel="noopener">Ferramenta Analor</a> antes de confiar. A ordem da resolução segue a do laboratório: solubilidade, elementos, IV, constantes físicas.</p>
     <div id="pbList"></div>
   </section>
@@ -662,7 +656,6 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <button class="back" type="button" data-go="p-en">← Ensaios</button>
     <h2 class="scr">Consulta rápida</h2>
     <p class="scrsub">Tudo de ensaios em uma folha, para consultar com rapidez. Os dados vêm das outras telas.</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Ensaios"><button class="chip" type="button" data-go="p-pf" aria-pressed="false">Preliminares</button><button class="chip" type="button" data-go="p-so" aria-pressed="false">Solubilidade</button><button class="chip" type="button" data-go="p-el" aria-pressed="false">Elementar</button><button class="chip" type="button" data-go="p-fu" aria-pressed="false">Funcional</button><button class="chip" type="button" data-go="p-pb" aria-pressed="false">Problemas</button><button class="chip" type="button" data-go="p-cs" aria-pressed="false">Consulta rápida</button><button class="chip" type="button" data-go="p-ec" aria-pressed="false">ECGF</button></div>
     <div id="csBody"></div>
   </section>
 
@@ -670,7 +663,6 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <button class="back" type="button" data-go="p-en">← Ensaios</button>
     <h2 class="scr">Notação ECGF</h2>
     <p class="scrsub">ECGF significa Esqueletos de Carbono e Grupos Funcionais. É uma notação linear que escreve a molécula com números, sinais e caracteres, deixando explícitos o esqueleto e os grupos funcionais. É ela que a Ferramenta Analor usa para buscar compostos no banco de dados. <span class="tag sv">Conferido: Analor</span></p>
-    <div class="chipbar rseg msub" role="group" aria-label="Ensaios"><button class="chip" type="button" data-go="p-pf" aria-pressed="false">Preliminares</button><button class="chip" type="button" data-go="p-so" aria-pressed="false">Solubilidade</button><button class="chip" type="button" data-go="p-el" aria-pressed="false">Elementar</button><button class="chip" type="button" data-go="p-fu" aria-pressed="false">Funcional</button><button class="chip" type="button" data-go="p-pb" aria-pressed="false">Problemas</button><button class="chip" type="button" data-go="p-cs" aria-pressed="false">Consulta rápida</button><button class="chip" type="button" data-go="p-ec" aria-pressed="false">ECGF</button></div>
     <div class="why">O site diz que a notação tem <b>18 regras</b>, descritas em Costa Neto (2004, p. 1336). As regras em si <b>não estão no site</b>. Abaixo estão só os códigos de cada grupo funcional, que o site lista página por página. O <b>método dos cortes</b>, citado no cronograma, também não consta no site.</div>
     <label for="ecq" style="margin-top:12px">Filtrar por grupo ou código<input class="f-p" type="text" id="ecq" placeholder="ex.: cetona, Est, Aro"></label>
     <div id="ecTbl"></div>
@@ -683,7 +675,7 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <button class="back" type="button" data-go="p-sp">← Espectros</button>
     <h2 class="scr">Espectrometria de massas</h2>
     <p class="scrsub">Escolha um composto ou digite M e os picos. Depois toque num pico para ver o que ficou e o que saiu. <button class="back" style="display:inline;margin:0" data-go="p-aj">Como ler um pico?</button></p>
-    <div class="chipbar rseg msub" role="group" aria-label="Massas"><button class="chip" type="button" data-go="p-an" aria-pressed="false">Analisar</button><button class="chip" type="button" data-go="p-tr" aria-pressed="false">Treinar</button><button class="chip" type="button" data-go="p-tb" aria-pressed="false">Livro</button><button class="chip" type="button" data-go="p-aj" aria-pressed="false">Como ler um pico</button><button class="chip" type="button" data-go="p-pq" aria-pressed="false">Entender as quebras</button><button class="chip" type="button" data-go="p-sl" aria-pressed="false">Slides</button><button class="chip" type="button" data-go="p-ca" aria-pressed="false">Calculadora</button></div>
+    <div class="chipbar rseg msub" role="group" aria-label="Massas" data-bar="mas"></div>
     <div id="an-in">
     <label for="msSel">Composto<select id="msSel" class="f-p"></select></label>
     <div class="row">
@@ -692,7 +684,14 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
       <button class="btn" id="go">Analisar</button>
     </div>
     <div id="nrule" class="mhint"></div>
-    <details class="sec" style="margin-top:14px"><summary>Ler um espectro de massas em PDF</summary>
+    <details class="sec" id="an-calc" style="margin-top:14px"><summary>Calculadora de massa de um fragmento</summary>
+      <p class="hint">Digite a fórmula de um pedaço (por exemplo C3H7O ou CH3). O app soma as massas e mostra o que o livro lista para esse número.</p>
+    <div class="row">
+      <label for="fm">Fórmula<input class="f-p" type="text" id="fm" value="C2H5"></label>
+    </div>
+    <div id="calcout"></div>
+    </details>
+    <details class="sec" style="margin-top:10px"><summary>Ler um espectro de massas em PDF</summary>
       <div class="sppdf" data-sp="ms"></div>
     </details>
     </div>
@@ -708,150 +707,11 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     </div>
   </section>
 
-  <section id="p-tr" role="tabpanel" aria-labelledby="t-tr" hidden>
+  <section id="p-te" role="region" aria-label="Teoria de massas" hidden>
     <button class="back" type="button" data-go="p-sp">← Espectros</button>
-    <h2 class="scr">Treinar massas</h2>
-    <p class="scrsub">Cada rodada tem 5 cartões e depois você pode parar. Escolha um modo. &ldquo;Qual saiu?&rdquo; mostra a perda entre dois picos e opções. &ldquo;Tente antes de ver&rdquo; pergunta também o tipo de cisão e a regra. O que você errar fica guardado em &ldquo;Revisar erros&rdquo;.</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Massas"><button class="chip" type="button" data-go="p-an" aria-pressed="false">Analisar</button><button class="chip" type="button" data-go="p-tr" aria-pressed="false">Treinar</button><button class="chip" type="button" data-go="p-tb" aria-pressed="false">Livro</button><button class="chip" type="button" data-go="p-aj" aria-pressed="false">Como ler um pico</button><button class="chip" type="button" data-go="p-pq" aria-pressed="false">Entender as quebras</button><button class="chip" type="button" data-go="p-sl" aria-pressed="false">Slides</button><button class="chip" type="button" data-go="p-ca" aria-pressed="false">Calculadora</button></div>
-    <div class="chipbar" id="trmode" role="group" aria-label="Modo de treino"></div>
-    <div class="quiz" id="quiz"></div>
-  </section>
-
-  <section id="p-tb" role="tabpanel" aria-labelledby="t-tb" hidden>
-    <button class="back" type="button" data-go="p-sp">← Espectros</button>
-    <h2 class="scr">Livro</h2>
-    <p class="scrsub">Tabelas do Silverstein: o que saiu (Apêndice C) e o que ficou (Apêndice B).</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Massas"><button class="chip" type="button" data-go="p-an" aria-pressed="false">Analisar</button><button class="chip" type="button" data-go="p-tr" aria-pressed="false">Treinar</button><button class="chip" type="button" data-go="p-tb" aria-pressed="false">Livro</button><button class="chip" type="button" data-go="p-aj" aria-pressed="false">Como ler um pico</button><button class="chip" type="button" data-go="p-pq" aria-pressed="false">Entender as quebras</button><button class="chip" type="button" data-go="p-sl" aria-pressed="false">Slides</button><button class="chip" type="button" data-go="p-ca" aria-pressed="false">Calculadora</button></div>
-    <div class="row">
-      <label for="tbsel">Tabela
-        <select id="tbsel"><option value="C">C: o que saiu (M − pico)</option><option value="B">B: o que ficou (m/z do íon)</option></select>
-      </label>
-      <label for="tbq">Buscar (número ou texto)<input type="text" id="tbq" placeholder="ex.: 28, CO, cetona"></label>
-    </div>
-    <p class="hint" id="tbnote"></p>
-    <div class="tbl"><table><thead id="tbhead"></thead><tbody id="tbbody"></tbody></table></div>
-  </section>
-
-  <section id="p-iv" role="tabpanel" aria-labelledby="t-sp" hidden>
-    <button class="back" type="button" data-go="p-sp">← Espectros</button>
-    <h2 class="scr">Infravermelho (IV)</h2>
-    <p class="scrsub">Cada banda é uma ligação que vibra. Veja as bandas por composto, por número de onda, o guia por região e treine.</p>
-    <div class="chipbar rseg ivseg" role="group" aria-label="Partes do IV">
-      <button class="chip" type="button" data-v="v-comp" aria-pressed="true">Composto</button>
-      <button class="chip" type="button" data-v="v-num" aria-pressed="false">Número de onda</button>
-      <button class="chip" type="button" data-v="v-guia" aria-pressed="false">Guia</button>
-      <button class="chip" type="button" data-v="v-tr" aria-pressed="false">Treinar</button>
-      <button class="chip" type="button" data-v="v-pdf" aria-pressed="false">Ler PDF</button>
-    </div>
-    <div id="v-pdf" hidden>
-      <div class="sppdf" data-sp="iv"></div>
-    </div>
-    <div id="v-comp">
-      <p class="scrsub">Escolha um composto para ver o espectro de IV simulado e a tabela de bandas.</p>
-      <label for="ivQ">Buscar<input class="f-p" type="search" id="ivQ" placeholder="nome, fórmula ou CAS"></label>
-      <label for="ivSel">Composto<select id="ivSel" class="f-p"></select></label>
-      <div data-hlscope id="ivout"></div>
-    </div>
-    <div id="v-num" hidden>
-      <p class="scrsub">Digite uma banda e veja que grupo ela pode ser e com qual outra banda confirmar.</p>
-      <label for="ivq">Número de onda (cm⁻¹)<input class="f-m" type="number" id="ivq" inputmode="numeric" min="400" max="4000" placeholder="ex.: 1712"></label>
-      <div id="ivres"></div>
-    </div>
-    <div id="v-guia" hidden>
-    <div class="how">
-      <b>Como ler um espectro de IV</b>
-      <ol>
-        <li><b>Olhe 1850–1650.</b> Tem banda forte? É C=O. A posição diz o tipo (aldeído, cetona, ácido, éster).</li>
-        <li><b>Olhe 3600–3200.</b> Banda larga é O–H; uma ou duas bandas mais finas são N–H. Se não tem nada, não há O–H nem N–H.</li>
-        <li><b>Olhe perto de 3000.</b> Acima de 3000 é C–H de anel ou C=C; abaixo é C–H de cadeia. Duas bandas em ~2820 e ~2720 indicam aldeído.</li>
-        <li><b>Leve a pista para o MS.</b> O grupo funcional diz quais perdas do Apêndice C fazem sentido.</li>
-      </ol>
-    </div>
-
-    <h2>Por que cada banda aparece onde aparece?</h2><dl class="gl">
-      <div><dt>Posição: ligação mais forte e átomo mais leve vibram mais alto</dt><dd>C≡C ~2150 &gt; C=C ~1650 &gt; C–C ~1000. C–H, N–H e O–H ficam acima de 2500 porque o H é muito leve.</dd></div>
-      <div><dt>Intensidade: depende de quanto o dipolo muda</dt><dd>C=O é sempre forte porque o O é muito eletronegativo. C=C simétrico é fraco ou some, porque a vibração não muda o dipolo.</dd></div>
-      <div><dt>Hibridização do carbono</dt><dd>Quanto mais caráter s, mais alto: C–H sp (alcino) ~3300; C–H sp² (anel, alceno) 3100–3000; C–H sp³ (alcano) 2960–2850. Mesma lógica no C–O: fenol (~1200) fica acima de álcool (~1050).</dd></div>
-      <div><dt>Estiramento × deformação</dt><dd>Estiramento (muda o comprimento da ligação) fica sempre acima da deformação (muda o ângulo). Exemplo do C–H: estiramento 3000–2900; deformação 1470–1350.</dd></div>
-    </dl>
-    <h2>O que desloca uma banda de IV</h2><p class="hint">A faixa da tabela é uma média. Cada fator abaixo empurra a banda para cima ou para baixo. O app já aplica esses fatores nas fichas dos compostos.</p><div id="ivfat"></div>
-
-      <h2 style="margin-top:18px">Guia por região (da apostila)</h2>
-      <div id="ivreg"></div>
-
-      <h2 style="margin-top:18px">Modos de vibração (o que cada nome quer dizer)</h2>
-      <dl class="gl">
-        <div><dt>Estiramento = deformação axial</dt><dd>A ligação estica e encolhe, ao longo do eixo dela. Muda o comprimento. Fica em número de onda mais alto que a deformação angular da mesma ligação.</dd></div>
-        <div><dt>Simétrico × assimétrico</dt><dd>Vale para grupos com 2 ou 3 ligações iguais. <b>Simétrico:</b> as ligações esticam juntas, no mesmo momento. <b>Assimétrico:</b> uma estica enquanto a outra encolhe. O assimétrico tem número de onda mais alto. Ex.: CH₃ assimétrico ~2960 e simétrico ~2880; CH₂ assimétrico ~2926 e simétrico ~2850; NO₂ ~1550–1500 (assimétrico) e ~1370–1300 (simétrico); NH₂ tem 2 bandas.</dd></div>
-        <div><dt>Deformação angular</dt><dd>O ângulo entre ligações muda. Fica abaixo de 1500 (exceto N–H, em 1650–1550). Divide-se em quatro movimentos:</dd></div>
-        <div><dt>Tesoura (scissoring)</dt><dd>Deformação <b>no plano</b>. Os dois H do CH₂ abrem e fecham como as lâminas de uma tesoura. CH₂ ~1465–1455. CH₂ ao lado de C=O: ~1430–1410.</dd></div>
-        <div><dt>Balanço (rocking)</dt><dd>Deformação <b>no plano</b>. O grupo balança de um lado para o outro, como um pêndulo. A cadeia –(CH₂)ₙ– com n ≥ 4 dá banda em ~720.</dd></div>
-        <div><dt>Sacudida (wagging)</dt><dd>Deformação <b>fora do plano</b>. O grupo se move para frente e para trás em relação ao plano. É o C–H fora do plano de anel e alcenos (900–650).</dd></div>
-        <div><dt>Torção (twisting)</dt><dd>Deformação <b>fora do plano</b>. Os dois H do CH₂ giram em sentidos opostos, como torcer um pano. Banda fraca, que quase nunca se usa na análise.</dd></div>
-        <div><dt>Guarda-chuva (umbrella)</dt><dd>É a deformação <b>simétrica</b> do CH₃: os 3 H se abrem e se fecham juntos, como um guarda-chuva. Banda em ~1380–1370. Se for um dubleto, há i-propil ou gem-dimetil. A <b>assimétrica</b> do CH₃ fica em ~1470–1460, junto com a tesoura do CH₂.</dd></div>
-        <div><dt>No plano × fora do plano</dt><dd>&ldquo;Plano&rdquo; é o plano que contém o átomo central e as duas ligações. Tesoura e balanço ficam nele. Sacudida e torção saem dele.</dd></div>
-      </dl>
-      <h2 style="margin-top:18px">Tabela completa de bandas</h2>
-      <p class="hint">Filtre pela faixa (cm⁻¹) ou digite um grupo (ex.: &ldquo;C=O&rdquo;, &ldquo;simétrico&rdquo;, &ldquo;tesoura&rdquo;). A linha &ldquo;Fonte&rdquo; diz de onde vem o valor: <b>apostila</b> e <b>tabela</b> são da disciplina; <b>LibreTexts</b> é a tabela de IV do LibreTexts; &ldquo;referência geral&rdquo; não foi conferida em fonte nomeada, então confirme com o professor.</p>
-      <label for="irtq">Filtrar<input class="f-m" type="text" id="irtq" placeholder="ex.: 1700, éster, guarda-chuva"></label>
-      <div id="irtbl"></div>
-    <p class="hint">Fontes: <i>Apostila de Interpretação de Espectros de IV</i>, a <i>tabela análise org II</i>, a tabela de números de onda do Drive e, nas linhas marcadas, a tabela de IV do LibreTexts. Os números vêm do arquivo de dados da disciplina; as atribuições a cada modo de vibração não foram conferidas, então confira com a tabela do professor.</p>
-
-    </div>
-    <div id="v-tr" hidden>
-      <p class="scrsub">Perguntas sobre bandas e grupos. Escolha, veja o porquê e siga para a próxima.</p>
-      <div id="ivQuiz"></div>
-    </div>
-  </section>
-
-  <section id="p-st" role="region" aria-label="Ajustes" hidden>
-    <button class="back" type="button" data-go="p-in">← Início</button>
-    <h2 class="scr">Ajustes</h2>
-    <div class="menu">
-      <button class="mi" type="button" data-go="p-co"><b>Cor do app</b><span>Escolha o tom que for mais confortável para você.</span></button>
-    </div>
-    <label class="sw"><input type="checkbox" id="stZoom"><span><b>Permitir zoom com os dedos</b><small>Ligado por padrão: use dois dedos para ampliar uma figura. O toque duplo não amplia a tela sem querer. Desligue se preferir travar o zoom.</small></span></label>
-    <label class="sw"><input type="checkbox" id="stSem"><span><b>Treinos sem pistas</b><small>Esconde o nome da molécula e o botão de dica nos treinos de massas, para você tentar antes de ver.</small></span></label>
-    <h3 style="margin:20px 0 6px">Leitura e acessibilidade</h3>
-    <div class="seg" id="stFonte" role="group" aria-label="Tamanho da letra">
-      <button type="button" data-fs="100" aria-pressed="true">Letra normal</button>
-      <button type="button" data-fs="118" aria-pressed="false">Grande</button>
-      <button type="button" data-fs="136" aria-pressed="false">Muito grande</button>
-    </div>
-    <label class="sw"><input type="checkbox" id="stAltoc"><span><b>Alto contraste</b><small>Textos secundários e linhas ficam na cor principal, mais fáceis de ler.</small></span></label>
-    <label class="sw"><input type="checkbox" id="stSemmov"><span><b>Reduzir animações</b><small>Tira as transições. Se o aparelho já pede menos movimento, o app respeita.</small></span></label>
-    <h3 style="margin:20px 0 6px">Uso sem internet</h3>
-    <p class="hint" style="margin:0 0 6px">Depois da primeira abertura com internet, todas as telas funcionam sem conexão. Só os links para fora do app (como o SDBS) precisam de internet.</p>
-    <dl class="cfd" id="offBox" aria-live="polite"></dl>
-    <div class="row"><button class="btn ghost" type="button" id="offChk">Verificar atualização</button></div>
-    <p class="hint" id="offMsg" role="status"></p>
-  </section>
-
-
-  <section id="p-rv" role="region" aria-label="Revisar" hidden>
-    <button class="back" type="button" data-go="p-in">← Início</button>
-    <h2 class="scr">Revisar</h2>
-    <p class="scrsub">As perguntas dos quizzes que você errou voltam aqui depois de 1, 3 e 7 dias. Acertou três vezes seguidas, sai da lista. No máximo 10 por dia.</p>
-    <div id="rvBox"></div>
-    <div class="row"><button class="btn ghost" type="button" data-go="p-tr">Revisar erros de massas</button></div>
-  </section>
-
-  <section id="p-ca" role="region" aria-label="Calculadora" hidden>
-    <button class="back" type="button" data-go="p-sp">← Espectros</button>
-    <h2 class="scr">Calculadora de massa</h2>
-    <div class="chipbar rseg msub" role="group" aria-label="Massas"><button class="chip" type="button" data-go="p-an" aria-pressed="false">Analisar</button><button class="chip" type="button" data-go="p-tr" aria-pressed="false">Treinar</button><button class="chip" type="button" data-go="p-tb" aria-pressed="false">Livro</button><button class="chip" type="button" data-go="p-aj" aria-pressed="false">Como ler um pico</button><button class="chip" type="button" data-go="p-pq" aria-pressed="false">Entender as quebras</button><button class="chip" type="button" data-go="p-sl" aria-pressed="false">Slides</button><button class="chip" type="button" data-go="p-ca" aria-pressed="false">Calculadora</button></div>
-    <p class="hint">Digite a fórmula de um pedaço (por exemplo C3H7O ou CH3). O app soma as massas e mostra o que o livro lista para esse número.</p>
-    <div class="row">
-      <label for="fm">Fórmula<input class="f-p" type="text" id="fm" value="C2H5"></label>
-    </div>
-    <div id="calcout"></div>
-  </section>
-
-
-  <section id="p-aj" role="region" aria-label="Como ler um pico" hidden>
-    <button class="back" type="button" data-go="p-sp">← Espectros</button>
-    <h2 class="scr">Como ler um pico</h2>
-    <div class="chipbar rseg msub" role="group" aria-label="Massas"><button class="chip" type="button" data-go="p-an" aria-pressed="false">Analisar</button><button class="chip" type="button" data-go="p-tr" aria-pressed="false">Treinar</button><button class="chip" type="button" data-go="p-tb" aria-pressed="false">Livro</button><button class="chip" type="button" data-go="p-aj" aria-pressed="false">Como ler um pico</button><button class="chip" type="button" data-go="p-pq" aria-pressed="false">Entender as quebras</button><button class="chip" type="button" data-go="p-sl" aria-pressed="false">Slides</button><button class="chip" type="button" data-go="p-ca" aria-pressed="false">Calculadora</button></div>
+    <h2 class="scr">Teoria de massas</h2>
+    <div class="chipbar rseg msub" role="group" aria-label="Massas" data-bar="mas"></div>
+    <details class="sec tesec" id="te-aj" open><summary>Como ler um pico</summary>
     <div class="how">
       <b>Como ler um pico</b>
       <ol>
@@ -861,14 +721,9 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
         <li><b>Escolha</b> o que combina com o grupo funcional da sua molécula e marque a ligação que quebrou.</li>
       </ol>
     </div>
-    <h2 style="margin-top:18px">Glossário</h2><dl id="glos" class="gl"></dl>
-  </section>
-
-
-  <section id="p-pq" role="region" aria-label="Por que a ligação quebra ali" hidden>
-    <button class="back" type="button" data-go="p-sp">← Espectros</button>
-    <h2 class="scr">Por que a ligação quebra ali?</h2>
-    <div class="chipbar rseg msub" role="group" aria-label="Massas"><button class="chip" type="button" data-go="p-an" aria-pressed="false">Analisar</button><button class="chip" type="button" data-go="p-tr" aria-pressed="false">Treinar</button><button class="chip" type="button" data-go="p-tb" aria-pressed="false">Livro</button><button class="chip" type="button" data-go="p-aj" aria-pressed="false">Como ler um pico</button><button class="chip" type="button" data-go="p-pq" aria-pressed="false">Entender as quebras</button><button class="chip" type="button" data-go="p-sl" aria-pressed="false">Slides</button><button class="chip" type="button" data-go="p-ca" aria-pressed="false">Calculadora</button></div>
+    <h3 class="sth">Glossário</h3><dl id="glos" class="gl"></dl>
+  </details>
+    <details class="sec tesec" id="te-pq"><summary>Por que a ligação quebra ali?</summary>
     <p class="hint">Cada quebra tem um motivo. Estas regras explicam quase todas as quebras do app. O cartão de cada pico traz o &ldquo;Por que quebra aqui?&rdquo; com a regra aplicada.</p>
 
     <div class="rule"><h3>Contagem de elétrons: quanto vale cada coisa</h3>
@@ -954,73 +809,185 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <div class="mdl"><h3>4. Perda de H· (M − 1)</h3><svg viewBox="0 0 340 170" role="img" aria-label="Perda de H: o heteroátomo forma a ligação dupla com o carbono e o H sai como radical" xmlns="http://www.w3.org/2000/svg" class="mdl2" style="width:100%;height:auto;max-width:520px"><text x="40" y="98" font-size="17" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">Y</text><text x="53" y="86" font-size="12" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">+</text><circle cx="40" cy="72" r="2.2" fill="currentColor"/><line x1="52" y1="95" x2="86" y2="95" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="104" y="99" font-size="16" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">C</text><line x1="104" y1="86" x2="104" y2="52" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="104" y="42" font-size="16" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">H</text><path d="M40 70 Q54 42 84 84" fill="none" stroke="var(--arrow)" stroke-width="1.9" stroke-linecap="round"/><path d="M84 84 L76.4 80.2" stroke="var(--arrow)" stroke-width="1.9" stroke-linecap="round" fill="none"/><text x="54" y="38" font-size="12" text-anchor="middle" fill="var(--arrow)" font-weight="600" font-family="IBM Plex Sans,system-ui,sans-serif">1</text><path d="M108 70 Q130 46 116 44" fill="none" stroke="var(--arrow)" stroke-width="1.9" stroke-linecap="round"/><path d="M116 44 L124.0 41.1" stroke="var(--arrow)" stroke-width="1.9" stroke-linecap="round" fill="none"/><text x="130" y="42" font-size="12" text-anchor="middle" fill="var(--arrow)" font-weight="600" font-family="IBM Plex Sans,system-ui,sans-serif">2</text><text x="200" y="98" font-size="22" text-anchor="middle" fill="var(--muted)" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">→</text><text x="246" y="98" font-size="17" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">Y</text><text x="259" y="86" font-size="12" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">+</text><line x1="258.0" y1="98.0" x2="288.0" y2="98.0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="258.0" y1="92.0" x2="288.0" y2="92.0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="304" y="99" font-size="16" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">C</text><text x="256" y="146" font-size="16" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">+</text><circle cx="284" cy="144" r="2.2" fill="currentColor"/><text x="302" y="148" font-size="14" text-anchor="middle" fill="currentColor" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">H·: 1 e⁻</text><text x="70" y="112" font-size="10" text-anchor="middle" fill="var(--muted)" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">2 e⁻</text><text x="122" y="70" font-size="10" text-anchor="middle" fill="var(--muted)" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">2 e⁻</text><text x="18" y="76" font-size="10" text-anchor="middle" fill="var(--muted)" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">1 e⁻</text><text x="273" y="114" font-size="10" text-anchor="middle" fill="var(--muted)" font-weight="400" font-family="IBM Plex Sans,system-ui,sans-serif">4 e⁻ (dupla)</text></svg><p><b>1:</b> o elétron sozinho de Y forma a ligação dupla. <b>2:</b> 1 elétron da ligação C–H vai com o H, que sai como radical. Aparece em: dimetiletilamina (72), pentanal (85).</p></div>
     <p class="hint">Estes são modelos. Se o seu professor desenhar de outro jeito, siga o dele.</p>
   </div>
-  </section>
-
-  <section id="p-sl" role="region" aria-label="Slides de mecanismos" hidden>
-    <button class="back" type="button" data-go="p-sp">← Espectros</button>
-    <h2 class="scr">Slides de mecanismos</h2>
-    <div class="chipbar rseg msub" role="group" aria-label="Massas"><button class="chip" type="button" data-go="p-an" aria-pressed="false">Analisar</button><button class="chip" type="button" data-go="p-tr" aria-pressed="false">Treinar</button><button class="chip" type="button" data-go="p-tb" aria-pressed="false">Livro</button><button class="chip" type="button" data-go="p-aj" aria-pressed="false">Como ler um pico</button><button class="chip" type="button" data-go="p-pq" aria-pressed="false">Entender as quebras</button><button class="chip" type="button" data-go="p-sl" aria-pressed="false">Slides</button><button class="chip" type="button" data-go="p-ca" aria-pressed="false">Calculadora</button></div>
+  </details>
+    <details class="sec tesec" id="te-sl"><summary>Slides de mecanismos (Prof. Jeronimo)</summary>
     <p class="hint">Resumo do deck &ldquo;Análise Orgânica II, Espectroscopia de Massas&rdquo; (Prof. Jeronimo). Texto e figuras vêm dos slides dele. Toque na figura para ampliar.</p>
     <div class="rule"><h3>Regras do slide (resumo)</h3>
       <ul><li><b>Regra do nitrogênio:</b> massa par = nenhum N ou N par. Massa ímpar = N ímpar. Íon molecular par: quebra de ligação simples dá fragmento ímpar. Íon molecular ímpar: dá fragmento par. O fragmento deve conter todos os N.</li><li><b>M+• mais intenso:</b> aromáticos &gt; alquenos conjugados &gt; cíclicos &gt; sulfetos &gt; alcanos normais curtos &gt; mercaptanas.</li><li><b>Por grupo:</b> cetonas &gt; aminas &gt; ésteres &gt; éteres &gt; ácidos = aldeídos = amidas = halogenetos.</li><li><b>Em geral não aparece M+•:</b> álcoois alifáticos, nitritos, nitratos, nitro, nitrilas e compostos muito ramificados.</li><li><b>Elétron mais fácil de tirar:</b> não ligante &gt; π &gt; σ.</li></ul></div>
     <div id="slBody"></div>
     <p class="hint">Fonte: slides de aula de Análise Orgânica (IFRJ). Os resumos em texto foram escritos para o app; as figuras são dos slides.</p>
+  </details>
   </section>
 
-  <section id="p-pg" role="region" aria-label="Salvar e levar o progresso" hidden>
-    <button class="back" data-go="p-in">← Início</button>
-    <h2 class="scr">Salvar e levar o progresso</h2>
-    <p class="hint">O que você marca aqui (estudados, notas, revisões, cor) fica só neste aparelho e neste navegador. O app do GitHub e a versão aberta no Claude são cópias separadas e não conversam. Para levar de um para o outro: gere o código, copie, e cole no outro.</p>
-    <div class="row"><button class="btn" id="pgGen" type="button">1. Gerar código</button><button class="btn ghost" id="pgCopy" type="button">Copiar</button></div>
-    <textarea id="pgTxt" rows="5" aria-label="Código do progresso" style="width:100%;margin:10px 0;font-family:var(--mono);font-size:.8rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px"></textarea>
-    <div class="row"><button class="btn" id="pgImp" type="button">2. Importar o código colado</button></div>
-    <p class="hint">Importar junta com o que já existe e não apaga nada.</p>
-    <p class="hint" id="pgSyHint" hidden>Se preferir não levar código de um aparelho para o outro, use <b>Sincronizar entre aparelhos</b>, no Início.</p>
-    <div id="pgMsg" role="status"></div>
+  <section id="p-tr" role="tabpanel" aria-labelledby="t-tr" hidden>
+    <button class="back" type="button" data-go="p-sp">← Espectros</button>
+    <h2 class="scr">Treinar massas</h2>
+    <p class="scrsub">Cada rodada tem 5 cartões e depois você pode parar. Escolha um modo. &ldquo;Qual saiu?&rdquo; mostra a perda entre dois picos e opções. &ldquo;Tente antes de ver&rdquo; pergunta também o tipo de cisão e a regra. O que você errar fica guardado em &ldquo;Revisar erros&rdquo;.</p>
+    <div class="chipbar rseg msub" role="group" aria-label="Massas" data-bar="mas"></div>
+    <div class="chipbar" id="trmode" role="group" aria-label="Modo de treino"></div>
+    <div class="quiz" id="quiz"></div>
   </section>
 
-  <section id="p-co" role="region" aria-label="Cor do app" hidden>
-    <button class="back" data-go="p-in">← Início</button>
-    <h2 class="scr">Cor do app</h2>
-    <div class="pal" id="pals"></div>
-  </section>
-
-  <section id="p-es" role="region" aria-label="Espectro novo" hidden>
-    <h2 class="scr">Espectro novo (modo detetive)</h2>
-    <div class="chipbar rseg msub" role="group" aria-label="Compostos"><button class="chip" type="button" data-go="p-cp" aria-pressed="false">Fichas</button><button class="chip" type="button" data-go="p-ic" aria-pressed="false">Identificar</button><button class="chip" type="button" data-go="p-es" aria-pressed="false">Espectro novo</button></div>
-    <p class="hint">Para um composto que você ainda não resolveu. Preencha o que tiver. O app dá pistas, não a resposta: quem decide é você.</p>
+  <section id="p-tb" role="tabpanel" aria-labelledby="t-tb" hidden>
+    <button class="back" type="button" data-go="p-sp">← Espectros</button>
+    <h2 class="scr">Livro</h2>
+    <p class="scrsub">Tabelas do Silverstein: o que saiu (Apêndice C) e o que ficou (Apêndice B).</p>
+    <div class="chipbar rseg msub" role="group" aria-label="Massas" data-bar="mas"></div>
     <div class="row">
-      <label for="esF">Fórmula (opcional)<input type="text" id="esF" placeholder="ex.: C6H12O2"></label>
-      <label for="esM">Massa molar (M)<input type="number" id="esM" class="f-m" inputmode="numeric" placeholder="ex.: 116"></label>
+      <label for="tbsel">Tabela
+        <select id="tbsel"><option value="C">C: o que saiu (M − pico)</option><option value="B">B: o que ficou (m/z do íon)</option></select>
+      </label>
+      <label for="tbq">Buscar (número ou texto)<input type="text" id="tbq" placeholder="ex.: 28, CO, cetona"></label>
     </div>
-    <label for="esP">Picos do espectro de massas<input type="text" id="esP" class="f-p" placeholder="ex.: 87, 85, 74, 57, 43, 29"></label>
-    <label for="esI" style="margin-top:10px">Bandas do IV (cm⁻¹)<input type="text" id="esI" class="f-p" placeholder="ex.: 2960, 1743, 1250"></label>
-    <div id="esOut" style="margin-top:16px"></div>
+    <p class="hint" id="tbnote"></p>
+    <div class="tbl"><table><thead id="tbhead"></thead><tbody id="tbbody"></tbody></table></div>
   </section>
 
-  <section id="p-av" role="region" aria-label="Avisar erro ou sugestão" hidden>
+  <section id="p-iv" role="tabpanel" aria-labelledby="t-sp" hidden>
+    <button class="back" type="button" data-go="p-sp">← Espectros</button>
+    <h2 class="scr">Infravermelho (IV)</h2>
+    <p class="scrsub">Cada banda é uma ligação que vibra. Veja as bandas por composto, por número de onda, o guia por região e treine.</p>
+    <div class="chipbar rseg ivseg" role="group" aria-label="Partes do IV">
+      <button class="chip" type="button" data-v="v-comp" aria-pressed="true">Composto</button>
+      <button class="chip" type="button" data-v="v-num" aria-pressed="false">Número de onda</button>
+      <button class="chip" type="button" data-v="v-guia" aria-pressed="false">Guia</button>
+      <button class="chip" type="button" data-v="v-tr" aria-pressed="false">Treinar</button>
+      <button class="chip" type="button" data-v="v-pdf" aria-pressed="false">Ler PDF</button>
+    </div>
+    <div id="v-pdf" hidden>
+      <div class="sppdf" data-sp="iv"></div>
+    </div>
+    <div id="v-comp">
+      <p class="scrsub">Escolha um composto para ver o espectro de IV simulado e a tabela de bandas.</p>
+      <label for="ivQ">Buscar<input class="f-p" type="search" id="ivQ" placeholder="nome, fórmula ou CAS"></label>
+      <label for="ivSel">Composto<select id="ivSel" class="f-p"></select></label>
+      <div data-hlscope id="ivout"></div>
+    </div>
+    <div id="v-num" hidden>
+      <p class="scrsub">Digite uma banda e veja que grupo ela pode ser e com qual outra banda confirmar.</p>
+      <label for="ivq">Número de onda (cm⁻¹)<input class="f-m" type="number" id="ivq" inputmode="numeric" min="400" max="4000" placeholder="ex.: 1712"></label>
+      <div id="ivres"></div>
+    </div>
+    <div id="v-guia" hidden>
+    <div class="how">
+      <b>Como ler um espectro de IV</b>
+      <ol>
+        <li><b>Olhe 1850–1650.</b> Tem banda forte? É C=O. A posição diz o tipo (aldeído, cetona, ácido, éster).</li>
+        <li><b>Olhe 3600–3200.</b> Banda larga é O–H; uma ou duas bandas mais finas são N–H. Se não tem nada, não há O–H nem N–H.</li>
+        <li><b>Olhe perto de 3000.</b> Acima de 3000 é C–H de anel ou C=C; abaixo é C–H de cadeia. Duas bandas em ~2820 e ~2720 indicam aldeído.</li>
+        <li><b>Leve a pista para o MS.</b> O grupo funcional diz quais perdas do Apêndice C fazem sentido.</li>
+      </ol>
+    </div>
+
+    <h2>Por que cada banda aparece onde aparece?</h2><dl class="gl">
+      <div><dt>Posição: ligação mais forte e átomo mais leve vibram mais alto</dt><dd>C≡C ~2150 &gt; C=C ~1650 &gt; C–C ~1000. C–H, N–H e O–H ficam acima de 2500 porque o H é muito leve.</dd></div>
+      <div><dt>Intensidade: depende de quanto o dipolo muda</dt><dd>C=O é sempre forte porque o O é muito eletronegativo. C=C simétrico é fraco ou some, porque a vibração não muda o dipolo.</dd></div>
+      <div><dt>Hibridização do carbono</dt><dd>Quanto mais caráter s, mais alto: C–H sp (alcino) ~3300; C–H sp² (anel, alceno) 3100–3000; C–H sp³ (alcano) 2960–2850. Mesma lógica no C–O: fenol (~1200) fica acima de álcool (~1050).</dd></div>
+      <div><dt>Estiramento × deformação</dt><dd>Estiramento (muda o comprimento da ligação) fica sempre acima da deformação (muda o ângulo). Exemplo do C–H: estiramento 3000–2900; deformação 1470–1350.</dd></div>
+    </dl>
+    <h2>O que desloca uma banda de IV</h2><p class="hint">A faixa da tabela é uma média. Cada fator abaixo empurra a banda para cima ou para baixo. O app já aplica esses fatores nas fichas dos compostos.</p><div id="ivfat"></div>
+
+      <h2 style="margin-top:18px">Guia por região (da apostila)</h2>
+      <div id="ivreg"></div>
+
+      <h2 style="margin-top:18px">Modos de vibração (o que cada nome quer dizer)</h2>
+      <dl class="gl">
+        <div><dt>Estiramento = deformação axial</dt><dd>A ligação estica e encolhe, ao longo do eixo dela. Muda o comprimento. Fica em número de onda mais alto que a deformação angular da mesma ligação.</dd></div>
+        <div><dt>Simétrico × assimétrico</dt><dd>Vale para grupos com 2 ou 3 ligações iguais. <b>Simétrico:</b> as ligações esticam juntas, no mesmo momento. <b>Assimétrico:</b> uma estica enquanto a outra encolhe. O assimétrico tem número de onda mais alto. Ex.: CH₃ assimétrico ~2960 e simétrico ~2880; CH₂ assimétrico ~2926 e simétrico ~2850; NO₂ ~1550–1500 (assimétrico) e ~1370–1300 (simétrico); NH₂ tem 2 bandas.</dd></div>
+        <div><dt>Deformação angular</dt><dd>O ângulo entre ligações muda. Fica abaixo de 1500 (exceto N–H, em 1650–1550). Divide-se em quatro movimentos:</dd></div>
+        <div><dt>Tesoura (scissoring)</dt><dd>Deformação <b>no plano</b>. Os dois H do CH₂ abrem e fecham como as lâminas de uma tesoura. CH₂ ~1465–1455. CH₂ ao lado de C=O: ~1430–1410.</dd></div>
+        <div><dt>Balanço (rocking)</dt><dd>Deformação <b>no plano</b>. O grupo balança de um lado para o outro, como um pêndulo. A cadeia –(CH₂)ₙ– com n ≥ 4 dá banda em ~720.</dd></div>
+        <div><dt>Sacudida (wagging)</dt><dd>Deformação <b>fora do plano</b>. O grupo se move para frente e para trás em relação ao plano. É o C–H fora do plano de anel e alcenos (900–650).</dd></div>
+        <div><dt>Torção (twisting)</dt><dd>Deformação <b>fora do plano</b>. Os dois H do CH₂ giram em sentidos opostos, como torcer um pano. Banda fraca, que quase nunca se usa na análise.</dd></div>
+        <div><dt>Guarda-chuva (umbrella)</dt><dd>É a deformação <b>simétrica</b> do CH₃: os 3 H se abrem e se fecham juntos, como um guarda-chuva. Banda em ~1380–1370. Se for um dubleto, há i-propil ou gem-dimetil. A <b>assimétrica</b> do CH₃ fica em ~1470–1460, junto com a tesoura do CH₂.</dd></div>
+        <div><dt>No plano × fora do plano</dt><dd>&ldquo;Plano&rdquo; é o plano que contém o átomo central e as duas ligações. Tesoura e balanço ficam nele. Sacudida e torção saem dele.</dd></div>
+      </dl>
+      <h2 style="margin-top:18px">Tabela completa de bandas</h2>
+      <p class="hint">Filtre pela faixa (cm⁻¹) ou digite um grupo (ex.: &ldquo;C=O&rdquo;, &ldquo;simétrico&rdquo;, &ldquo;tesoura&rdquo;). A linha &ldquo;Fonte&rdquo; diz de onde vem o valor: <b>apostila</b> e <b>tabela</b> são da disciplina; <b>LibreTexts</b> é a tabela de IV do LibreTexts; &ldquo;referência geral&rdquo; não foi conferida em fonte nomeada, então confirme com o professor.</p>
+      <label for="irtq">Filtrar<input class="f-m" type="text" id="irtq" placeholder="ex.: 1700, éster, guarda-chuva"></label>
+      <div id="irtbl"></div>
+    <p class="hint">Fontes: <i>Apostila de Interpretação de Espectros de IV</i>, a <i>tabela análise org II</i>, a tabela de números de onda do Drive e, nas linhas marcadas, a tabela de IV do LibreTexts. Os números vêm do arquivo de dados da disciplina; as atribuições a cada modo de vibração não foram conferidas, então confira com a tabela do professor.</p>
+
+    </div>
+    <div id="v-tr" hidden>
+      <p class="scrsub">Perguntas sobre bandas e grupos. Escolha, veja o porquê e siga para a próxima.</p>
+      <div id="ivQuiz"></div>
+    </div>
+  </section>
+
+  <section id="p-st" role="region" aria-label="Ajustes" hidden>
     <button class="back" type="button" data-go="p-in">← Início</button>
-    <h2 class="scr">Avisar erro ou sugestão</h2>
-    <p class="scrsub">Seu aviso vai para a planilha de mudanças do app, marcado como vindo de você.</p>
-    <form id="avF" class="el avf">
-      <div class="avr" role="group" aria-label="Tipo"><label><input type="radio" name="avT" value="Erro" checked> Erro</label><label><input type="radio" name="avT" value="Sugestão"> Sugestão</label></div>
-      <label>Em que tela?<select id="avTela"><option>Geral</option><option>Início</option><option>Compostos</option><option>Identificar</option><option>Espectros</option><option>Ensaios</option><option>Solubilidade</option><option>Problemas</option><option>Outra</option></select></label>
-      <label>O que aconteceu ou o que você quer?<textarea id="avM" rows="5" maxlength="1500" required placeholder="Ex.: na ficha da anilina, o CAS está errado."></textarea></label>
-      <label>Seu contato (opcional)<input id="avC" type="text" maxlength="120" autocomplete="off" placeholder="e-mail ou nome"></label>
-      <button class="btn" type="submit">Enviar aviso</button>
-      <p id="avS" class="hint" role="status"></p>
-    </form>
-    <details class="sec"><summary>Avisos guardados neste aparelho</summary><div id="avL"></div></details>
+    <h2 class="scr">Ajustes</h2>
+
+    <h3 class="sth">Aparência</h3>
+    <p class="stl">Cor do app</p>
+    <div class="pal" id="pals"></div>
+    <p class="stl">Tamanho da letra</p>
+    <div class="seg" id="stFonte" role="group" aria-label="Tamanho da letra">
+      <button type="button" data-fs="100" aria-pressed="true">Normal</button>
+      <button type="button" data-fs="118" aria-pressed="false">Grande</button>
+      <button type="button" data-fs="136" aria-pressed="false">Muito grande</button>
+    </div>
+    <label class="sw"><input type="checkbox" id="stAltoc"><span><b>Alto contraste</b><small>Textos secundários e linhas ficam na cor principal, mais fáceis de ler.</small></span></label>
+    <label class="sw"><input type="checkbox" id="stSemmov"><span><b>Reduzir animações</b><small>Tira as transições. Se o aparelho já pede menos movimento, o app respeita.</small></span></label>
+
+    <h3 class="sth">Uso</h3>
+    <label class="sw"><input type="checkbox" id="stSem"><span><b>Treinos sem pistas</b><small>Esconde o nome da molécula e o botão de dica nos treinos de massas, para você tentar antes de ver.</small></span></label>
+    <label class="sw"><input type="checkbox" id="stZoom"><span><b>Zoom com os dedos</b><small>Ligado: use dois dedos para ampliar uma figura. Desligue para travar o zoom.</small></span></label>
+
+    <h3 class="sth" id="stDados">Seus dados e aparelhos</h3>
+    <p class="hint">O que você marca (estudados, notas, revisões, aulas) fica neste aparelho. Para ver o mesmo no celular e no computador, use o código de sincronização. Não precisa de nome, e-mail nem cadastro.</p>
+    <div id="syBox"></div>
+    <details class="sec" id="stManual"><summary>Levar o progresso com um texto copiado</summary>
+      <p class="hint">Para quem não quer sincronizar: gere o texto, copie e cole no outro aparelho. Importar junta com o que já existe e não apaga nada.</p>
+      <div class="row"><button class="btn" id="pgGen" type="button">1. Gerar código</button><button class="btn ghost" id="pgCopy" type="button">Copiar</button></div>
+      <textarea id="pgTxt" rows="5" aria-label="Código do progresso" class="pgtxt"></textarea>
+      <div class="row"><button class="btn" id="pgImp" type="button">2. Importar o código colado</button></div>
+      <div id="pgMsg" role="status"></div>
+    </details>
+    <details class="sec"><summary>O que é guardado e onde</summary>
+      <p class="hint" style="margin-top:8px">O app salva tudo primeiro neste aparelho e funciona sem internet. Com a sincronização ligada, ele manda uma cópia para o servidor.</p>
+      <p class="hint">O que vai é só o que você produz no app: o que marcou como estudado, as revisões, as aulas práticas, as notas e as análises salvas. O texto é cifrado aqui, no seu aparelho, antes de sair, e a chave vem do seu código. O servidor guarda um bloco que ele mesmo não consegue ler.</p>
+      <p class="hint">O app não pede nome, e-mail, telefone nem data de nascimento. O código não vai para o servidor, só uma impressão digital dele. Como em qualquer site, o provedor do servidor vê o endereço de IP de quem se conecta; o app não usa nem guarda isso.</p>
+      <p class="hint">Se duas pessoas usarem o mesmo código, as duas veem e alteram os mesmos dados. Não compartilhe o código.</p>
+    </details>
+
+    <h3 class="sth">Sem internet</h3>
+    <p class="hint">Depois da primeira abertura com internet, todas as telas funcionam sem conexão. Só os links para fora do app (como o SDBS) precisam de internet.</p>
+    <dl class="cfd" id="offBox" aria-live="polite"></dl>
+    <div class="row"><button class="btn ghost" type="button" id="offChk">Verificar atualização</button></div>
+    <p class="hint" id="offMsg" role="status"></p>
   </section>
 
-  <section id="p-fo" role="region" aria-label="Fontes, avisos e créditos" hidden>
+
+
+  <section id="p-rv" role="region" aria-label="Revisar" hidden>
+    <button class="back" type="button" data-go="p-in">← Início</button>
+    <h2 class="scr">Revisar</h2>
+    <p class="scrsub">As perguntas dos quizzes que você errou voltam aqui depois de 1, 3 e 7 dias. Acertou três vezes seguidas, sai da lista. No máximo 10 por dia.</p>
+    <div id="rvBox"></div>
+    <div class="row"><button class="btn ghost" type="button" data-go="p-tr">Revisar erros de massas</button></div>
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+  <section id="p-fo" role="region" aria-label="Sobre o Anaquim" hidden>
     <button class="back" data-go="p-in">← Início</button>
-    <h2 class="scr">Fontes, avisos e créditos</h2>
+    <h2 class="scr">Sobre o Anaquim</h2>
     <p class="hint">Versão do app: <b class="mono" id="vers"></b>. Se a data não for a mais recente, feche e abra o app duas vezes.</p>
     <div class="seg" id="foTabs" role="group" aria-label="Seções desta página">
       <button type="button" data-fo="fo-fontes" aria-pressed="true">Fontes</button>
       <button type="button" data-fo="fo-avisos" aria-pressed="false">Avisos</button>
       <button type="button" data-fo="fo-creditos" aria-pressed="false">Créditos</button>
+      <button type="button" data-fo="fo-avisar" aria-pressed="false">Avisar erro</button>
     </div>
     <div id="fo-fontes" class="fopane">
       <p>Fonte das tabelas: Silverstein, Webster, Kiemle, Bryce. Spectrometric Identification of Organic Compounds, 8ª ed. (2014), Apêndice B (p. 67–68) e Apêndice C (p. 69–70). O livro avisa que as listas são sugestivas e não completas. Nas entradas com anel, o nome e a estrutura são a leitura que Claude fez do desenho do livro; confira na página indicada. "+ H" ou "+ 2H" indica rearranjo com transferência de hidrogênio. Nas estruturas, o desenho mostra o esqueleto; a carga + e o elétron desemparelhado (·) aparecem na legenda e, quando possível, no desenho.</p>
@@ -1037,6 +1004,18 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
     <div id="fo-creditos" class="fopane" hidden>
       <p>Feito por Camila Silva, aluna de Bacharelado em Química do IFRJ, como material de apoio ao estudo de Análise Orgânica.</p>
       <p>Conteúdo de ensaios: Plataforma QO é Vida, do Prof. Marcelo Sierpe Pedrosa (IFRJ). Teoria de RMN: resumo dos slides do Prof. Jeronimo (IFRJ). Dados de espectros e constantes físicas: SDBS (AIST, Japão), PubChem (NIH, EUA) e as tabelas de Silverstein et al. citadas em Fontes. Estruturas e cálculos: RDKit (licença BSD). Fontes de texto: IBM Plex (SIL Open Font License).</p>
+    </div>
+      <div id="fo-avisar" class="fopane" hidden>
+      <p class="scrsub">Achou um erro ou tem uma sugestão? Seu aviso vai para a planilha de mudanças do app, marcado como vindo de você.</p>
+      <form id="avF" class="el avf">
+      <div class="avr" role="group" aria-label="Tipo"><label><input type="radio" name="avT" value="Erro" checked> Erro</label><label><input type="radio" name="avT" value="Sugestão"> Sugestão</label></div>
+      <label>Em que tela?<select id="avTela"><option>Geral</option><option>Início</option><option>Compostos</option><option>Identificar</option><option>Espectros</option><option>Ensaios</option><option>Solubilidade</option><option>Problemas</option><option>Outra</option></select></label>
+      <label>O que aconteceu ou o que você quer?<textarea id="avM" rows="5" maxlength="1500" required placeholder="Ex.: na ficha da anilina, o CAS está errado."></textarea></label>
+      <label>Seu contato (opcional)<input id="avC" type="text" maxlength="120" autocomplete="off" placeholder="e-mail ou nome"></label>
+      <button class="btn" type="submit">Enviar aviso</button>
+      <p id="avS" class="hint" role="status"></p>
+    </form>
+      <details class="sec"><summary>Avisos guardados neste aparelho</summary><div id="avL"></div></details>
     </div>
   </section>
 
@@ -1386,7 +1365,7 @@ function analyze(){
 }
 $('#go').onclick=()=>{curEx=null;msC=null;pkSel=null;buildChips();analyze();anStage(true);};
 $('#an-back').onclick=()=>anStage(false);
-function anStage(r){$('#an-in').hidden=r;$('#an-res').hidden=!r;window.scrollTo(0,0);if(!r)drawHoje();}
+function anStage(r){$('#an-in').hidden=r;$('#an-res').hidden=!r;window.scrollTo(0,0);}
 ['#inM','#inP'].forEach(s=>$(s).addEventListener('input',()=>{analyze();}));
 
 /* ---------- aba Treinar ---------- */
@@ -1673,25 +1652,6 @@ function trDraw(){
   const hh=$('#trh');if(hh)hh.onclick=()=>{TR.hint=true;trDraw();};
 }
 
-/* ---------- Hoje ---------- */
-const ORD=[6,9,5,10,12,11,4,1,3,8,7,2];
-function drawHoje(){
-  const box=$('#hoje');if(!box)return;
-  const due=repAvail(),dq=repqAvail(),next=ORD.find(n=>!isStud(n)),st=LS.get('massas-stud',[]),last=st.length?st[st.length-1]:null;
-  let h='<h3>Hoje</h3><ol class="hoje">';
-  h+='<li>'+((due||dq)?'<b>Revisar</b>: '+(dq?'<button class="btn" data-hj="rq" type="button">'+dq+' pergunta'+(dq>1?'s':'')+'</button> ':'')+(due?'<button class="btn" data-hj="rev" type="button">'+due+' erro'+(due>1?'s':'')+' de massas</button>':'')+' <span class="mut">no máximo '+REV_MAX+' por dia</span>':'Revisão: nada vencido hoje.')+'</li>';
-  h+='<li>'+(next?'<button class="btn" data-hj="ex" data-n="'+next+'" type="button">Estudar o Ex. '+next+'</button> '+esc(EX.find(e=>e.n===next).nome)+'. Marque como estudado no fim.':'Todos os exercícios estão marcados como estudados.')+'</li>';
-  h+='<li>'+(last?'<button class="btn ghost" data-hj="sim" data-n="'+last+'" type="button">Simulado do Ex. '+last+'</button> o último que você estudou, sem consultar.':'O simulado aparece depois que você marcar um exercício como estudado.')+'</li></ol>';
-  box.innerHTML=h;
-}
-document.addEventListener('click',ev=>{
-  const b=ev.target.closest('[data-hj]');if(!b)return;const k=b.dataset.hj,n=+b.dataset.n;
-  if(k==='rev'){TR.mode='rev';TR.revAll=false;go('p-tr');}
-  else if(k==='rq'){go('p-rv');}
-  else if(k==='ex'){go('p-an');const e=EX.find(x=>x.n===n);curEx=n;pkSel=null;$('#inM').value=e.M;$('#inP').value=e.peaks.filter(p=>p!==e.M).join(', ');buildChips();analyze();anStage(true);}
-  else if(k==='sim'){TR.mode='sm';go('p-tr');$('#smsel').value=String(n);$('#smmod').value='1';$('#smgo').click();}
-});
-
 /* ---------- Elétron: de onde sai? ---------- */
 function ionNext(){
   if(sessGate())return;
@@ -1866,7 +1826,7 @@ function pgInit(){
     buildChips();trLabel();drawPerg();pgMsg('Importado ('+n+' itens juntados com o que já existia). Nada foi apagado.');};
 }
 
-/* ---------- Espectro novo (detetive) ---------- */
+/* ---------- Pistas dos espectros (usadas no resultado do Identificar) ---------- */
 function coHint(v){
   if(v>=1750&&v<=1735)return 'éster saturado (~1740)';
   if(v<1735&&v>=1720)return 'aldeído ou éster saturado (1740–1720)';
@@ -1877,46 +1837,6 @@ function coHint(v){
 }
 const MSD={15:'CH3⁺',29:'C2H5⁺ ou HC≡O⁺',30:'CH2=NH2⁺ (amina primária)',31:'CH2=OH⁺ (álcool primário)',43:'C3H7⁺ ou CH3–C≡O⁺',44:'CH2=CH–OH⁺· (McLafferty de aldeído) ou CH3CH=NH2⁺',45:'CH3CH=OH⁺ (álcool secundário)',57:'C4H9⁺ ou CH3CH2–C≡O⁺',58:'McLafferty de metil-cetona, ou CH2=N⁺(CH3)2 (amina)',60:'McLafferty de ácido carboxílico (CH2=C(OH)2⁺·)',74:'McLafferty de éster metílico',77:'C6H5⁺ (anel monossubstituído)',91:'C7H7⁺ (benzila/tropílio: alquilbenzeno)',105:'C6H5–C≡O⁺ (benzoíla)'};
 const MSL={1:'H·',15:'CH3·',17:'HO·',18:'H2O',26:'HC≡CH',27:'HC≡N',28:'CO ou CH2=CH2',29:'CH3CH2· ou ·CHO',31:'·OCH3',42:'CH2=CH–CH3',43:'C3H7· ou CH3–C≡O·',44:'CO2',45:'·OCH2CH3 ou ·COOH'};
-function esRun(){
-  const out=[];
-  const F=$('#esF').value.trim().replace(/\s+/g,''),M=parseInt($('#esM').value,10);
-  const peaks=[...new Set(($('#esP').value.match(/\d+/g)||[]).map(Number))].filter(p=>p>0).sort((a,b)=>b-a);
-  const ir=($('#esI').value.match(/\d+/g)||[]).map(Number).filter(v=>v>=400&&v<=4000);
-  if(F){const f=parseF(F);if(f){const X=(f.F||0)+(f.Cl||0)+(f.Br||0)+(f.I||0),idh=((2*(f.C||0)+2+(f.N||0)-(f.H||0)-X)/2);
-    out.push('<div class="rule"><h3>Fórmula</h3><p><b>IDH = '+idh+'</b> (anéis + ligações π). '+(idh===0?'Sem anel, sem C=O, sem C=C.':idh===1?'1 anel ou 1 dupla (C=O, C=C).':idh>=4?'IDH ≥ 4 sugere anel aromático.':'')+'</p>'+(f.N?'<p>Tem N: M ímpar é esperado.</p>':'')+'</div>');}
-    else out.push('<div class="rule"><h3>Fórmula</h3><p>Não entendi a fórmula. Use letras como C6H12O2.</p></div>');}
-  if(M)out.push('<div class="rule"><h3>Regra do nitrogênio</h3><p>M = '+M+' é <b>'+(M%2?'ímpar → número ímpar de N':'par → zero ou número par de N')+'</b>.</p></div>');
-  if(ir.length){
-    let h='<div class="rule"><h3>IV: o que cada banda sugere</h3>';const fl={};
-    ir.forEach(v=>{const m=irHits(v).slice(0,4);
-      h+='<p><b class="mono">'+v+'</b>: '+(m.length?m.map(r=>r[2]+(r[3]?' <span style="color:var(--muted)">('+r[3]+')</span>':'')).join('; '):irNone(v));
-      if(v>=1650&&v<=1850){const c=coHint(v);if(c)h+=' <b>Valor: '+c+'.</b>';fl.co=v;}
-      h+='</p>';
-      if(v>=2700&&v<=2730)fl.ald=1;if(v>=3200&&v<=3650)fl.oh=1;if(v>=1450&&v<=1610)fl.ar=1;if(v>=3000&&v<3100)fl.sp2=1;if(v>=3300&&v<=3500)fl.nh=1;});
-    const g=[];
-    if(fl.co&&fl.ald)g.push('C=O + C–H em ~2720: <b>aldeído</b>.');
-    else if(fl.co&&fl.co>=1735&&fl.co<=1750)g.push('C=O em ~1740, sem 2720: <b>éster</b> (confira C–O em ~1250 e ~1030).');
-    else if(fl.co&&fl.oh)g.push('C=O e O–H largo: <b>ácido carboxílico</b>, se o O–H for muito largo.');
-    else if(fl.co)g.push('C=O sem 2720 e sem O–H: <b>cetona</b> (ou amida, se menor que ~1690).');
-    else if(fl.oh)g.push('Sem C=O e com O–H: <b>álcool ou fenol</b>.');
-    if(fl.ar)g.push('Bandas de anel: <b>aromático</b>. Veja 900–690 para o padrão de substituição.');
-    if(g.length)h+='<p class="ex"><b>Pistas combinadas.</b><br>'+g.join('<br>')+'</p>';
-    out.push(h+'</div>');
-  }
-  if(peaks.length){
-    let h='<div class="rule"><h3>Massas: íons conhecidos</h3>';let any=false;
-    peaks.forEach(p=>{if(MSD[p]){any=true;h+='<p><b class="mono">'+p+'</b>: '+MSD[p]+'</p>';}});
-    if(!any)h+='<p>Nenhum dos picos está na lista curta de íons diagnósticos. Use a aba Analisar para o Apêndice B.</p>';
-    out.push(h+'</div>');
-    if(M){let h2='<div class="rule"><h3>Massas: perdas a partir de M</h3>';let any2=false;
-      peaks.filter(p=>p<M).forEach(p=>{const d=M-p;if(MSL[d]){any2=true;h2+='<p><b class="mono">M − '+p+' = '+d+'</b>: '+MSL[d]+'</p>';}});
-      if(!any2)h2+='<p>Nenhuma perda da lista curta. A aba Analisar usa o Apêndice C completo.</p>';
-      out.push(h2+'</div>');}
-  }
-  $('#esOut').innerHTML=out.length?out.join('')+'<p class="hint">Pistas gerais. Elas não substituem a lousa nem o Apêndice B e C. Confirme com a aba Analisar.</p>':'<p class="empty">Preencha pelo menos um campo.</p>';
-}
-['#esF','#esM','#esP','#esI'].forEach(s=>$(s).addEventListener('input',esRun));
-
 (function(){const v=document.getElementById('vers');if(v)v.textContent=VERSAO;})();
 /*@@ANALORG2_JS@@*/
 /*@@ANALORG3_JS@@*/
@@ -1928,8 +1848,6 @@ function esRun(){
 /*@@ANALORG9_JS@@*/
 /*@@ANALORG10_JS@@*/
 /* ---------- Analorg: módulos novos (início, ensaios, solubilidade, elementar, identificar) ---------- */
-function agHoje(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
-function agInit2(){}
 function agInit(){
   fuInit();avInit();sgmBind('so','so-');sgmBind('el','el-');sgmBind('fu','fu-');
   soInit();elInit();pfInit();ivQuizInit();pbInit();ecInit();ensInit();apInit();syInit();
@@ -2206,30 +2124,47 @@ function ecInit(){
   miniQuiz('#ecQuiz',bank,'Pergunta');
 }
 
-const SCR=['p-ec','p-pb','p-cs','p-in','p-en','p-pf','p-so','p-el','p-fu','p-an','p-tr','p-tb','p-iv','p-sp','p-ca','p-aj','p-fo','p-pq','p-sl','p-co','p-es','p-pg','p-cp','p-cf','p-ic','p-rm','p-ob','p-st','p-rv','p-av','p-ap','p-sy'];
-const OWN={'p-ec':'t-en','p-pb':'t-en','p-cs':'t-en','p-pf':'t-en','p-so':'t-en','p-el':'t-en','p-fu':'t-en','p-tr':'t-sp','p-tb':'t-sp','p-an':'t-sp','p-ca':'t-sp','p-aj':'t-sp','p-pq':'t-sp','p-sl':'t-sp','p-iv':'t-sp','p-rm':'t-sp','p-cf':'t-cp','p-ic':'t-cp','p-es':'t-cp','p-ob':'t-in','p-fo':'t-in','p-co':'t-in','p-pg':'t-in','p-st':'t-in','p-rv':'t-in','p-av':'t-in','p-ap':'t-en','p-sy':'t-in'};
+document.addEventListener('toggle',e=>{if(e.target.id==='te-sl'&&e.target.open)drawSl();},true);
+const SCR=['p-in','p-cp','p-cf','p-ic','p-en','p-ap','p-pf','p-so','p-el','p-fu','p-pb','p-cs','p-ec','p-sp','p-iv','p-an','p-tr','p-tb','p-te','p-rm','p-ob','p-rv','p-st','p-fo'];
+const OWN={'p-ec':'t-en','p-pb':'t-en','p-cs':'t-en','p-pf':'t-en','p-so':'t-en','p-el':'t-en','p-fu':'t-en','p-ap':'t-en','p-tr':'t-sp','p-tb':'t-sp','p-an':'t-sp','p-te':'t-sp','p-iv':'t-sp','p-rm':'t-sp','p-cf':'t-cp','p-ic':'t-cp','p-ob':'t-in','p-fo':'t-in','p-st':'t-in','p-rv':'t-in'};
+/* Telas que foram juntadas em outras: o endereço antigo continua funcionando (atalhos, links, histórico). [tela nova, bloco a abrir ou rolar até] */
+const ALIAS={'p-es':['p-ic'],'p-co':['p-st','#pals'],'p-pg':['p-st','#stManual'],'p-sy':['p-st','#stDados'],'p-av':['p-fo','#fo-avisar'],'p-ca':['p-an','#an-calc'],'p-aj':['p-te','#te-aj'],'p-pq':['p-te','#te-pq'],'p-sl':['p-te','#te-sl'],'p-se':['p-te','#se-anchor']};
 const NAV=['t-in','t-cp','t-en','t-sp'];
+/* abre (se for <details>) e rola até um bloco de uma tela */
+function abreBloco(sel){
+  const el=document.querySelector(sel);if(!el)return;
+  if(el.tagName==='DETAILS')el.open=true;
+  let p=el.parentElement;while(p){if(p.tagName==='DETAILS')p.open=true;p=p.parentElement;}
+  setTimeout(()=>el.scrollIntoView({block:'start'}),30);
+}
 function drawSl(){const b=$('#slBody');if(!b||b.dataset.ok||typeof SLD==='undefined')return;b.dataset.ok='1';
   b.innerHTML=SLD.map((s,i)=>'<div class="rule"><h3>'+esc(s[0])+'</h3><p>'+esc(s[1])+'</p><figure class="mech"><button type="button" class="mechb" data-sl="'+i+'"><img src="'+s[2]+'" alt="Slide do professor: '+esc(s[0])+'"></button></figure></div>').join('');
   b.querySelectorAll('[data-sl]').forEach(x=>x.onclick=()=>mechZoom(SLD[+x.dataset.sl][2],x));}
+/* Barras de abas de cada área, escritas uma vez só e desenhadas em todas as telas da área */
+const BARS={
+  ens:[['p-pf','Preliminares'],['p-so','Solubilidade'],['p-el','Elementar'],['p-fu','Funcional']],
+  mas:[['p-an','Analisar'],['p-tr','Treinar'],['p-tb','Livro'],['p-te','Teoria']],
+  cmp:[['p-cp','Fichas'],['p-ic','Identificar']]
+};
+function drawBars(){document.querySelectorAll('[data-bar]').forEach(b=>{b.innerHTML=BARS[b.dataset.bar].map(x=>'<button class="chip" type="button" data-go="'+x[0]+'" aria-pressed="false">'+x[1]+'</button>').join('');});}
+drawBars();
 let CUR='p-in';
 function go(id,fromPop){
   const prevScr=CUR;
-  if(id==='p-se'){go('p-pq');const a=$('#se-anchor');if(a)a.scrollIntoView();return;}
+  if(ALIAS[id]){const al=ALIAS[id];go(al[0],fromPop);if(al[1])abreBloco(al[1]);return;}
   SCR.forEach(x=>{$('#'+x).hidden=x!==id;});
   const own=OWN[id]||('t-'+id.slice(2));
   NAV.forEach(t=>$('#'+t).setAttribute('aria-selected',t===own?'true':'false'));
   document.querySelectorAll('.msub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.go===id?'true':'false'));
   CUR=id;
   if(id==='p-cs')csDraw();
-  if(id==='p-in')drawHoje();
   if(id==='p-rv')rvDraw();
   if(id==='p-st')stDraw();
   if(id==='p-ec')ecDraw();
   if(id==='p-tr')trInit();
-  if(id==='p-sl')drawSl();
+  if(id==='p-te'&&$('#te-sl').open)drawSl();
   if(id==='p-ap')apDraw();
-  if(id==='p-sy')syDraw();
+  if(id==='p-st')syDraw();
   if(!fromPop)navRecord(id);
   window.scrollTo(0,0);
   if(prevScr!==id&&NAVH.length>1)focoTitulo(id);
@@ -2263,7 +2198,7 @@ function navBackTo(t){
 function navFromHash(h){
   const p=String(h||'').replace(/^#\/?/,'').split('/');if(!p[0])return false;
   if(p[0]==='cf'){const cas=decodeURIComponent(p.slice(1).join('/')),i=COMP.findIndex(c=>c.cas===cas);if(i<0){const k=bdAll().findIndex(c=>c.cas===cas);if(k<0)return false;i=1000+k;}cfDraw(i);go('p-cf');return true;}
-  const id='p-'+p[0];if(SCR.indexOf(id)<0)return false;go(id);return true;
+  const id='p-'+p[0];if(SCR.indexOf(id)<0&&!ALIAS[id])return false;go(id);return true;
 }
 window.addEventListener('popstate',ev=>{
   const s=ev.state;NAVPOP=true;
@@ -2298,8 +2233,8 @@ document.querySelectorAll('.seg,.ivseg').forEach(g=>g.querySelectorAll('button')
 /* ---------- início: exercício 6 carregado ---------- */
 $('#glos').innerHTML=[['+ (cátion)','Fragmento com carga positiva e nenhum elétron sozinho. É o que o aparelho enxerga.'],['+· (íon-radical)','Carga positiva e um elétron sozinho. O íon molecular M e os fragmentos de rearranjo são assim.'],['· (radical)','Pedaço neutro com um elétron sozinho. Sai da molécula e não aparece no espectro.'],[GLOS.alfa[0],GLOS.alfa[1]],[GLOS.mcl[0],GLOS.mcl[1]],[GLOS.neu[0],GLOS.neu[1]],[GLOS.anel[0],GLOS.anel[1]]].map(x=>'<div><dt>'+x[0]+'</dt><dd>'+x[1]+'</dd></div>').join('');
 pgInit();curEx=6;$('#inM').value=60;$('#inP').value='59, 42, 31';
-agInit();buildChips();analyze();drawHoje();drawTable();calc();drawIVChips();drawIV();drawIVReg();drawIRT();drawIVFat();$('#ivq').addEventListener('input',ivLookup);
-cpInit();icInit();obInit();stInit();nvInit();sugInit();
+agInit();buildChips();analyze();drawTable();calc();drawIVChips();drawIV();drawIVReg();drawIRT();drawIVFat();$('#ivq').addEventListener('input',ivLookup);
+cpInit();icInit();obInit();stInit();nvInit();
 go('p-in');sesRestore();if(NAVHASH0)navFromHash(NAVHASH0);
 (function(){
   function stk(){

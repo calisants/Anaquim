@@ -48,7 +48,7 @@ with sync_playwright() as p:
     # link de sincronização
     p2=c.new_page();p2.on('pageerror',lambda e:erros.append(str(e)))
     p2.goto(IND+'#/sy/3a0j-4zbg-c558');p2.wait_for_timeout(800)
-    chk('link abre a tela de sincronização com o código preenchido',p2.evaluate("CUR")=='p-sy' and p2.input_value('#syCod')=='3A0J-4ZBG-C558')
+    chk('link abre a tela de sincronização com o código preenchido',p2.evaluate("CUR")=='p-st' and p2.input_value('#syCod')=='3A0J-4ZBG-C558')
     chk('o código sai do endereço',('3a0j' not in p2.evaluate('location.href').lower()))
     chk('sem erros de código',not erros)
     b.close()

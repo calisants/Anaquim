@@ -2,7 +2,7 @@
   <section id="p-cp" role="tabpanel" aria-labelledby="t-cp" hidden>
     <h2 class="scr">Compostos</h2>
     <p class="scrsub">Mais de 100 compostos do app e mais de 4 mil do banco Analor. Busque por nome, fórmula ou CAS.</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Compostos"><button class="chip" type="button" data-go="p-cp" aria-pressed="false">Fichas</button><button class="chip" type="button" data-go="p-ic" aria-pressed="false">Identificar</button><button class="chip" type="button" data-go="p-es" aria-pressed="false">Espectro novo</button></div>
+    <div class="chipbar rseg msub" role="group" aria-label="Compostos" data-bar="cmp"></div>
     <div class="cpq">
       <input type="search" id="cpQ" placeholder="Nome, fórmula ou CAS" aria-label="Buscar composto" autocomplete="off">
       <label>Estado<select id="cpE"><option value="">Todos</option><option value="líquido">Líquido</option><option value="sólido">Sólido</option></select></label>
@@ -35,7 +35,7 @@
   <section id="p-ic" role="tabpanel" aria-labelledby="t-cp" hidden>
     <h2 class="scr">Identificar o Composto</h2>
     <p class="scrsub">Marque o que você mediu. O que ficar em &ldquo;Não sei&rdquo; não entra na conta. O app mostra as classes que sobram e os compostos do banco mais compatíveis.</p>
-    <div class="chipbar rseg msub" role="group" aria-label="Compostos"><button class="chip" type="button" data-go="p-cp" aria-pressed="false">Fichas</button><button class="chip" type="button" data-go="p-ic" aria-pressed="false">Identificar</button><button class="chip" type="button" data-go="p-es" aria-pressed="false">Espectro novo</button></div>
+    <div class="chipbar rseg msub" role="group" aria-label="Compostos" data-bar="cmp"></div>
     <label class="icnome" for="icNome">Nome da amostra<input type="text" id="icNome" maxlength="60" placeholder="ex.: amostra 3, composto desconhecido A" autocomplete="off"></label>
     <button class="icsum" type="button" id="icSum" aria-live="polite">Marque pelo menos um dado.</button>
     <div class="row" style="margin-bottom:6px">
@@ -148,15 +148,10 @@
     <p class="scrsub">Cada sinal é um grupo de núcleos equivalentes. Quatro perguntas: quantos sinais, onde, quanto vale cada um e como se divide.</p>
     <div class="chipbar rseg" role="group" aria-label="Partes do RMN">
       <button class="chip" type="button" data-rp="ler" aria-pressed="true">Ler um espectro</button>
-      <button class="chip" type="button" data-rp="acop" aria-pressed="false">Acoplamento</button>
-      <button class="chip" type="button" data-rp="calc" aria-pressed="false">Cálculos</button>
-      <button class="chip" type="button" data-rp="mac" aria-pressed="false">Macetes</button>
-      <button class="chip" type="button" data-rp="tab" aria-pressed="false">Tabelas</button>
-      <button class="chip" type="button" data-rp="teo" aria-pressed="false">Teoria</button>
-      <button class="chip" type="button" data-rp="res" aria-pressed="false">Resolvidos</button>
-      <button class="chip" type="button" data-rp="treino" aria-pressed="false">Treinar</button>
-      <button class="chip" type="button" data-rp="comp" aria-pressed="false">Compostos</button>
-      <button class="chip" type="button" data-rp="integ" aria-pressed="false">Integral</button>
+      <button class="chip" type="button" data-rp="apr" aria-pressed="false">Aprender</button>
+      <button class="chip" type="button" data-rp="calc" aria-pressed="false">Calcular</button>
+      <button class="chip" type="button" data-rp="cons" aria-pressed="false">Consultar</button>
+      <button class="chip" type="button" data-rp="pra" aria-pressed="false">Praticar</button>
       <button class="chip" type="button" data-rp="pdf" aria-pressed="false">Ler PDF</button>
     </div>
 
@@ -234,14 +229,6 @@
       <div id="cxTab"></div>
       <p class="srcl">Exemplo do SDBS No. 889 (89,56 MHz): o quarteto em 4,119 ppm fica a 4,119 × 89,56 ≈ 369 Hz do TMS. O mesmo sinal em 400 MHz fica a ≈ 1648 Hz, mas continua em 4,12 ppm. A J (em Hz) não muda de um aparelho para outro; em ppm, ela encolhe quando o campo sobe. Por isso, em campo alto, os multipletos ficam mais separados e mais fáceis de ler.</p>
 
-      <h3 class="rmh">Integração: da área ao número de H</h3>
-      <p>Meça (ou leia) a altura da "escada" de cada sinal. Divida pelo menor para achar a proporção. Se não der número inteiro, multiplique por 2 ou 3. Depois ajuste ao total de H da fórmula.</p>
-      <div class="row">
-        <label style="flex:1 1 200px">Valores (separe por espaço)<input type="text" id="cgI" value="20,3 30,4 30,0" inputmode="decimal" autocomplete="off"></label>
-        <label>Total de H da fórmula<input type="number" id="cgT" value="8" min="1" max="200" inputmode="numeric"></label>
-      </div>
-      <div class="rmout" id="cgOut"></div>
-
       <h3 class="rmh">GDH: o que a fórmula já adianta</h3>
       <p>GDH = (2C + 2 + N − H − X) ÷ 2, com X = halogênios. O oxigênio e o enxofre não entram na conta.</p>
       <div class="row">
@@ -278,12 +265,14 @@
     </div>
 
     <div data-rpane="mac" hidden>
+      <h3 class="rmh">Macetes</h3>
       <p class="scrsub">Atalhos que quem lê espectro usa o tempo todo. Cada um é uma regra de bolso: confirme com os quatro passos.</p>
       <div id="rmMac"></div>
     </div>
 
     <div data-rpane="integ" hidden>
       <h3 class="rmh">Integral: quantos H tem cada sinal</h3>
+      <p>Meça (ou leia) a altura da "escada" de cada sinal. Divida pelo menor para achar a proporção. Se não der número inteiro, multiplique por 2 ou 3. Depois ajuste ao total de H da fórmula.</p>
       <p class="hint">Digite a fórmula molecular e, um por linha, o δ e o tamanho da integral de cada sinal (o valor que o espectro mostra na curva em degraus). O app divide o total de H da fórmula na proporção das integrais. Se a linha tiver só um número, ele é a integral.</p>
       <label for="igF">Fórmula molecular<input type="text" id="igF" placeholder="ex.: C4H8O" autocomplete="off" style="font-family:var(--mono)"></label>
       <label for="igT">Sinais (δ e integral, um por linha)<textarea id="igT" rows="5" placeholder="2.45 20.3&#10;2.14 30.4&#10;1.06 30.0" style="font-family:var(--mono)"></textarea></label>
