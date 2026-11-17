@@ -1,0 +1,5 @@
+/* ---- Sincronização (v7) ---- */
+#syBox .btn{min-height:44px}
+#syBox .sycod{font-family:var(--mono);font-size:1.25rem;letter-spacing:.08em;margin:10px 0;word-break:break-all}
+#syBox input[type=text]{font:inherit;font-family:var(--mono);width:100%;box-sizing:border-box;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:9px 10px;min-height:44px;text-transform:uppercase}
+#syBox label.aplb{display:grid;gap:3px;font-size:.86rem;color:var(--muted);margin:0 0 10px}

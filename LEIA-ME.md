@@ -80,3 +80,11 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 - Tudo fica numa chave só, `massas-aulas`: `{v:1, ativa, l:[{id,t,d,am,ens:[{id,f,r,o}],no,co,cr,up}]}`. Aula excluída vira lápide `{id,del,up}`. `apJuntar()` junta aulas de outro aparelho (a edição mais nova de cada aula vence, aula apagada não volta); o Salvar e levar o progresso já usa.
 - O catálogo (`apCat()`) lê os ensaios das telas e de `FUN`; o id de cada um é fixo (`pf-ign`, `so-naoh`, `el-n`, `fn-tollens`...). Se um ensaio novo entrar nas telas, acrescente em `apCat()`.
 - Teste: `fontes/testes/teste_aula.py`.
+
+## v236 a v238: sincronização por código e plano de aula
+- **Sincronização entre aparelhos** (`fontes/analorg7.js`, `.html`, `.css`; tela `p-sy`, em Início > O app). Sem conta nem dados pessoais: o app cria um código de 16 letras e números (80 bits) e quem digita o mesmo código em outro aparelho vê os mesmos dados. O código não vai para o servidor; vai o SHA-256 dele e o texto cifrado no aparelho (AES-GCM). Funciona sem internet e sincroniza ao abrir, ao voltar ao app, quando a internet volta e uns 4 segundos depois de cada alteração. O que sincroniza: `SY_MERGE` (aulas e revisões, juntadas) e `SY_LWW` (estudados, perguntas, análises salvas, favoritos, Identificar, notas: vence a alteração mais recente). Zoom, cor e sessão ficam só no aparelho. Na primeira ligação a um código existente, tudo é juntado e nada se perde.
+- **Está desligada até haver servidor.** `SY_URL` e `SY_ANON` (começo de `analorg7.js`) estão vazios; enquanto estiverem, o item do menu não aparece. Para ligar: criar um projeto Supabase só do Anaquim, rodar `fontes/sync_supabase.sql`, colocar o endereço e a chave publicável nesses dois campos e rodar `empacotar.py`.
+- **Plano de aula em código** (`ANQ1.…`), na tela Aula prática: gera um código só com o nome e a lista de ensaios, para mandar a um colega ou receber do professor. Sem servidor.
+- `pgJuntaChave(k,inc)` (template) junta uma chave de outro aparelho sem apagar nada; é usada pelo Salvar e levar o progresso e pela sincronização.
+- `fontes/MODO-PROFESSOR.md`: o que já está pronto e o que falta para o modo professor e a integração com o Analor e a QO é Vida.
+- Testes: `teste_sync.py` (usa `testes/servidor_falso.js`, que imita as funções do Supabase; precisa de Node) e `teste_aula.py`.

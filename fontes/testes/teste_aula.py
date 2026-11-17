@@ -135,6 +135,23 @@ with sync_playwright() as p:
     cod=pg.evaluate("pgEnc({v:1,d:pgCollect()})")
     chk('código de salvar inclui as aulas',pg.evaluate("'massas-aulas' in pgDec(%s).d"%json.dumps(cod)))
 
+    # plano de aula para compartilhar: só nome e ensaios
+    pg.evaluate("go('p-ap')");pg.wait_for_timeout(100)
+    pg.click('#apPlano summary');pg.click('[data-a=plgera]')
+    cod=pg.input_value('#apPlTxt')
+    chk('código do plano começa com ANQ1.',cod.startswith('ANQ1.'))
+    chk('o código do plano não leva resultado nem anotação','segredo' not in pg.evaluate("atob(%s.slice(5).replace(/\\s+/g,''))"%json.dumps(cod)) and 'chama amarela' not in pg.evaluate("decodeURIComponent(escape(atob(%s.slice(5))))"%json.dumps(cod)))
+    n_ant=pg.evaluate("apVivas(apGet()).length");ens_ant=pg.evaluate("apAtiva(apGet()).ens.length")
+    pg.click('[data-a=plcria]');pg.wait_for_timeout(200)
+    nova=pg.evaluate("apAtiva(apGet())")
+    chk('criar com o código faz uma aula nova com os mesmos ensaios, sem resultado',pg.evaluate("apVivas(apGet()).length")==n_ant+1 and len(nova['ens'])==ens_ant and all(x['r']=='' and not x['f'] and x['o']=='' for x in nova['ens']))
+    pg.evaluate("go('p-ap')");pg.click('#apPlano summary');pg.fill('#apPlTxt','qualquer coisa');pg.click('[data-a=plcria]')
+    chk('código inválido: mensagem clara',"começa com ANQ1." in pg.inner_text('#apPlMsg'))
+    falso=pg.evaluate("'ANQ1.'+pgEnc({anaquim:'plano',v:1,t:'Do professor',e:['pf-ign','nao-existe','pf-ign','fn-tollens']})")
+    pg.fill('#apPlTxt',falso);pg.click('[data-a=plcria]');pg.wait_for_timeout(200)
+    nv=pg.evaluate("apAtiva(apGet())")
+    chk('ids desconhecidos e repetidos são descartados',nv['t']=='Do professor' and [x['id'] for x in nv['ens']]==['pf-ign','fn-tollens'])
+
     # recarregar: tudo continua
     pg.reload();pg.wait_for_timeout(400)
     chk('depois de recarregar, estrela continua marcada',pg.evaluate("apAtiva(apGet())!==null"))

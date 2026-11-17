@@ -140,6 +140,18 @@ function apRelTexto(a,comProc){
   return L.join('\n');
 }
 
+/* ---- plano de aula para compartilhar: só o nome e a lista de ensaios (nada de resultado nem anotação) ---- */
+function apPlanoGera(a){return 'ANQ1.'+pgEnc({anaquim:'plano',v:1,t:a.t,e:a.ens.map(x=>x.id)});}
+function apPlanoLe(txt){
+  const m=/ANQ1\.([A-Za-z0-9+\/=\s]+)/.exec(txt||'');if(!m)return null;
+  let o;try{o=pgDec(m[1]);}catch(e){return null;}
+  return o&&o.anaquim==='plano'&&o.v===1&&Array.isArray(o.e)?o:null;
+}
+function apPlanoCria(o){
+  const d=apGet(),a=apNova(d,String(o.t||'Aula importada').slice(0,80)),ja={};
+  o.e.forEach(id=>{if(typeof id==='string'&&apPorId(id)&&!ja[id]){ja[id]=1;a.ens.push({id:id,f:0,r:'',o:''});}});
+  apSave(d);return {n:a.ens.length,fora:o.e.length-a.ens.length};
+}
 /* ---- página ---- */
 function apBadge(x){
   const r=AP_RES.find(q=>q[0]===x.r);
@@ -188,7 +200,12 @@ function apDraw(){
    +'<h2 class="mh">Anotações da aula</h2><textarea class="apta" id="apNo" rows="5" aria-label="Anotações da aula" placeholder="O que o professor disse, cuidados, dúvidas, medidas.">'+esc(a.no||'')+'</textarea>'
    +'<h2 class="mh">Conclusão</h2><textarea class="apta" id="apCo" rows="4" aria-label="Conclusão" placeholder="O que os resultados indicam sobre a amostra.">'+esc(a.co||'')+'</textarea>'
    +'<h2 class="mh">Relatório</h2><label class="apck" style="display:flex;gap:10px;align-items:center;min-height:44px"><input type="checkbox" id="apProc" style="width:22px;height:22px"><span>Incluir o passo a passo de cada ensaio</span></label>'
-   +'<div class="aprow"><button type="button" class="btn" data-a="rel">Montar relatório</button></div><div id="apRelBox" hidden></div>';
+   +'<div class="aprow"><button type="button" class="btn" data-a="rel">Montar relatório</button></div><div id="apRelBox" hidden></div>'
+   +'<details class="el" id="apPlano" style="margin-top:16px"><summary style="cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center">Compartilhar ou importar um plano de aula</summary>'
+   +'<p class="hint">O plano leva só o nome da aula e a lista de ensaios, sem resultados nem anotações. Mande o código para um colega, ou cole aqui o que o professor mandar.</p>'
+   +'<div class="aprow"><button type="button" class="btn ghost" data-a="plgera">Gerar o código desta aula</button><button type="button" class="btn ghost" data-a="plcopia">Copiar</button></div>'
+   +'<textarea class="apta" id="apPlTxt" rows="3" aria-label="Código do plano" placeholder="Código do plano"></textarea>'
+   +'<div class="aprow" style="margin-top:8px"><button type="button" class="btn" data-a="plcria">Criar uma aula com este código</button></div><div id="apPlMsg" role="status"></div></details>';
   apListaDesenha();
   if(keepPick)document.getElementById('apPick').open=true;
 }
@@ -252,6 +269,14 @@ function apInit(){
       apAplica(a=>{a.ens=a.ens.filter(q=>q.id!==eid);});apListaDesenha();apStarsAtualiza();
       const c=document.querySelector('#apPick [data-pick="'+eid+'"]');if(c)c.checked=false;return;}
     if(k==='rel'){apRelMostra();return;}
+    if(k==='plgera'){const a=apAtiva(apGet());if(a){document.getElementById('apPlTxt').value=apPlanoGera(a);document.getElementById('apPlMsg').textContent='';}return;}
+    if(k==='plcopia'){const ta=document.getElementById('apPlTxt'),m=document.getElementById('apPlMsg');if(!ta.value)document.querySelector('[data-a=plgera]').click();ta.select();
+      const ok=()=>{m.className='fb good';m.textContent='Copiado.';};
+      const fail=()=>{let r=false;try{r=document.execCommand('copy');}catch(e){}m.className=r?'fb good':'fb bad';m.textContent=r?'Copiado.':'Não consegui copiar sozinho. O código está selecionado: use o Copiar do seu aparelho.';};
+      try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ta.value).then(ok,fail);else fail();}catch(e){fail();}return;}
+    if(k==='plcria'){const m=document.getElementById('apPlMsg'),o=apPlanoLe(document.getElementById('apPlTxt').value);
+      if(!o){m.className='fb bad';m.textContent='Esse código não é de um plano de aula do Anaquim. Cole o código inteiro, que começa com ANQ1.';return;}
+      const r=apPlanoCria(o);apDraw();apStarsAtualiza();apToast('Aula criada com '+r.n+' ensaio'+(r.n===1?'':'s')+(r.fora?'. '+r.fora+' não existe nesta versão do app.':'.'));return;}
     if(k==='copia'){const a=apAtiva(apGet());if(!a)return;const t=apRelTexto(a,document.getElementById('apProc').checked),m=document.getElementById('apRelMsg');
       const ok=()=>{m.textContent='Copiado.';};
       const fail=()=>{const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();let r=false;try{r=document.execCommand('copy');}catch(e){}ta.remove();m.textContent=r?'Copiado.':'Não consegui copiar sozinho. Selecione o relatório acima e copie.';};
