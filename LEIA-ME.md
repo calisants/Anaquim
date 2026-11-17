@@ -74,3 +74,9 @@ O banco só traz picos de massas; não tem bandas de IV nem RMN, e não cita a f
 ## v232
 - Ensaios ilustrados: Preliminares (cor, aspecto, cheiro, ignição, PF, PEb, pureza), Solubilidade (cada solvente), Análise elementar (cada elemento, halogênios, pirólise, Lassaigne) e Funcional de nitro, ácido carboxílico e cloro (tubo antes/depois e materiais). Tudo em `fontes/analorg5.js` (esquemas em SVG; as cores vêm do texto de cada ensaio).
 - Novo: ficha "Cor da chama" em Preliminares: (1) cor da chama da amostra (Analor e Atividade 1 do Prof. Flávio), (2) alça de cobre / Beilstein (apostila IFRJ 2016, com as interferências), (3) cor da chama de metais do resíduo (Creative Chemistry e RSC, fonte web; passos de roteiros escolares).
+
+## v235: Aula prática
+- Nova tela em Ensaios > Aula prática (`p-ap`; código em `fontes/analorg6.js`, `.html` e `.css`). Cada ensaio (59 no catálogo: preliminares, solubilidade, elementar, funcional) tem uma estrela; a estrela põe o ensaio na aula ativa. Na tela da aula: nome, data, amostra, lista com "já fiz", resultado (positivo, negativo, inconclusivo) e o que foi observado, ordem, anotações, conclusão e relatório (copiar texto ou imprimir em PDF, com ou sem o passo a passo).
+- Tudo fica numa chave só, `massas-aulas`: `{v:1, ativa, l:[{id,t,d,am,ens:[{id,f,r,o}],no,co,cr,up}]}`. Aula excluída vira lápide `{id,del,up}`. `apJuntar()` junta aulas de outro aparelho (a edição mais nova de cada aula vence, aula apagada não volta); o Salvar e levar o progresso já usa.
+- O catálogo (`apCat()`) lê os ensaios das telas e de `FUN`; o id de cada um é fixo (`pf-ign`, `so-naoh`, `el-n`, `fn-tollens`...). Se um ensaio novo entrar nas telas, acrescente em `apCat()`.
+- Teste: `fontes/testes/teste_aula.py`.

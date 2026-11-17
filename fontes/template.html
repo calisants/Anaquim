@@ -268,6 +268,7 @@ button.back{border-radius:10px}
 /*@@ANALORG3_CSS@@*/
 /*@@ANALORG4_CSS@@*/
 /*@@ANALORG5_CSS@@*/
+/*@@ANALORG6_CSS@@*/
 /* BEGIN temas */
 :root[data-pal="quimica"]{--bg:#F2F7F8;--surface:#FFFFFF;--ink:#142629;--muted:#536B6E;--line:#D0DFE2;--keep:#0A6F7A;--focus:#0A6F7A;--keep-soft:#DDF0F3;--pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%230A6F7A' stroke-opacity='.16' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate%2822 24%29 rotate%286%29'%3E%3Cpath d='M-5-13h10M-3-13v9l-9 17a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-17v-9M-9 8h18'/%3E%3C/g%3E%3Cg transform='translate%2882 18%29 rotate%288%29'%3E%3Ccircle r='3'/%3E%3Ccircle cx='9' cy='-8' r='2'/%3E%3Ccircle cx='-8' cy='-9' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2852 52%29 rotate%28-20%29'%3E%3Cpath d='M-4-14v22a4 4 0 0 0 8 0v-22M-5-14h10M-4 2h8'/%3E%3C/g%3E%3Cg transform='translate%28104 62%29 rotate%2814%29'%3E%3Cpath d='M0-12l10.4 6v12L0 12l-10.4-6v-12z'/%3E%3Cpath d='M0-7l6 3.5v7L0 7l-6-3.5v-7z'/%3E%3C/g%3E%3Cg transform='translate%2820 86%29 rotate%2818%29'%3E%3Ccircle r='3'/%3E%3Ccircle cx='9' cy='-8' r='2'/%3E%3Ccircle cx='-8' cy='-9' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2874 100%29 rotate%28-2%29'%3E%3Cpath d='M-5-13h10M-3-13v9l-9 17a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-17v-9M-9 8h18'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"])[data-pal="quimica"]{--bg:#0D1617;--surface:#152123;--ink:#E1EDEF;--muted:#9DB5B8;--line:#2B3D40;--keep:#7BD3E0;--focus:#7BD3E0;--keep-soft:#1C3F45;--pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%237BD3E0' stroke-opacity='.2' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate%2822 24%29 rotate%286%29'%3E%3Cpath d='M-5-13h10M-3-13v9l-9 17a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-17v-9M-9 8h18'/%3E%3C/g%3E%3Cg transform='translate%2882 18%29 rotate%288%29'%3E%3Ccircle r='3'/%3E%3Ccircle cx='9' cy='-8' r='2'/%3E%3Ccircle cx='-8' cy='-9' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2852 52%29 rotate%28-20%29'%3E%3Cpath d='M-4-14v22a4 4 0 0 0 8 0v-22M-5-14h10M-4 2h8'/%3E%3C/g%3E%3Cg transform='translate%28104 62%29 rotate%2814%29'%3E%3Cpath d='M0-12l10.4 6v12L0 12l-10.4-6v-12z'/%3E%3Cpath d='M0-7l6 3.5v7L0 7l-6-3.5v-7z'/%3E%3C/g%3E%3Cg transform='translate%2820 86%29 rotate%2818%29'%3E%3Ccircle r='3'/%3E%3Ccircle cx='9' cy='-8' r='2'/%3E%3Ccircle cx='-8' cy='-9' r='1.5'/%3E%3C/g%3E%3Cg transform='translate%2874 100%29 rotate%28-2%29'%3E%3Cpath d='M-5-13h10M-3-13v9l-9 17a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-17v-9M-9 8h18'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}}
@@ -321,6 +322,10 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
   <section id="p-en" role="tabpanel" aria-labelledby="t-en" hidden>
     <h2 class="scr">Análise de Ensaios</h2>
     <p class="scrsub">Os ensaios de bancada (via úmida), na ordem em que são feitos.</p>
+    <div class="menu">
+      <button class="mi" type="button" data-go="p-ap"><b>Aula prática</b><span>Escolha os ensaios da aula, anote o resultado de cada um e monte o relatório.</span></button>
+    </div>
+    <h2 class="mh">Ensaios</h2>
     <div class="menu">
       <button class="mi" type="button" data-go="p-pf"><b>Preliminares e propriedades físicas</b><span>Cor, ignição, cor da chama, ponto de fusão e de ebulição.</span></button>
       <button class="mi" type="button" data-go="p-so"><b>Solubilidade</b><span>Fluxograma, grupos S<sub>2</sub> a I e treino.</span></button>
@@ -1020,6 +1025,7 @@ body{background-image:var(--pat,none);background-size:120px 120px;background-att
   </section>
 
   <!--@@ANALORG2_HTML@@-->
+  <!--@@ANALORG6_HTML@@-->
 </div>
 
 <div role="navigation" aria-label="Seções">
@@ -1831,6 +1837,7 @@ function pgInit(){
       else if(k==='massas-rep'||k==='massas-repq'){const m=cur||{};Object.keys(inc).forEach(q=>{if(!m[q]||inc[q].d>m[q].d)m[q]=inc[q];});LS.set(k,m);n++;}
       else if(k==='massas-an'){n+=anJuntar(inc);}
       else if(k==='massas-erros'){}
+      else if(k==='massas-aulas'){n+=apJuntar(inc);}
       else if(k.indexOf('massas-nota-')===0){if(!cur)LS.set(k,inc);else if(String(cur).indexOf(String(inc))<0){LS.set(k,cur+'\n— importado: '+inc);n++;}}
       else if(cur===null){LS.set(k,inc);n++;}
     });
@@ -1893,12 +1900,13 @@ function esRun(){
 /*@@ANALORG3_JS@@*/
 /*@@ANALORG4_JS@@*/
 /*@@ANALORG5_JS@@*/
+/*@@ANALORG6_JS@@*/
 /* ---------- Analorg: módulos novos (início, ensaios, solubilidade, elementar, identificar) ---------- */
 function agHoje(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
 function agInit2(){}
 function agInit(){
   fuInit();avInit();sgmBind('so','so-');sgmBind('el','el-');sgmBind('fu','fu-');
-  soInit();elInit();pfInit();ivQuizInit();pbInit();ecInit();ensInit();
+  soInit();elInit();pfInit();ivQuizInit();pbInit();ecInit();ensInit();apInit();
 }
 /* botões segmentados: attr = data-so / data-el; prefixo dos painéis */
 function sgmBind(attr,pre){
@@ -2172,8 +2180,8 @@ function ecInit(){
   miniQuiz('#ecQuiz',bank,'Pergunta');
 }
 
-const SCR=['p-ec','p-pb','p-cs','p-in','p-en','p-pf','p-so','p-el','p-fu','p-an','p-tr','p-tb','p-iv','p-sp','p-ca','p-aj','p-fo','p-pq','p-sl','p-co','p-es','p-pg','p-cp','p-cf','p-ic','p-rm','p-ob','p-st','p-rv','p-av'];
-const OWN={'p-ec':'t-en','p-pb':'t-en','p-cs':'t-en','p-pf':'t-en','p-so':'t-en','p-el':'t-en','p-fu':'t-en','p-tr':'t-sp','p-tb':'t-sp','p-an':'t-sp','p-ca':'t-sp','p-aj':'t-sp','p-pq':'t-sp','p-sl':'t-sp','p-iv':'t-sp','p-rm':'t-sp','p-cf':'t-cp','p-ic':'t-cp','p-es':'t-cp','p-ob':'t-in','p-fo':'t-in','p-co':'t-in','p-pg':'t-in','p-st':'t-in','p-rv':'t-in','p-av':'t-in'};
+const SCR=['p-ec','p-pb','p-cs','p-in','p-en','p-pf','p-so','p-el','p-fu','p-an','p-tr','p-tb','p-iv','p-sp','p-ca','p-aj','p-fo','p-pq','p-sl','p-co','p-es','p-pg','p-cp','p-cf','p-ic','p-rm','p-ob','p-st','p-rv','p-av','p-ap'];
+const OWN={'p-ec':'t-en','p-pb':'t-en','p-cs':'t-en','p-pf':'t-en','p-so':'t-en','p-el':'t-en','p-fu':'t-en','p-tr':'t-sp','p-tb':'t-sp','p-an':'t-sp','p-ca':'t-sp','p-aj':'t-sp','p-pq':'t-sp','p-sl':'t-sp','p-iv':'t-sp','p-rm':'t-sp','p-cf':'t-cp','p-ic':'t-cp','p-es':'t-cp','p-ob':'t-in','p-fo':'t-in','p-co':'t-in','p-pg':'t-in','p-st':'t-in','p-rv':'t-in','p-av':'t-in','p-ap':'t-en'};
 const NAV=['t-in','t-cp','t-en','t-sp'];
 function drawSl(){const b=$('#slBody');if(!b||b.dataset.ok||typeof SLD==='undefined')return;b.dataset.ok='1';
   b.innerHTML=SLD.map((s,i)=>'<div class="rule"><h3>'+esc(s[0])+'</h3><p>'+esc(s[1])+'</p><figure class="mech"><button type="button" class="mechb" data-sl="'+i+'"><img src="'+s[2]+'" alt="Slide do professor: '+esc(s[0])+'"></button></figure></div>').join('');
@@ -2194,6 +2202,7 @@ function go(id,fromPop){
   if(id==='p-ec')ecDraw();
   if(id==='p-tr')trInit();
   if(id==='p-sl')drawSl();
+  if(id==='p-ap')apDraw();
   if(!fromPop)navRecord(id);
   window.scrollTo(0,0);
   if(prevScr!==id&&NAVH.length>1)focoTitulo(id);
