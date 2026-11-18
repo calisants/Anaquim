@@ -3123,6 +3123,96 @@ function icClasses(){
   ok.sort((a,b)=>b.pts-a.pts);
   return {any:true,ok,out};
 }
+/* IVLEITURA:INICIO */
+/* Leitura do espectro de IV: olha todas as bandas juntas e dá, por grupo, presente, excluído ou indefinido (com motivo, o que confirmaria e a fonte).
+   Função pura: não mexe na página. Regras e fontes: docs/superpowers/plans/2026-11-17-leitura-do-espectro-ir.md */
+const IVL_MAPA='Mapa (Ingham e Henson, 1984)',IVL_APP='tabela do app',IVL_CL='regra do Claude, sem fonte conferida';
+function ivBandasDeTexto(s){return bdIvQuery(s);}
+function ivLe(bandas,meio){
+  const B=[];
+  (bandas||[]).forEach(b=>{if(!b||!isFinite(b.v)||b.v<400||b.v>4000)return;
+    const q=B.find(x=>Math.abs(x.v-b.v)<1);
+    if(q){q.forte=q.forte||b.forte===true;return;}
+    B.push({v:b.v,w:b.w,h:b.h,forte:b.forte===true});});
+  B.sort((a,b)=>b.v-a.v);
+  if(!B.length)return{vazio:true,aviso:'Nenhuma banda entre 400 e 4000 cm⁻¹ para ler.',grupos:[]};
+  const sol=meio==='sol'||meio==='gas';
+  const em=(a,b)=>B.filter(x=>x.v<=Math.max(a,b)&&x.v>=Math.min(a,b));
+  const larga=x=>x.w==='l'||(typeof x.w==='number'&&x.w>=110);
+  const estreita=x=>x.w==='e'||(typeof x.w==='number'&&x.w>0&&x.w<110);
+  const semW=x=>!larga(x)&&!estreita(x);
+  const forte=x=>x.forte||(typeof x.h==='number'&&x.h>=0.3);
+  const lis=a=>a.map(x=>x.v).join(', ');
+  const R=(estado,motivo,falta,fonte)=>({estado,motivo,falta:falta||'',fonte:fonte||''});
+  const G=[];
+  const regra=(k,lab,regiao,fonte,f)=>{const r=f();if(r)G.push(Object.assign({k,lab,regiao},r,{fonte:r.fonte||fonte}));};
+  const A='acima de 2700',M='2000 a 1500',C='1500 a 1100',D='abaixo de 900';
+  const co=(()=>{const c=em(1850,1630);return c.length&&c.some(forte);})();
+  regra('oh','O–H (banda larga)',A,IVL_MAPA,()=>{
+    const livre=em(3650,3580),amplo=em(3550,2500),a=amplo.filter(larga);
+    if(sol&&livre.length)return R('presente','banda em '+lis(livre)+': O–H livre (solução diluída ou gás)');
+    if(a.length){const v=a[0].v;
+      if(v<3200&&!co)return R('indefinido','banda larga em '+v+', abaixo de 3200','a banda de C=O em 1725–1700 (se houver, é ácido carboxílico)',IVL_APP);
+      return R('presente','banda larga em '+v+(v<3200?', com C=O: O–H de ácido carboxílico':': O–H associado'),'',v<3200?IVL_APP:IVL_MAPA);}
+    const sw=em(3550,3200).filter(semW);
+    if(sw.length)return R('indefinido','banda em '+lis(sw)+' sem largura conhecida','a largura da banda (larga é O–H, fina é N–H)');
+    if(em(3550,3200).length)return R('excluido','só bandas estreitas em 3550–3200: não é O–H associado (pode ser N–H)','',IVL_CL);
+    if(em(3700,3100).length)return R('excluido','banda em '+lis(em(3700,3100))+' é estreita e fora de 3550–3200: O–H livre só aparece em solução diluída ou gás','',IVL_CL);
+    return R('excluido','nenhuma banda em 3700–3100');});
+  regra('nh','N–H',A,IVL_MAPA,()=>{
+    const n=em(3500,3300);
+    if(!n.length)return R('excluido','nenhuma banda em 3500–3300');
+    const e=n.filter(estreita),s=n.filter(semW);
+    if(s.length)return R('indefinido','banda em '+lis(s)+' sem largura conhecida','a largura da banda (fina é N–H, larga é O–H)');
+    if(!e.length)return R('excluido','só banda larga em 3500–3300: é O–H');
+    return R('presente',e.length===1?'uma banda estreita em '+e[0].v+': NH':e.length+' bandas estreitas ('+lis(e)+'): NH₂ se forem duas');});
+  regra('ald','C–H de aldeído',A,IVL_MAPA,()=>{
+    const b1=em(2750,2700),b2=em(2860,2800);
+    if(!b1.length)return R('excluido','nenhuma banda em 2750–2700');
+    if(b1.length&&b2.length)return co?R('presente','par '+b2[0].v+' e '+b1[0].v+' com C=O'):R('indefinido','par '+b2[0].v+' e '+b1[0].v+' sem C=O forte','a banda forte de C=O em 1740–1720');
+    return R('indefinido','só a banda em '+b1[0].v,'a banda em 2860–2800 (o par 2820 e 2720)',IVL_APP);});
+  regra('cn','C≡N (nitrila)',M,IVL_APP,()=>{
+    const n=em(2260,2210);
+    return n.length?R('presente','banda em '+lis(n)):R('excluido',em(2260,2100).length?'banda em '+lis(em(2260,2100))+' fora da faixa de nitrila (2260–2210)':'nenhuma banda em 2260–2100');});
+  regra('cc','C≡C (alcino)',M,IVL_APP,()=>{
+    const n=em(2260,2100);
+    if(!n.length)return R('excluido','nenhuma banda em 2260–2100');
+    const t=em(3330,3270).filter(estreita);
+    return t.length?R('presente','banda em '+lis(n)+' e ≡C–H estreita em '+t[0].v,'',IVL_CL):R('indefinido','banda em '+lis(n)+' sem a banda ≡C–H','a banda estreita em ~3300 (alcino terminal)',IVL_CL);});
+  regra('co','C=O',M,IVL_MAPA,()=>{
+    const c=em(1850,1630);
+    if(!c.length)return R('excluido','nenhuma banda em 1850–1630');
+    const f=c.filter(forte);
+    return f.length?R('presente','banda forte em '+lis(f)):R('indefinido','banda em '+lis(c)+' sem intensidade forte','a intensidade da banda');});
+  regra('dc','C=C de alceno',M,IVL_MAPA,()=>{
+    const d=em(1680,1620);
+    if(!d.length)return R('excluido','nenhuma banda em 1680–1620');
+    return em(3100,3000).length?R('presente','banda em '+lis(d)+' e C–H acima de 3000'):R('indefinido','só a banda em '+lis(d),'a banda de C–H acima de 3000');});
+  regra('no2','NO₂',M,IVL_APP,()=>{
+    const a=em(1550,1500),b=em(1370,1300);
+    if(!a.length)return R('excluido','nenhuma banda em 1550–1500');
+    return b.length?R('presente','par '+a[0].v+' e '+b[0].v):R('indefinido','só a banda em '+a[0].v,'a banda em 1370–1300 (o par 1530 e 1350)');});
+  const ar=(()=>{const a=em(1620,1580),b=em(1520,1480),c=em(3100,3000);return{a,b,c,ok:a.length&&b.length&&c.length,nada:!em(1620,1480).length};})();
+  regra('ar','Anel aromático',M,IVL_MAPA,()=>{
+    if(ar.nada)return R('excluido','nenhuma banda em 1620–1480');
+    if(ar.ok)return R('presente','bandas em '+ar.a[0].v+', '+ar.b[0].v+' e C–H acima de 3000');
+    const f=[];if(!ar.a.length)f.push('banda perto de 1600');if(!ar.b.length)f.push('banda perto de 1500');if(!ar.c.length)f.push('C–H acima de 3000');
+    return R('indefinido','faltam bandas do anel','a '+f.join(', '));});
+  regra('ch3','CH₃',C,IVL_MAPA,()=>{const n=em(1385,1365);return n.length?R('presente','banda em '+lis(n)):R('excluido','nenhuma banda em 1385–1365');});
+  regra('ch2','CH₂',C,IVL_MAPA,()=>{const n=em(1470,1440),l=em(730,710);
+    return n.length||l.length?R('presente',(n.length?'banda em '+lis(n):'')+(n.length&&l.length?' e ':'')+(l.length?'banda em '+lis(l)+' (cadeia longa)':'')):R('excluido','nenhuma banda em 1470–1440 nem em 730–710');});
+  regra('c-o','C–O ou C–N',C,IVL_MAPA,()=>{const n=em(1300,1050);
+    if(!n.length)return R('excluido','nenhuma banda em 1300–1050');
+    const f=n.filter(forte);return f.length?R('presente','banda forte em '+lis(f)):R('indefinido','banda em '+lis(n)+' sem intensidade forte','a intensidade da banda');});
+  if(ar.ok){
+    const m1=em(710,690).length&&em(770,730).length,o=em(770,735).length,me=em(735,680).length&&em(810,750).length,p=em(860,800).length;
+    const c=[];if(m1)c.push('mono');if(o)c.push('orto (1,2)');if(me)c.push('meta (1,3)');if(p)c.push('para (1,4)');
+    G.push({k:'anel-sub',lab:'Substituição do anel',regiao:D,fonte:IVL_MAPA,
+      ...(c.length===1?R('presente','padrão '+c[0]+' pelas bandas abaixo de 900'):c.length?R('indefinido','as bandas abaixo de 900 servem para '+c.join(' ou '),'as bandas que separam os padrões (mono: 710–690 e 770–730; para: 860–800)'):R('indefinido','nenhuma banda abaixo de 900 que defina o padrão','as bandas entre 900 e 680'))});}
+  const alto=B.some(x=>x.v>1500);
+  return{vazio:false,aviso:alto?'':'Nenhuma banda acima de 1500 cm⁻¹: a leitura usa só a região abaixo.',grupos:G};
+}
+/* IVLEITURA:FIM */
 function icBands(){
   const v=($('#icIV').value.match(/\d{3,4}/g)||[]).map(Number).filter(x=>x>=400&&x<=4000);
   if(!v.length){$('#icBandOut').innerHTML='';return;}
