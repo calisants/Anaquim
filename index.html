@@ -2502,7 +2502,7 @@ function drawPals(){
   if(!PALS.some(x=>x[0]===n))n='azul';setPal(n);})();
 
 /* ---------- armazenamento (com proteção) ---------- */
-const VERSAO='v273 · 17/11/2026';
+const VERSAO='v274 · 17/11/2026';
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}try{if(typeof SYtoca==='function')SYtoca(k);}catch(e){}}};
 const isStud=n=>(LS.get('massas-stud',[])).indexOf(n)>=0;
 function ionBox(ex){const d=(typeof IONI!=='undefined')&&IONI[ex.n];if(!d)return '';
@@ -3145,19 +3145,23 @@ function ivLe(bandas,meio){
   const larga=x=>x.w==='l'||(typeof x.w==='number'&&x.w>=110);
   const estreita=x=>x.w==='e'||(typeof x.w==='number'&&x.w>0&&x.w<110);
   const semW=x=>!larga(x)&&!estreita(x);
-  const forte=x=>x.forte||(typeof x.h==='number'&&x.h>=0.3);
+  const forte=x=>typeof x.h==='number'?x.h>=0.3:x.forte===true;
+  /* abaixo de 3200 os C–H se juntam e parecem uma banda larga: O–H de ácido pede banda bem mais intensa */
+  const forteOH=x=>x.v<3200&&typeof x.h==='number'?x.h>=0.5:forte(x);
   const lis=a=>a.map(x=>x.v).join(', ');
   const R=(estado,motivo,falta,fonte)=>({estado,motivo,falta:falta||'',fonte:fonte||''});
   const G=[];
   const regra=(k,lab,regiao,fonte,f)=>{const r=f();if(r)G.push(Object.assign({k,lab,regiao},r,{fonte:r.fonte||fonte}));};
   const A='acima de 2700',M='2000 a 1500',C='1500 a 1100',D='abaixo de 900';
   const co=(()=>{const c=em(1850,1630);return c.length&&c.some(forte);})();
+  const acidoOH=co&&(em(3200,2500).filter(larga).filter(forteOH).length>0||em(2680,2500).length>0);
   regra('oh','O–H (banda larga)',A,IVL_MAPA,()=>{
-    const livre=em(3650,3580),amplo=em(3550,2500),a=amplo.filter(larga);
+    const livre=em(3650,3580),amplo=em(3550,2500),a=amplo.filter(larga).filter(forteOH),fraca=amplo.filter(larga).filter(x=>!forteOH(x));
     if(sol&&livre.length)return R('presente','banda em '+lis(livre)+': O–H livre (solução diluída ou gás)');
     if(a.length){const v=a[0].v;
       if(v<3200&&!co)return R('indefinido','banda larga em '+v+', abaixo de 3200','a banda de C=O em 1725–1700 (se houver, é ácido carboxílico)',IVL_APP);
       return R('presente','banda larga em '+v+(v<3200?', com C=O: O–H de ácido carboxílico':': O–H associado'),'',v<3200?IVL_APP:IVL_MAPA);}
+    if(fraca.length)return R('indefinido','banda larga mas fraca em '+fraca[0].v+': O–H associado costuma ser forte','a intensidade da banda',IVL_APP);
     const sw=em(3550,3200).filter(semW);
     if(sw.length)return R('indefinido','banda em '+lis(sw)+' sem largura conhecida','a largura da banda (larga é O–H, fina é N–H)');
     if(em(3550,3200).length)return R('excluido','só bandas estreitas em 3550–3200: não é O–H associado (pode ser N–H)','',IVL_CL);
@@ -3173,6 +3177,7 @@ function ivLe(bandas,meio){
   regra('ald','C–H de aldeído',A,IVL_MAPA,()=>{
     const b1=em(2750,2700),b2=em(2860,2800);
     if(!b1.length)return R('excluido','nenhuma banda em 2750–2700');
+    if(b1.length&&b2.length&&acidoOH)return R('indefinido','par '+b2[0].v+' e '+b1[0].v+', mas há O–H largo de ácido carboxílico, que também dá bandas aí','a banda de C=O perto de 1730 e a ausência do O–H largo',IVL_APP);
     if(b1.length&&b2.length)return co?R('presente','par '+b2[0].v+' e '+b1[0].v+' com C=O'):R('indefinido','par '+b2[0].v+' e '+b1[0].v+' sem C=O forte','a banda forte de C=O em 1740–1720');
     return R('indefinido','só a banda em '+b1[0].v,'a banda em 2860–2800 (o par 2820 e 2720)',IVL_APP);});
   regra('cn','C≡N (nitrila)',M,IVL_APP,()=>{
@@ -3195,7 +3200,10 @@ function ivLe(bandas,meio){
   regra('no2','NO₂',M,IVL_APP,()=>{
     const a=em(1550,1500),b=em(1370,1300);
     if(!a.length)return R('excluido','nenhuma banda em 1550–1500');
-    return b.length?R('presente','par '+a[0].v+' e '+b[0].v):R('indefinido','só a banda em '+a[0].v,'a banda em 1370–1300 (o par 1530 e 1350)');});
+    if(!a.some(forte))return R('indefinido','banda em '+a[0].v+' fraca: nitro dá bandas fortes','a intensidade da banda',IVL_APP);
+    const bf=b.filter(forte);
+    if(bf.length)return R('presente','par '+a[0].v+' e '+bf[0].v);
+    return b.length?R('indefinido','banda em '+b[0].v+' fraca: nitro dá bandas fortes nas duas','a intensidade da banda em 1370–1300',IVL_APP):R('indefinido','só a banda em '+a[0].v,'a banda em 1370–1300 (o par 1530 e 1350)');});
   const ar=(()=>{const a=em(1620,1580),b=em(1520,1480),c=em(3100,3000);return{a,b,c,ok:a.length&&b.length&&c.length,nada:!em(1620,1480).length};})();
   regra('ar','Anel aromático',M,IVL_MAPA,()=>{
     if(ar.nada)return R('excluido','nenhuma banda em 1620–1480');

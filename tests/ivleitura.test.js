@@ -32,6 +32,32 @@ const casos = {
     assert.strictEqual(est(r, 'ald'), 'excluido');
     return r;
   },
+  oh_largo_mas_fraco(L) {
+    const r = L.ivLe([{ v: 3597, w: 279, h: 0.18 }, { v: 3408, w: 279, h: 0.18 }, { v: 1718, h: 0.93 }], '');
+    assert.notStrictEqual(est(r, 'oh'), 'presente', 'banda larga fraca não prova O–H');
+    return r;
+  },
+  ch_agrupado_nao_e_oh_de_acido(L) {
+    const r = L.ivLe([{ v: 3001, w: 121, h: 0.31 }, { v: 2963, w: 1, h: 0.21 }, { v: 2918, w: 23, h: 0.2 }, { v: 1718, h: 0.93 }], '');
+    assert.notStrictEqual(est(r, 'oh'), 'presente', 'C–H agrupados em 3000 não são O–H de ácido');
+    return r;
+  },
+  aldeido_dentro_de_acido(L) {
+    const r = L.ivLe([F(3000, { w: 'l' }), F(2850), F(2722), F(1665)], '');
+    assert.strictEqual(est(r, 'oh'), 'presente');
+    assert.notStrictEqual(est(r, 'ald'), 'presente', 'ácido dá bandas em 2850 e 2720');
+    return r;
+  },
+  aldeido_dentro_de_acido_ombros_2600(L) {
+    const r = L.ivLe([F(3235, { w: 'l' }), F(2865), F(2850), F(2722), F(2608), F(2593), F(1665)], '');
+    assert.notStrictEqual(est(r, 'ald'), 'presente', 'ombros em 2600 são do O–H de ácido, não de aldeído');
+    return r;
+  },
+  no2_com_banda_fraca(L) {
+    const r = L.ivLe([{ v: 1502, h: 0.93 }, { v: 1323, h: 0.19 }], '');
+    assert.notStrictEqual(est(r, 'no2'), 'presente', 'par com banda fraca não é nitro');
+    return r;
+  },
   banda_unica(L) {
     const r = L.ivLe([F(1715)], '');
     assert.strictEqual(est(r, 'co'), 'presente');
