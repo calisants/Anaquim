@@ -1,7 +1,8 @@
 // Service worker do Anaquim (antes Analorg e, antes disso, Quebra-cabeça de Massas): guarda o app no aparelho para abrir sem internet.
 // Ao publicar uma versão nova do index.html, troque o número em CACHE (v1 -> v2).
-const CACHE = "anaquim-v274";
-const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
+const CACHE = "anaquim-v275";
+const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png",
+  "./dados/SVG.json", "./dados/MAPS.json", "./dados/ARWD.json", "./dados/MECH.json", "./dados/SLD.json", "./dados/COMP.json", "./dados/BDJSON.json", "./dados/MSFS.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
