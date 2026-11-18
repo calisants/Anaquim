@@ -2501,7 +2501,7 @@ function drawPals(){
   if(!PALS.some(x=>x[0]===n))n='azul';setPal(n);})();
 
 /* ---------- armazenamento (com proteção) ---------- */
-const VERSAO='v271 · 17/11/2026';
+const VERSAO='v272 · 17/11/2026';
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}try{if(typeof SYtoca==='function')SYtoca(k);}catch(e){}}};
 const isStud=n=>(LS.get('massas-stud',[])).indexOf(n)>=0;
 function ionBox(ex){const d=(typeof IONI!=='undefined')&&IONI[ex.n];if(!d)return '';
@@ -5551,11 +5551,11 @@ function apItemHtml(x,i,n,abertos){
    +(i>0?'<button type="button" class="btn ghost" data-a="sobe" aria-label="Subir na lista">↑</button>':'')+(i<n-1?'<button type="button" class="btn ghost" data-a="desce" aria-label="Descer na lista">↓</button>':'')
    +'<button type="button" class="btn ghost" data-a="tira">Tirar da aula</button></div></details>';
 }
-function apListaDesenha(){
+function apListaDesenha(abPre){
   const box=document.getElementById('apLista');if(!box)return;
   apFC=apFotos();
   const a=apAtiva(apGet());if(!a)return;
-  const ab={};box.querySelectorAll('details[open]').forEach(d=>{ab[d.dataset.id]=1;});
+  const ab=abPre||{};if(!abPre)box.querySelectorAll('details[open]').forEach(d=>{ab[d.dataset.id]=1;});
   box.innerHTML=a.ens.length?a.ens.map((x,i)=>apItemHtml(x,i,a.ens.length,ab)).join(''):'<p class="hint">Nenhum ensaio ainda. Marque as caixas abaixo, ou toque na estrela (☆) no título de qualquer ensaio.</p>';
 }
 function apPickHtml(a){
@@ -5564,9 +5564,14 @@ function apPickHtml(a){
   return '<details class="el" id="apPick"><summary>Escolher ensaios para a aula</summary><label class="aplb">Buscar<input type="search" id="apBusca" placeholder="Ex.: Tollens, solubilidade, ponto de fusão"></label>'
    +Object.keys(gr).map(k=>'<p class="apgrp">'+esc(k)+'</p>'+gr[k].map(e=>'<label class="apit" data-n="'+esc(apSlug(e.n+' '+e.g+' '+e.sg))+'"><input type="checkbox" data-pick="'+esc(e.id)+'"'+(ids.indexOf(e.id)>=0?' checked':'')+'><span>'+esc(e.n)+'</span></label>').join('')).join('')+'</details>';
 }
-function apDraw(){
+function apDraw(manter){
   const box=document.getElementById('apBox');if(!box)return;
   apFlush();
+  let ab0=null,foco=null;const y0=window.scrollY;
+  if(manter){ab0={};box.querySelectorAll('#apLista details[open]').forEach(d=>{ab0[d.dataset.id]=1;});
+    const f=document.activeElement;
+    if(f&&box.contains(f)&&(f.tagName==='INPUT'||f.tagName==='TEXTAREA')){const c=f.closest('.ap-e'),m=f.closest('.apam');
+      foco={id:f.id||'',a:f.dataset.a||'',card:c?c.dataset.id:'',am:m?m.dataset.i:'',s:f.selectionStart,e:f.selectionEnd};}}
   const d=apGet(),a=apAtiva(d),keepPick=document.getElementById('apPick')&&document.getElementById('apPick').open;
   if(!a){
     box.innerHTML='<div class="el"><h3>Monte a sua aula</h3><p>Escolha os ensaios que quer fazer e deixe tudo pronto antes de ir para a bancada. Depois, anote o resultado de cada um e gere o relatório.</p></div>'
@@ -5592,8 +5597,16 @@ function apDraw(){
    +'<div class="aprow"><button type="button" class="btn ghost" data-a="plgera">Gerar o código desta aula</button><button type="button" class="btn ghost" data-a="plcopia">Copiar</button></div>'
    +'<textarea class="apta" id="apPlTxt" rows="3" aria-label="Código do plano" placeholder="Código do plano"></textarea>'
    +'<div class="aprow" style="margin-top:8px"><button type="button" class="btn" data-a="plcria">Criar uma aula com este código</button></div><div id="apPlMsg" role="status"></div></details>';
-  apListaDesenha();
+  apListaDesenha(ab0);
   if(keepPick)document.getElementById('apPick').open=true;
+  if(manter){
+    if(foco){let el=null;
+      if(foco.id)el=document.getElementById(foco.id);
+      else if(foco.card){const c=[].find.call(box.querySelectorAll('.ap-e'),d=>d.dataset.id===foco.card);
+        if(c){const alvo=foco.am!==''?c.querySelector('.apam[data-i="'+foco.am+'"]'):c;el=alvo&&alvo.querySelector('[data-a="'+foco.a+'"]');}}
+      if(el){try{el.focus({preventScroll:true});if(foco.s!=null)el.setSelectionRange(foco.s,foco.e);}catch(e){}}}
+    window.scrollTo(0,y0);
+  }
 }
 function apRelMostra(){
   const a=apAtiva(apGet()),box=document.getElementById('apRelBox');if(!a||!box)return;
@@ -5709,7 +5722,7 @@ function apJuntar(inc){
   cur.l=Object.keys(m).map(k=>m[k]).filter(x=>!(x.del&&x.del<lim));
   if(!cur.ativa||!cur.l.some(x=>x.id===cur.ativa&&!x.del))cur.ativa=(inc&&inc.ativa&&cur.l.some(x=>x.id===inc.ativa&&!x.del))?inc.ativa:((apVivas(cur)[0]||{}).id||null);
   apSave(cur);
-  if(document.getElementById('apBox')&&CUR==='p-ap')apDraw();
+  if(n>0&&document.getElementById('apBox')&&CUR==='p-ap')apDraw(true);
   apStarsAtualiza();
   return n;
 }
@@ -5824,7 +5837,7 @@ function syAplica(rem,primeira){
 }
 function syRefresca(){
   try{buildChips();}catch(e){}try{trLabel();}catch(e){}try{drawPerg();}catch(e){}
-  try{if(typeof apStarsAtualiza==='function')apStarsAtualiza();if(CUR==='p-ap')apDraw();}catch(e){}
+  try{if(typeof apStarsAtualiza==='function')apStarsAtualiza();}catch(e){}
   try{if(CUR==='p-rv')rvDraw();}catch(e){}try{if(CUR==='p-an'&&typeof anDesenha==='function')anDesenha();}catch(e){}
   try{if(CUR==='p-st')syDraw();}catch(e){}
 }
