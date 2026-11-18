@@ -58,6 +58,31 @@ const casos = {
     assert.notStrictEqual(est(r, 'no2'), 'presente', 'par com banda fraca não é nitro');
     return r;
   },
+  halogenio_bromoalcano(L) {
+    const r = L.ivLe([F(2960), F(1460), F(1250), F(640, { h: 0.7 })], '');
+    assert.strictEqual(est(r, 'hal'), 'provavel', 'banda forte em 640 sugere C–Br ou C–Cl');
+    const g = r.grupos.find(x => x.k === 'hal');
+    assert.ok(/M\+2/.test(g.falta), 'deve apontar o M+2 do espectro de massas para confirmar');
+    return r;
+  },
+  halogenio_nao_confunde_alcool(L) {
+    const r = L.ivLe([F(3350, { w: 'l' }), F(2960), F(1050), F(660, { h: 0.6, w: 'l' })], '');
+    assert.notStrictEqual(est(r, 'hal'), 'provavel', 'O–H fora do plano de álcool cai em 700–600');
+    return r;
+  },
+  halogenio_ausente(L) {
+    const r = L.ivLe([F(2960), F(1460), F(1715)], '');
+    assert.strictEqual(est(r, 'hal'), 'excluido');
+    return r;
+  },
+  halogenio_em_aromatico_avisa(L) {
+    const r = L.ivLe([F(3030), F(1600), F(1495), F(750, { h: 0.8 }), F(690, { h: 0.8 })], '');
+    const g = r.grupos.find(x => x.k === 'hal');
+    assert.strictEqual(g.estado, 'indefinido', 'com anel aromático, o C–H fora do plano esconde o C–X');
+    assert.ok(/aromático/.test(g.motivo), 'avisar que C–H aromático também cai aqui');
+    assert.ok(/M\+2/.test(g.falta));
+    return r;
+  },
   banda_unica(L) {
     const r = L.ivLe([F(1715)], '');
     assert.strictEqual(est(r, 'co'), 'presente');
