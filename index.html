@@ -3021,6 +3021,7 @@ function otTem(c,k){
 let icSt={est:'',cor:'',g:'',el:{},ir:{},irAuto:{},sub:{},ring:'',ot:{}};
 /* intensidade das bandas lidas de arquivo (o campo #icIV só guarda os números) */
 let ICIVREAD=[];
+function ivCampoTexto(peaks){return peaks.map(p=>p.v+(p.w>=110&&p.v>=2400?'l':(p.w>0&&p.w<=60?'e':''))).join(' ');}
 const sx=h=>String(h).replace(/<[^>]*>/g,'');
 
 function icChips(key,opts){
@@ -3216,6 +3217,19 @@ function ivLe(bandas,meio){
   return{vazio:false,aviso:alto?'':'Nenhuma banda acima de 1500 cm⁻¹: a leitura usa só a região abaixo.',grupos:G};
 }
 /* IVLEITURA:FIM */
+/* HTML da leitura do conjunto de bandas, usado no Identificar e em Espectros > IV */
+function ivLeituraHtml(res,ligado){
+  const ROT={presente:'presente',excluido:'não tem',indefinido:'não dá para dizer'};
+  const ordem=['acima de 2700','2000 a 1500','1500 a 1100','abaixo de 900'];
+  const regs=ordem.filter(r=>res.grupos.some(g=>g.regiao===r)).concat([...new Set(res.grupos.map(g=>g.regiao))].filter(r=>ordem.indexOf(r)<0));
+  return '<h3 style="margin:10px 0 4px">Leitura do espectro inteiro</h3>'
+    +'<p class="sm">O app olhou todas as bandas juntas e disse, grupo por grupo, o que o conjunto mostra. '+(ligado?'Isso já entrou nos Sim/Não de IV acima, exceto onde você marcou à mão.':'Use como pista: o botão abaixo leva as bandas ao Identificar, que usa esta leitura.')+'</p>'
+    +(res.aviso?'<p class="hint">'+esc(res.aviso)+'</p>':'')
+    +regs.map(r=>'<p class="sm" style="margin:8px 0 2px"><b>Região '+esc(r)+' cm⁻¹</b></p>'
+      +res.grupos.filter(g=>g.regiao===r).map(g=>'<div class="ivl" style="margin:3px 0"><b>'+esc(g.lab)+'</b>: '+esc(ROT[g.estado]||g.estado)+'. '+esc(g.motivo||'')
+        +(g.estado==='indefinido'&&g.falta?' <small>Falta: '+esc(g.falta)+'</small>':'')
+        +'<details class="ivfonte"><summary class="sm">fonte</summary><span class="sm">'+esc(g.fonte||'')+'</span></details></div>').join('')).join('');
+}
 function icLeituraDesenha(){
   const box=$('#icLeitura');if(!box)return;
   if(!icSt.irAuto)icSt.irAuto={};
@@ -3232,16 +3246,7 @@ function icLeituraDesenha(){
     if(novo){if(icSt.ir[g.k]!==novo||!icSt.irAuto[g.k]){icSt.ir[g.k]=novo;icSt.irAuto[g.k]=true;mudou=true;}}
     else if(icSt.irAuto[g.k])limpa(g.k);});
   Object.keys(icSt.irAuto).forEach(k=>{if(!vistos[k])limpa(k);});
-  const ROT={presente:'presente',excluido:'não tem',indefinido:'não dá para dizer'};
-  const ordem=['acima de 2700','2000 a 1500','1500 a 1100','abaixo de 900'];
-  const regs=ordem.filter(r=>res.grupos.some(g=>g.regiao===r)).concat([...new Set(res.grupos.map(g=>g.regiao))].filter(r=>ordem.indexOf(r)<0));
-  box.innerHTML='<h3 style="margin:10px 0 4px">Leitura do espectro inteiro</h3>'
-    +'<p class="sm">O app olhou todas as bandas juntas e disse, grupo por grupo, o que o conjunto mostra. Isso já entrou nos Sim/Não de IV acima, exceto onde você marcou à mão.</p>'
-    +(res.aviso?'<p class="hint">'+esc(res.aviso)+'</p>':'')
-    +regs.map(r=>'<p class="sm" style="margin:8px 0 2px"><b>Região '+esc(r)+' cm⁻¹</b></p>'
-      +res.grupos.filter(g=>g.regiao===r).map(g=>'<div class="ivl" style="margin:3px 0"><b>'+esc(g.lab)+'</b>: '+esc(ROT[g.estado]||g.estado)+'. '+esc(g.motivo||'')
-        +(g.estado==='indefinido'&&g.falta?' <small>Falta: '+esc(g.falta)+'</small>':'')
-        +'<details class="ivfonte"><summary class="sm">fonte</summary><span class="sm">'+esc(g.fonte||'')+'</span></details></div>').join('')).join('');
+  box.innerHTML=ivLeituraHtml(res,true);
   if(mudou)icDraw();
 }
 function icBands(){
@@ -5111,7 +5116,7 @@ const ehPdf=f=>/\.pdf$/i.test(f.name)||f.type==='application/pdf';
 function ivPreenche(peaks,msg,T,n){
   ICIVREAD=peaks.map(p=>({v:p.v,w:p.w,h:p.h,forte:p.forte===true}));
   const out=document.getElementById('icIVMsg'),campo=document.getElementById('icIV');
-  campo.value=peaks.map(p=>p.v+(p.w>=110&&p.v>=2400?'l':(p.w>0&&p.w<=60?'e':''))).join(' ');
+  campo.value=ivCampoTexto(peaks);
   campo.dispatchEvent(new Event('input',{bubbles:true}));
   out.textContent=msg+(T===undefined?'':' ('+(T?'espectro em transmitância':'espectro em absorbância')+', '+n+' pontos)')+'. Confira a lista no campo acima e apague as que não forem bandas de verdade. Marquei "l" nas bandas muito largas acima de 2400 cm⁻¹ e "e" nas estreitas, pela largura medida na curva; confira se faz sentido.';
 }
@@ -6303,9 +6308,9 @@ function spDesenha(met,r){
   if(met==='iv'){
     const P=r.peaks.slice().sort((a,b)=>b.v-a.v);
     h+=spStick(P.map(p=>[p.v,Math.max(8,Math.round((p.h||0.5)*100))]),{a:4000,b:400,tk:[4000,3000,2000,1000],alt:'Bandas de IV lidas, de 4000 a 400 cm⁻¹'});
-    h+=spTabela(['Banda (cm⁻¹)','O que pode ser (tabela do app)'],P.map(p=>{const hit=IRT.filter(q=>p.v<=q[0]+(q[0]===q[1]?5:0)&&p.v>=q[1]-(q[0]===q[1]?5:0)),nm=[...new Set(hit.map(q=>q[2]))];
-      return['<b>'+p.v+(p.w>=110&&p.v>2400?' (larga)':'')+'</b>'+(p.est?' <small>(estimada)</small>':''),nm.length?esc(nm.slice(0,3).join('; '))+(nm.length>3?'; ...':''):'nada na tabela do app'];}));
-    h+='<p class="hint">As faixas se sobrepõem: use como pista e confirme com outra banda. Marquei "larga" só nas bandas muito largas acima de 2400 cm⁻¹.</p>';
+    h+=ivLeituraHtml(ivLe(P,''),false);
+    h+='<details class="ivdet"><summary>Cada banda isolada (pode ser muita coisa)</summary>'+spTabela(['Banda (cm⁻¹)','O que pode ser (tabela do app)'],P.map(p=>{const hit=IRT.filter(q=>p.v<=q[0]+(q[0]===q[1]?5:0)&&p.v>=q[1]-(q[0]===q[1]?5:0)),nm=[...new Set(hit.map(q=>q[2]))];
+      return['<b>'+p.v+(p.w>=110&&p.v>2400?' (larga)':'')+'</b>'+(p.est?' <small>(estimada)</small>':''),nm.length?esc(nm.slice(0,3).join('; '))+(nm.length>3?'; ...':''):'nada na tabela do app'];}))+'<p class="hint">As faixas se sobrepõem: cada banda sozinha pode ser vários grupos. Marquei "larga" só nas bandas muito largas acima de 2400 cm⁻¹.</p></details>';
     h+='<div class="row"><button class="btn" type="button" data-sp-go="iv">Levar as bandas para o Identificar</button></div>';
   }else if(met==='ms'){
     const P=r.pk.slice().sort((a,b)=>a[0]-b[0]),mm=spMProvavel(r.pk),M=Math.max(...P.map(p=>p[0]));
@@ -6335,7 +6340,7 @@ function spIrIdent(campos,aviso){
 }
 function spLevar(met){
   const r=SPR[met==='msan'?'ms':met];if(!r)return;
-  if(met==='iv')spIrIdent([['icIV',r.peaks.map(p=>p.v+(p.w>=110&&p.v>2400?'l':'')).join(' ')]],'Bandas de IV lidas do PDF. Confira o campo e apague as que não forem bandas de verdade.');
+  if(met==='iv'){ICIVREAD=r.peaks.map(p=>({v:p.v,w:p.w,h:p.h,forte:p.forte===true}));spIrIdent([['icIV',ivCampoTexto(r.peaks)]],'Bandas de IV lidas do PDF. Confira o campo e apague as que não forem bandas de verdade.');}
   else if(met==='ms'){
     const mm=spMProvavel(r.pk),pk=r.pk.filter(q=>q[0]!==mm.M&&mm.iso.indexOf(q[0])<0);
     spIrIdent([['icP',pk.map(q=>q[0]+':'+q[1]).join(' ')]],'Picos de massas lidos do PDF (sem o M provável, '+mm.M+', e sem o pico M+1). Confira os valores e digite o M se tiver certeza dele.');}

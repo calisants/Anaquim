@@ -2,6 +2,7 @@
 const { chromium } = require('/opt/npm-tools/node_modules/playwright');
 const path = require('path');
 const assert = require('assert');
+const PDFS = process.env.ANAQUIM_PDFS || '/home/claude/pdfs';
 const INDEX = 'file://' + path.join(__dirname, '..', 'index.html');
 (async () => {
   const br = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox', '--allow-file-access-from-files'] });
@@ -50,6 +51,13 @@ const INDEX = 'file://' + path.join(__dirname, '..', 'index.html');
     await zera(); await digita('1715 2820 2720 3030'); await digita('');
     const s = await estado();
     assert.strictEqual(s.leitura.trim(), ''); assert.deepStrictEqual(s.auto, {}); assert.ok(!s.ir.ald, 'ald deveria voltar a vazio');
+  });
+  await caso('espectros_iv_mostra_leitura', async () => {
+    await page.evaluate(() => spInit());
+    await page.setInputFiles('#spf-iv', path.join(PDFS, 'acetona_ir.pdf'));
+    await page.waitForFunction(() => /Leitura do espectro/.test((document.querySelector('.sppdf[data-sp="iv"] [data-sp-out]') || {}).textContent || ''), null, { timeout: 60000 });
+    const r = await page.evaluate(() => { const b = document.querySelector('.sppdf[data-sp="iv"] [data-sp-out]'); const ls = [...b.querySelectorAll('.ivl')].map(x => x.textContent); return { co: ls.find(t => /C=O/.test(t)) || '', abertos: b.querySelectorAll('details[open]').length, antiga: [...b.querySelectorAll('details')].some(d => /O que pode ser/.test(d.textContent) && !d.open) }; });
+    assert.ok(/presente/.test(r.co), 'C=O deveria estar presente: ' + r.co); assert.strictEqual(r.abertos, 0); assert.ok(r.antiga, 'tabela "O que pode ser" deve ficar em <details> fechado');
   });
   await caso('sem_erros', async () => assert.deepStrictEqual(erros, []));
   falhas.forEach(f => console.log('FALHOU ' + f));
