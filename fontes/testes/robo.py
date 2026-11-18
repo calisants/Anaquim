@@ -1,12 +1,14 @@
+import os,sys;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from playwright.sync_api import sync_playwright
+from _nav import abrir
 import random
 random.seed(7)
 errs=[];clicks=0
 with sync_playwright() as p:
-    b=p.chromium.launch();pg=b.new_page(viewport={'width':360,'height':780})
+    b=abrir(p);pg=b.new_page(viewport={'width':360,'height':780})
     pg.on('pageerror',lambda e:errs.append(str(e)))
-    pg.goto('file:///home/claude/massas/index.html')
-    screens=['p-an','p-tr','p-tb','p-iv','p-sp','p-ca','p-aj','p-fo','p-pq','p-co','p-es','p-pr','p-pg']
+    pg.goto('file:///home/claude/massas/index.html');pg.wait_for_timeout(500)
+    screens=['p-in','p-cp','p-ic','p-en','p-pf','p-so','p-el','p-fu','p-sp','p-iv','p-an','p-tr','p-tb','p-te','p-rm','p-ob','p-rv','p-st','p-fo']
     for rodada in range(260):
         sc=random.choice(screens)
         pg.evaluate(f"go('{sc}')")
@@ -21,5 +23,5 @@ with sync_playwright() as p:
             try: bt.click(timeout=800,force=True);clicks+=1
             except Exception: pass
         if sc=='p-an':
-            pg.evaluate("document.querySelectorAll('#p-an .chip')[%d]&&document.querySelectorAll('#p-an .chip')[%d].click()"%(random.randrange(12),random.randrange(12)))
+            pg.evaluate("(()=>{const c=document.querySelectorAll('#p-an .chip');if(c.length)c[Math.floor(Math.random()*c.length)].click();})()")
     print('cliques:',clicks,'| erros de código:',len(errs));[print(e) for e in sorted(set(errs))[:8]]

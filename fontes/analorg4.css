@@ -24,10 +24,8 @@ details.fonte[open]>summary::before{content:"▾"}
 .chipbar.ivseg{flex-wrap:nowrap;gap:4px;overflow-x:auto;margin-inline:-16px;padding:2px 16px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chipbar.ivseg::-webkit-scrollbar{display:none}
 .chipbar.ivseg .chip{flex:1 0 auto;padding-inline:6px;white-space:nowrap;text-align:center;font-size:.9rem}
-/* RMN: oito abas rolam de lado */
-#p-rm .chipbar.rseg{flex-wrap:nowrap;overflow-x:auto;margin-inline:-16px;padding:2px 16px 8px;scrollbar-width:none}
-#p-rm .chipbar.rseg::-webkit-scrollbar{display:none}
-#p-rm .chipbar.rseg .chip{flex:none;white-space:nowrap}
+/* RMN: as abas quebram em linhas, nenhuma fica escondida */
+#p-rm .chipbar.rseg .chip{white-space:nowrap}
 .icr .pct{text-align:right}.icr .pct small{display:block;font-size:.6em;font-weight:400;color:var(--muted)}
 .icwarn+.tbl th{letter-spacing:0;text-transform:none;word-break:normal;overflow-wrap:normal;font-size:.85rem;white-space:normal}
 .icr .pct{display:inline-flex;flex-direction:column;align-items:flex-end;line-height:1.15}
