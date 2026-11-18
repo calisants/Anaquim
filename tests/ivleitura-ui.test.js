@@ -56,7 +56,7 @@ const INDEX = 'file://' + path.join(__dirname, '..', 'index.html');
     await page.evaluate(() => spInit());
     await page.setInputFiles('#spf-iv', path.join(PDFS, 'acetona_ir.pdf'));
     await page.waitForFunction(() => /Leitura do espectro/.test((document.querySelector('.sppdf[data-sp="iv"] [data-sp-out]') || {}).textContent || ''), null, { timeout: 60000 });
-    const r = await page.evaluate(() => { const b = document.querySelector('.sppdf[data-sp="iv"] [data-sp-out]'); const ls = [...b.querySelectorAll('.ivl')].map(x => x.textContent); return { co: ls.find(t => /C=O/.test(t)) || '', abertos: b.querySelectorAll('details[open]').length, antiga: [...b.querySelectorAll('details')].some(d => /O que pode ser/.test(d.textContent) && !d.open) }; });
+    const r = await page.evaluate(() => { const b = document.querySelector('.sppdf[data-sp="iv"] [data-sp-out]'); const ls = [...b.querySelectorAll('.ivl')].map(x => x.textContent); return { co: ls.find(t => /^\s*C=O/.test(t)) || '', abertos: b.querySelectorAll('details[open]').length, antiga: [...b.querySelectorAll('details')].some(d => /O que pode ser/.test(d.textContent) && !d.open) }; });
     assert.ok(/presente/.test(r.co), 'C=O deveria estar presente: ' + r.co); assert.strictEqual(r.abertos, 0); assert.ok(r.antiga, 'tabela "O que pode ser" deve ficar em <details> fechado');
   });
   await caso('sem_erros', async () => assert.deepStrictEqual(erros, []));

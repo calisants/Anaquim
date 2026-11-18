@@ -32,6 +32,24 @@ const casos = {
     assert.strictEqual(est(r, 'ald'), 'excluido');
     return r;
   },
+  amida_nao_e_nitro(L) {
+    // acetanilida: N–H em 3300, C=O em 1660 e amida II em 1558 + 1369: sem N=O, não pode dizer nitro presente
+    const r = L.ivLe([{ v: 3300, w: 60, h: 0.7 }, { v: 1660, h: 0.9 }, { v: 1558, h: 0.8 }, { v: 1369, h: 0.7 }], '');
+    assert.notStrictEqual(est(r, 'no2'), 'presente');
+    return r;
+  },
+  co_so_em_1650_nao_e_cetona(L) {
+    // banda só em 1650–1630 (alceno, amida, ureia) não prova C=O
+    const r = L.ivLe([{ v: 1640, h: 0.8 }, { v: 3080, h: 0.3 }], '');
+    assert.notStrictEqual(est(r, 'co'), 'presente');
+    return r;
+  },
+  acido_com_ombros_nao_exclui_oh(L) {
+    // ácido em solução/sólido: C=O forte e ombros em 2700–2500 não podem dar O–H excluído
+    const r = L.ivLe([{ v: 1710, h: 0.9 }, { v: 2650, h: 0.2 }, { v: 2580, h: 0.2 }, { v: 2950, h: 0.4 }], '');
+    assert.notStrictEqual(est(r, 'oh'), 'excluido');
+    return r;
+  },
   oh_largo_mas_fraco(L) {
     const r = L.ivLe([{ v: 3597, w: 279, h: 0.18 }, { v: 3408, w: 279, h: 0.18 }, { v: 1718, h: 0.93 }], '');
     assert.notStrictEqual(est(r, 'oh'), 'presente', 'banda larga fraca não prova O–H');
