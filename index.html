@@ -2501,7 +2501,7 @@ function drawPals(){
   if(!PALS.some(x=>x[0]===n))n='azul';setPal(n);})();
 
 /* ---------- armazenamento (com proteção) ---------- */
-const VERSAO='v272 · 17/11/2026';
+const VERSAO='v273 · 17/11/2026';
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}try{if(typeof SYtoca==='function')SYtoca(k);}catch(e){}}};
 const isStud=n=>(LS.get('massas-stud',[])).indexOf(n)>=0;
 function ionBox(ex){const d=(typeof IONI!=='undefined')&&IONI[ex.n];if(!d)return '';
@@ -4953,11 +4953,20 @@ function pdfIVRot(I){
   out.sort((a,b)=>b.v-a.v);return{peaks:out,falhas,estim,lideres:usaL};
 }
 const PDF_ERR='Não consegui ler este PDF. O app lê PDF com texto (pares de números) e impressões de espectro do SDBS. Para outro tipo de imagem, digite os números.';
+/* PDF com só alguns picos numerados: o número escrito vale (é exato); pico forte da curva sem número por perto (±14 cm⁻¹) entra como estimado */
+function pdfIVJunta(esc,cur){
+  const out=esc.map(p=>Object.assign({},p,{est:false}));let novos=[];
+  (cur||[]).forEach(c=>{if(!c.forte)return;if(out.some(p=>Math.abs(p.v-c.v)<=14))return;out.push({v:c.v,h:c.h,w:0,forte:true,est:true});novos.push(c.v);});
+  out.sort((a,b)=>b.v-a.v);novos.sort((a,b)=>b-a);
+  return{peaks:out,esc:esc.length,novos:novos};
+}
+function pdfIVCurva(I){try{const fr=pdfMoldura(I);return fr?pdfIV(I,fr,[]):[];}catch(e){return[];}}
 async function pdfIVArquivo(f){
   const r=await pdfLer(f);
   if(r.texto){const p=ivParseSpec(r.texto);return p&&p.peaks.length?{peaks:p.peaks,msg:'Li '+p.peaks.length+' bandas do texto do PDF'}:null;}
   const I=pdfMascara(r),rot=pdfIVRot(I);
-  if(rot)return{peaks:rot.peaks,msg:'Li '+rot.peaks.length+' números escritos no espectro (rótulos dos picos)'+(rot.lideres?', conferidos com a linha de cada pico':'')+(rot.falhas?'. '+rot.falhas+' rótulo(s) eu não consegui ler: digite à mão':'')+'. Os dois últimos dígitos podem errar (6, 8 e 0 se parecem): confira a lista no campo acima. Não marquei largura (l/e)'};
+  if(rot){const j=pdfIVJunta(rot.peaks,pdfIVCurva(I));rot.peaks=j.peaks;rot.junta=j;}
+  if(rot)return{peaks:rot.peaks,msg:'Li '+rot.junta.esc+' números escritos no espectro (rótulos dos picos)'+(rot.lideres?', conferidos com a linha de cada pico':'')+(rot.falhas?'. '+rot.falhas+' rótulo(s) eu não consegui ler: digite à mão':'')+'. Os dois últimos dígitos podem errar (6, 8 e 0 se parecem): confira a lista no campo acima. Não marquei largura (l/e)'+(rot.junta.novos.length?'. Mais '+rot.junta.novos.length+' bandas sem número foram estimadas pela curva ('+rot.junta.novos.join(', ')+') e aparecem como "estimada" na tabela de Espectros. Cada pixel do gráfico vale alguns cm⁻¹, então esses valores podem errar um pouco, e na banda larga do O–H a curva pode inventar bandas: apague as que não forem de verdade':'')};
   const fr=pdfMoldura(I);if(!fr)return null;
   const guia=pdfTabelaIR(I,fr),pk=pdfIV(I,fr,guia);
   return pk.length>=3?{peaks:pk,msg:'Li '+pk.length+' bandas da imagem do espectro (impressão do SDBS)'+(guia.length?', usando a tabela de picos escrita ('+guia.length+' linhas lidas) como guia':'')+'. A posição vem da curva. Não marquei largura (l/e): a imagem não dá isso com segurança'}:null;
@@ -6164,7 +6173,7 @@ function spDesenha(met,r){
     const P=r.peaks.slice().sort((a,b)=>b.v-a.v);
     h+=spStick(P.map(p=>[p.v,Math.max(8,Math.round((p.h||0.5)*100))]),{a:4000,b:400,tk:[4000,3000,2000,1000],alt:'Bandas de IV lidas, de 4000 a 400 cm⁻¹'});
     h+=spTabela(['Banda (cm⁻¹)','O que pode ser (tabela do app)'],P.map(p=>{const hit=IRT.filter(q=>p.v<=q[0]+(q[0]===q[1]?5:0)&&p.v>=q[1]-(q[0]===q[1]?5:0)),nm=[...new Set(hit.map(q=>q[2]))];
-      return['<b>'+p.v+(p.w>=110&&p.v>2400?' (larga)':'')+'</b>',nm.length?esc(nm.slice(0,3).join('; '))+(nm.length>3?'; ...':''):'nada na tabela do app'];}));
+      return['<b>'+p.v+(p.w>=110&&p.v>2400?' (larga)':'')+'</b>'+(p.est?' <small>(estimada)</small>':''),nm.length?esc(nm.slice(0,3).join('; '))+(nm.length>3?'; ...':''):'nada na tabela do app'];}));
     h+='<p class="hint">As faixas se sobrepõem: use como pista e confirme com outra banda. Marquei "larga" só nas bandas muito largas acima de 2400 cm⁻¹.</p>';
     h+='<div class="row"><button class="btn" type="button" data-sp-go="iv">Levar as bandas para o Identificar</button></div>';
   }else if(met==='ms'){
