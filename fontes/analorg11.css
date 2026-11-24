@@ -1,0 +1,46 @@
+/* ANALORG v11: treino de prova de RMN de 1H (integração por régua). Tudo sob .pv para não mexer no resto do app. */
+.pv{--pi:#1f2933;--pm:#5b6672;--pc:#fffdf8;--pl:#d9d4c7;--pb:#2a5d84;--pg:#3d7a4a;--po:#b5651d;--pr:#b3261e;color:var(--pi);line-height:1.6}
+.pv h2{font-size:18px;margin:0 0 8px}
+.pv .pcard{background:var(--pc);border:1px solid var(--pl);border-radius:14px;padding:14px 16px;margin:12px 0;min-width:0;color:var(--pi)}
+.pv .pgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.pv .pgrid>.pcard{margin:0}
+@media(max-width:760px){.pv .pgrid{grid-template-columns:1fr}}
+.pv .prow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pv select,.pv input[type=number],.pv input[type=text],.pv textarea{font:inherit;border:1px solid #c6c0b0;border-radius:9px;padding:7px 10px;background:#fff;color:#1f2933;max-width:100%}
+.pv input[type=number]{width:96px}
+.pv textarea{width:100%;min-height:70px}
+.pv button{font:inherit;cursor:pointer;border:1px solid #c6c0b0;border-radius:9px;background:#f0ece0;color:#1f2933;padding:7px 14px}
+.pv button.pri{background:var(--pb);border-color:var(--pb);color:#fff}
+.pv button.pok{background:var(--pg);border-color:var(--pg);color:#fff}
+.pv button.pbad{background:#fff;border-color:var(--pr);color:var(--pr)}
+.pv button:disabled{opacity:.5;cursor:default}
+.pv mark{padding:0 3px;border-radius:3px;color:#1f2933}
+.pv mark.y{background:#fff0a0}.pv mark.p{background:#ffd3e2}.pv mark.b{background:#cfe6ff}
+.pv .psm{font-size:14px;color:var(--pm)}
+.pv table{border-collapse:collapse;width:100%;margin:8px 0;font-size:15px}
+.pv th,.pv td{border:1px solid #cfc9ba;padding:6px 8px;text-align:left;vertical-align:middle;color:#1f2933}
+.pv th{background:#f0ece0;text-transform:none}
+.pv td.num{white-space:nowrap}
+.pv #pv_tbl{overflow-x:auto}
+@media(max-width:560px){.pv #pv_tbl table{font-size:13px}.pv #pv_tbl th,.pv #pv_tbl td{padding:4px 5px}.pv #pv_tbl td.num{white-space:normal}.pv input[type=number]{width:64px}}
+.pv .ppasso{background:#eef6ff;border-left:6px solid var(--pb);border-radius:6px;padding:10px 16px;margin:10px 0;color:#1f2933}
+.pv .ppasso ol{margin:4px 0;padding-left:22px}.pv .ppasso li{margin:5px 0}
+.pv .pcuid{background:#fff3e2;border-left:6px solid var(--po);border-radius:6px;padding:8px 16px;margin:10px 0;font-size:15px;color:#1f2933}
+.pv .pok{color:var(--pg)}.pv .pbad{color:var(--pr)}
+.pv .pfb div{margin:4px 0;padding:6px 10px;border-radius:8px;font-size:15px}
+.pv .pfb .pok{background:#e4f5e1;color:#1f5a2b}.pv .pfb .pbad{background:#fde8e6;color:#8b1a14}.pv .pfb .ptip{background:#eef6ff;color:#1c4a73}
+.pv svg{width:100%;height:auto;display:block;touch-action:manipulation}
+.pv #pv_spec.medindo{cursor:crosshair}
+.pv .pchips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.pv .pchip{border:2px solid;border-radius:999px;background:#fff;padding:3px 14px}
+.pv .pchip[aria-pressed=true]{background:#fff8d8}
+.pv dl{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 12px;margin:0;align-items:center}
+.pv dd{margin:0;min-width:0}
+@media(max-width:560px){.pv dl{grid-template-columns:110px minmax(0,1fr)}}
+.pv .pat{display:inline-block;position:relative;font-weight:600;margin:0 1px;padding-bottom:16px;font-size:18px}
+.pv .pat i{position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);font-style:normal;font-size:12px;border:1.5px solid currentColor;border-radius:50%;width:17px;height:17px;line-height:14px;text-align:center}
+.pv .pmol{display:inline-block;padding:4px 12px;background:#fff;border:1px solid var(--pl);border-radius:8px;color:#1f2933}
+.pv .ppr{border:1px solid var(--pl);border-radius:10px;padding:6px 14px;margin:8px 0;background:#fff;color:#1f2933}
+.pv .ppr h4{margin:4px 0;font-size:16px;color:var(--pb)}
+.pv .pselo{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:0 8px;background:#ffe3bd;color:#7a4a00}
+.pv .pprog{font-weight:600}
