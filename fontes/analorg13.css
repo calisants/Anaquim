@@ -1,0 +1,30 @@
+/* ANALORG v13: leitor de espectros de RMN (¹H e ¹³C) com modo prova. Tudo sob .lt */
+.lt{--li:#1f2933;--lm:#5b6672;--lc:#fffdf8;--ll:#d9d4c7;--lb:#2a5d84;--lg:#2d6a3e;--lr:#a1332b;color:var(--li);line-height:1.55}
+.lt .lcard{background:var(--lc);border:1px solid var(--ll);border-radius:14px;padding:14px 16px;margin:12px 0;min-width:0;color:var(--li)}
+.lt .lcard h3{margin:0 0 8px;font-size:16px}
+.lt .lrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.lt select,.lt input[type=number]{font:inherit;border:1px solid #c6c0b0;border-radius:9px;padding:7px 10px;background:#fff;color:#1f2933;max-width:100%}
+.lt button.lbtn{font:inherit;cursor:pointer;border:1px solid #c6c0b0;border-radius:9px;background:#f0ece0;color:#1f2933;padding:7px 14px}
+.lt button.lbtn.pri{background:var(--lb);border-color:var(--lb);color:#fff}
+.lt button.lbtn:disabled{opacity:.5;cursor:default}
+.lt label.lchk{display:flex;gap:6px;align-items:center;cursor:pointer}
+.lt svg{width:100%;height:auto;display:block}
+.lt .lchips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+.lt .lchip{font:inherit;border:2px solid #d9d4c7;background:#fff;border-radius:999px;padding:5px 12px;cursor:pointer;color:#1f2933}
+.lt .lchip[aria-pressed=true]{background:#f0efe9}
+.lt table{border-collapse:collapse;width:100%;font-size:15px}
+.lt th,.lt td{border-bottom:1px solid var(--ll);padding:6px 8px;text-align:left;vertical-align:top;color:#1f2933}
+.lt th{color:var(--lm);font-weight:600;text-transform:none}
+.lt dl{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;margin:0}
+.lt dt{color:var(--lm)}.lt dd{margin:0;min-width:0}
+.lt .lok{color:var(--lg);font-weight:600}.lt .lbad{color:var(--lr);font-weight:600}
+.lt .lgrp{padding-bottom:1px;border-bottom:4px solid;margin:0 1px;font-size:1.15rem}
+.lt .lformula{font-size:1.15rem;margin:6px 0}
+.lt ol.lsteps{padding-left:22px;margin:8px 0}.lt ol.lsteps li{margin:6px 0}
+.lt .lsm{font-size:14px;color:var(--lm)}
+.lt .ltip{background:#f3f1e8;border-left:4px solid #b9a96a;padding:8px 12px;border-radius:6px;margin:10px 0}
+.lt .lgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.lt .lgrid>.lcard{margin:0}
+.lt .ltag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;border:1px solid var(--ll);color:var(--lm)}
+.lt .ltag.sv{background:#e8f0f6;border-color:#9db9cf;color:#1d4766}
+.lt details summary{cursor:pointer;color:var(--lb)}
+@media(max-width:760px){.lt .lgrid{grid-template-columns:1fr}.lt dl{grid-template-columns:110px 1fr}}

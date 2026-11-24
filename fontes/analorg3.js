@@ -639,7 +639,7 @@ function zoomOpen(btn){
   }
   document.addEventListener('click',e=>{const b=e.target.closest('[data-tq]');if(!b)return;TQ=b.dataset.tq;document.querySelectorAll('[data-tq]').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));trnDraw();});
   /* ---- troca de painel: cada aba do RMN mostra um ou mais painéis, na ordem do grupo ---- */
-  const RGRP={ler:['ler'],apr:['teo','acop','mac'],calc:['calc','integ'],cons:['tab','comp'],pra:['res','treino'],prova:['prova'],guia:['guia'],pdf:['pdf']};
+  const RGRP={ler:['ler'],apr:['teo','acop','mac'],calc:['calc','integ'],cons:['tab','comp'],pra:['res','treino'],prova:['prova'],guia:['guia'],leitor:['leitor'],pdf:['pdf']};
   const RFROM={};Object.keys(RGRP).forEach(g=>RGRP[g].forEach(p=>{RFROM[p]=g;}));
   function rp(k){
     const g=RGRP[k]?k:(RFROM[k]||'ler'),list=RGRP[g];
@@ -651,6 +651,7 @@ function zoomOpen(btn){
     if(list.indexOf('res')>=0&&window.resDraw)window.resDraw();
     if(list.indexOf('prova')>=0&&window.provaDraw)window.provaDraw();
     if(list.indexOf('guia')>=0&&window.guiaDraw)window.guiaDraw();
+    if(list.indexOf('leitor')>=0&&window.leitorDraw)window.leitorDraw();
     if(list.indexOf('tab')>=0&&window.c13Draw)window.c13Draw();
     if(list.indexOf('treino')>=0&&!TCUR)trnDraw();
     try{sessionStorage.setItem('massas-rp',g);}catch(e){}
