@@ -23,25 +23,31 @@ with sync_playwright() as p:
     # 4.3 usa os passos de Praticar
     pg.select_option('#lt_exsel','7');pg.click('#lt_allsteps')
     assert pg.locator('#lt_steps li').count()>=4
-    # modo prova: esconde δ e corrige
-    pg.select_option('#lt_exsel','0');pg.check('#lt_prova')
-    pg.click('#lt_chips [data-i="0"]')
-    assert '4,12' not in pg.inner_text('#lt_chips')
-    pg.fill('#lt_fd','4.1');pg.select_option('#lt_fcat','het');pg.fill('#lt_fh','2');pg.select_option('#lt_fm','q');pg.fill('#lt_fv','3')
-    pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==0,pg.inner_text('#lt_fb')
-    pg.fill('#lt_fh','3');pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==1
     # 13C
-    pg.uncheck('#lt_prova');pg.select_option('#lt_nuc','c');pg.wait_for_timeout(100)
+    assert pg.locator('#lt_prova').count()==0
+    pg.select_option('#lt_nuc','c');pg.wait_for_timeout(100)
     assert pg.locator('#lt_exsel option').count()==11
     assert pg.is_disabled('#lt_integral')
     pg.select_option('#lt_exsel','3')  # 5.7 A
     assert pg.locator('#lt_ov rect[data-i]').count()==4
     pg.click('#lt_allsteps');assert pg.locator('#lt_steps li').count()>=4
-    pg.check('#lt_prova');pg.click('#lt_chips [data-i="0"]')
+    # aba Prova em 13C: o mesmo leitor, em modo prova
+    pg.click('[data-rp="prova"]');pg.wait_for_timeout(200);pg.click('#pv_nc');pg.wait_for_timeout(200)
+    assert pg.locator('#pv_chost #lt_exsel').count()==1 and pg.locator('[data-rpane="leitor"] #lt_exsel').count()==0
+    assert pg.is_hidden('#lt_nuc')
+    assert pg.locator('#lt_exsel option').count()==11
+    pg.select_option('#lt_exsel','3');pg.click('#lt_chips [data-i="0"]')
+    assert '211' not in pg.inner_text('#lt_chips')
     pg.fill('#lt_fd','212');pg.select_option('#lt_fcat','cet');pg.select_option('#lt_fm','s');pg.fill('#lt_fh','0');pg.fill('#lt_fn','1')
     pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==0,pg.inner_text('#lt_fb')
+    pg.fill('#lt_fn','2');pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==1
+    pg.click('#pv_nh');assert pg.is_visible('#pv_exsel')
+    # voltar ao Leitor: volta o modo de estudo, ¹H
+    pg.click('[data-rp="leitor"]');pg.wait_for_timeout(200)
+    assert pg.locator('[data-rpane="leitor"] #lt_exsel').count()==1 and pg.is_visible('#lt_nuc')
+    assert pg.locator('#lt_chips button').count()>0
     # 13C do acetato: 4 sinais, nenhum equivalente (n=1)
-    pg.uncheck('#lt_prova');pg.select_option('#lt_exsel','0')
+    pg.select_option('#lt_nuc','c');pg.select_option('#lt_exsel','0')
     assert 'nenhum equivalente' in pg.inner_text('#lt_tbl')
     t=pg.evaluate("document.querySelector('.lt').innerText")
     assert '—' not in t and 'escrito por mim' not in t

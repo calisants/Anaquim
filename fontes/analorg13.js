@@ -338,19 +338,18 @@ function fillSel(){
  const o=(e,i)=>'<option value="'+i+'"'+(i===S.ex?' selected':'')+'>'+(S.prova?(e.rot||'Exemplo '+(i+1)+' · '+e.fs):e.nome)+'</option>';
  $('exsel').innerHTML='<optgroup label="Exemplos resolvidos">'+L.map((e,i)=>e.grp?'':o(e,i)).join('')+'</optgroup><optgroup label="'+(S.nuc==='c'?'Silverstein 5.7 (13C, dos problemas do Anaquim)':'Silverstein 4.3 (dos problemas do Anaquim)')+'">'+L.map((e,i)=>e.grp?o(e,i):'').join('')+'</optgroup>';
 }
-let INI=false;
-function leitorDraw(){
- const pane=document.querySelector('[data-rpane="leitor"]');if(!pane)return;
- if(INI)return;INI=true;
- pane.innerHTML='<div class="lt"><h3 style="margin:0 0 4px">Leitor de espectros: ¹H e ¹³C</h3><p class="lsm" style="margin:0 0 6px">Escolha um espectro, clique em cada pico e diga o que ele significa. Depois confira. No modo prova os δ ficam escondidos e você lê no eixo.</p>'
- +'<div class="lcard"><div class="lrow"><label for="lt_nuc"><b>Núcleo:</b></label><select id="lt_nuc"><option value="h">¹H</option><option value="c">¹³C</option></select><label for="lt_exsel"><b>Espectro:</b></label><select id="lt_exsel"></select><label class="lchk"><input type="checkbox" id="lt_prova"> Modo prova (eu respondo, o programa corrige)</label><label class="lchk"><input type="checkbox" id="lt_integral"> Mostrar curva de integração</label></div><div id="lt_head" class="lsm" style="margin-top:8px"></div><svg id="lt_ov" viewBox="0 0 1000 290" role="img" aria-label="Espectro de RMN"></svg><div class="lchips" id="lt_chips"></div><div class="lsm" style="margin-top:6px">O eixo vai de δ alto (esquerda) para δ baixo (direita). Clique em um pico ou em uma letra para ampliar o multipleto.</div></div>'
+let ROOT=null,CUR=null;
+function build(host){
+ ROOT=document.createElement('div');ROOT.className='lt-wrap';
+ ROOT.innerHTML='<div class="lt"><h3 style="margin:0 0 4px">Leitor de espectros: ¹H e ¹³C</h3><p class="lsm" style="margin:0 0 6px">Escolha um espectro, clique em cada pico e veja o que ele significa. Para treinar com correção, use a aba Prova.</p>'
+ +'<div class="lcard"><div class="lrow"><label class="lt-hn" for="lt_nuc"><b>Núcleo:</b></label><select class="lt-hn" id="lt_nuc"><option value="h">¹H</option><option value="c">¹³C</option></select><label for="lt_exsel"><b>Espectro:</b></label><select id="lt_exsel"></select><label class="lchk lt-hn"><input type="checkbox" id="lt_integral"> Mostrar curva de integração</label></div><div id="lt_head" class="lsm" style="margin-top:8px"></div><svg id="lt_ov" viewBox="0 0 1000 290" role="img" aria-label="Espectro de RMN"></svg><div class="lchips" id="lt_chips"></div><div class="lsm" style="margin-top:6px">O eixo vai de δ alto (esquerda) para δ baixo (direita). Clique em um pico ou em uma letra para ampliar o multipleto.</div></div>'
  +'<div class="lcard"><h3>Integração e posições</h3><div id="lt_tbl"></div></div>'
  +'<div class="lgrid"><div class="lcard"><h3 id="lt_zt">Multipleto ampliado</h3><svg id="lt_zoom" viewBox="0 0 600 216" role="img" aria-label="Multipleto ampliado"></svg><div id="lt_zinfo" class="lsm"></div></div><div class="lcard"><h3 id="lt_pt">Significado do pico</h3><div id="lt_panel"><span class="lsm">Clique em um sinal do espectro.</span></div></div></div>'
  +'<div class="lcard"><h3>Resolução passo a passo</h3><div class="lrow"><button type="button" class="lbtn pri" id="lt_nextstep">Mostrar próximo passo</button><button type="button" class="lbtn" id="lt_allsteps">Mostrar todos</button><button type="button" class="lbtn" id="lt_resetsteps">Esconder</button></div><ol class="lsteps" id="lt_steps"></ol><div id="lt_struct"></div><details style="margin-top:10px"><summary>Fonte dos valores deste espectro</summary><div id="lt_src" class="lsm" style="margin-top:6px"></div></details></div></div>';
+ host.appendChild(ROOT);
  $('nuc').onchange=ev=>{S.nuc=ev.target.value;S.ex=0;S.sel=null;S.steps=0;$('integral').disabled=S.nuc==='c';fillSel();renderAll();};
  fillSel();
  $('exsel').onchange=ev=>{S.ex=+ev.target.value;S.sel=null;S.steps=0;renderAll();};
- $('prova').onchange=ev=>{S.prova=ev.target.checked;fillSel();renderAll();};
  $('integral').onchange=ev=>{S.integral=ev.target.checked;drawOverview();};
  $('chips').onclick=ev=>{const b=ev.target.closest('[data-i]');if(b)pick(+b.dataset.i);};
  $('ov').onclick=ev=>{const r=ev.target.closest('rect[data-i]');if(r)pick(+r.dataset.i);};
@@ -360,6 +359,15 @@ function leitorDraw(){
  $('resetsteps').onclick=()=>{S.steps=0;drawSteps();};
  renderAll();
 }
+function attach(host,mode){
+ if(typeof host==='string')host=document.getElementById(host);if(!host)return;
+ if(!ROOT)build(host);else if(ROOT.parentNode!==host)host.appendChild(ROOT);
+ if(CUR!==mode){CUR=mode;ROOT.dataset.mode=mode;S.ex=0;S.sel=null;S.steps=0;S.integral=false;
+  if(mode==='prova13'){S.nuc='c';S.prova=true;}else{S.nuc='h';S.prova=false;}
+  $('nuc').value=S.nuc;$('integral').checked=false;$('integral').disabled=S.nuc==='c';fillSel();renderAll();}
+}
+function leitorDraw(){attach(document.querySelector('[data-rpane="leitor"]'),'explore');}
+window.leitorAttach=attach;
 window.leitorDraw=leitorDraw;
 window.LEITOR_EX=()=>({h:exh(),c:EX13});
 })();

@@ -367,7 +367,8 @@ function load(i){
  drawEnun();drawTable();drawSpec();drawChips();drawZoom();drawPanel();drawBuild();drawAtt();drawGate();
 }
 const HTML='<div class="pv">'
-+'<h3 style="margin:0 0 4px">Treino de prova: ¹H por régua</h3>'
++'<h3 style="margin:0 0 4px">Treino de prova</h3>'
++'<div class="prow" style="margin-bottom:8px"><button type="button" class="pri" id="pv_nh">¹H com régua</button><button type="button" id="pv_nc">¹³C: leitura dos sinais</button></div><div id="pv_hbody">'
 +'<p class="hint" style="margin:0 0 8px">Você mede os degraus da curva de integração, faz a regra de três, lê cada sinal (δ, grupo, formato, vizinhos), monta a estrutura e escreve o significado de cada pico, como na prova. 8 problemas 4.3 do Silverstein e 5 espectros da folha da aula.</p>'
 +'<div class="pcard" id="pv_metodo"><h2>O método da sua aula</h2><div class="ppasso"><ol><li><mark class="b">Meça</mark> o degrau de cada sinal com a régua (em cm).</li><li><mark class="b">Some</mark> todos os degraus.</li><li>Regra de três: <mark class="y">soma dos degraus ↔ H total da fórmula</mark>, então <mark class="y">degrau ↔ x</mark>. Fórmula: <b>x = degrau × H total ÷ soma</b>.</li><li><mark class="b">Arredonde</mark> cada x para inteiro. A soma dos inteiros tem de dar o H total.</li></ol></div><p class="psm" style="margin:6px 0 0">Exemplo da aula, 2-hexanona (C₆H₁₂O, 12 H): degraus 0,6; 0,8; 0,6; 0,6; 0,9. Soma = 3,5. Então 0,6 × 12 ÷ 3,5 = 2,06, que arredonda para <b>2 H</b>. O exercício A já vem com esses números.</p></div>'
 +'<div class="pcard prow"><label><b>Exercício</b> <select id="pv_exsel" style="max-width:calc(100vw - 80px)"></select></label><label class="psm"><input type="checkbox" id="pv_grade" checked> linhas de régua (1 mm)</label><span class="pprog" id="pv_prog"></span></div>'
@@ -380,7 +381,7 @@ const HTML='<div class="pv">'
 +'<div class="pcard" id="pv_c45"><h2>4. Atribuição: escreva o significado de cada pico</h2><p class="psm" style="margin-top:0">Como na prova: escreva você mesma, com suas palavras, o que cada sinal é na molécula. Só depois peça o modelo e compare.</p><div class="ppasso"><b>Uma boa resposta tem 4 coisas:</b><ol><li><mark class="y">Grupo</mark> e número de H (ex.: CH₂, 2 H).</li><li><mark class="b">Onde fica</mark> na estrutura (ex.: ligado ao C=O).</li><li><mark class="p">Por que esse δ</mark> (ex.: carbono alfa, 2 a 2,5 ppm).</li><li><mark class="y">Por que esse formato</mark> (ex.: tripleto, 2 vizinhos).</li></ol></div><div id="pv_att"></div><div class="psm" id="pv_attp" style="margin-top:8px"></div></div>'
 +'<div class="pcard" id="pv_c5"><h2>5. Conferir com a resolução</h2><p class="psm" style="margin-top:0">Escreva a estrutura no caderno, depois revele a resolução passo a passo.</p><div class="prow"><button type="button" class="pri" id="pv_reveal">Revelar resolução</button></div><div id="pv_sol" style="margin-top:10px"></div></div>'
 +'<div class="pcuid"><b>Fontes.</b> <span class="pselo">lido do gráfico</span> δ, H e multiplicidades dos 4.3 vêm do Anaquim (problemas 4.3 do Silverstein, 7ª ed. em português), lidos das páginas, então são aproximados. Os J são típicos, não medidos. <b>As alturas dos degraus são minhas</b>: o Anaquim deduziu a integração pela fórmula e não mediu a curva. Gerei alturas em cm a partir do H real, com uma imprecisão de régua. O exercício A usa os números da sua aula. Nos 5 da folha, as explicações de cada sinal são minhas, sem fonte conferida. No livro, use as alturas que você mesma medir.</div>'
-+'</div>';
++'</div><div id="pv_chost" hidden></div></div>';
 let INI=false;
 function provaDraw(){
  const pane=document.querySelector('[data-rpane="prova"]');if(!pane)return;
@@ -405,7 +406,16 @@ function provaDraw(){
   $('exsel').addEventListener('change',()=>load(+$('exsel').value));
   $('grade').addEventListener('change',drawSpec);
   drawProg();load(0);
+  $('nh').addEventListener('click',()=>setNuc('h'));$('nc').addEventListener('click',()=>setNuc('c'));
  }
+ setNuc(PVN);
+}
+let PVN='h';
+function setNuc(n){
+ PVN=n;const c=n==='c';
+ $('hbody').hidden=c;$('chost').hidden=!c;
+ $('nh').className=c?'':'pri';$('nc').className=c?'pri':'';
+ if(c&&window.leitorAttach)window.leitorAttach('pv_chost','prova13');
 }
 window.provaDraw=provaDraw;
 window.PROVA_EX=EX;window.PROVA_HS=heightsFor;

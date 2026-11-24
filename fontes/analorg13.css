@@ -28,3 +28,5 @@
 .lt .ltag.sv{background:#e8f0f6;border-color:#9db9cf;color:#1d4766}
 .lt details summary{cursor:pointer;color:var(--lb)}
 @media(max-width:760px){.lt .lgrid{grid-template-columns:1fr}.lt dl{grid-template-columns:110px 1fr}}
+
+.lt-wrap[data-mode=prova13] .lt-hn{display:none}
