@@ -10,10 +10,10 @@
 const K='pv_',$=id=>document.getElementById(K+id);
 const LC=['#2a5d84','#b5651d','#3d7a4a','#a13d63','#7a5c9e','#8a6d00'];
 const CATS={
- alq:{n:'H de alquila simples',r:'1 a 2 ppm'},
+ alq:{n:'H de alquila simples',r:'0,8 a 2 ppm (CH₃ terminal fica perto de 0,9)'},
  alfa:{n:'H em carbono vizinho de C=O, C=C ou anel',r:'2 a 2,5 ppm (até cerca de 3)'},
- het:{n:'H em carbono ligado a O, N ou halogênio',r:'3 a 4 ppm (até cerca de 4,5)'},
- vin:{n:'H de alceno (vinílico)',r:'4,5 a 6 ppm'},
+ het:{n:'H em carbono ligado a O, N ou halogênio',r:'3 a 4,5 ppm (sobe até cerca de 5,5 se o C liga a dois O, ou a O e a um anel)'},
+ vin:{n:'H de alceno (vinílico)',r:'4,5 a 6,5 ppm (até cerca de 7 se conjugado a C=O; em enol éter C=C–O o =CH₂ cai em 3,9 a 4,3)'},
  aro:{n:'H aromático',r:'6,5 a 8,5 ppm'},
  ald:{n:'H de aldeído',r:'9 a 10 ppm'},
  acid:{n:'H de ácido carboxílico',r:'10 a 12 ppm'},
@@ -350,7 +350,7 @@ function checkAnswer(){
  const dl=$('fd').value,cat=$('fcat').value,g=$('fg').value,m=$('fm').value,hh=$('fh').value;
  R.push(hh!==''&&+hh===s.h?['pok','Nº de H certo.']:['pbad','Nº de H: use o degrau do passo 1 (regra de três). Se ainda não fez, confira a integração acima.']);
  R.push(dl===''?['pbad','δ: leia no eixo onde o pico cai. O valor do gráfico é '+fmt(s.d,2)+' ppm.']:Math.abs(+dl-s.d)<=0.15?['pok','δ lido certo (o gráfico dá '+fmt(s.d,2)+' ppm; aceito até 0,15 ppm de diferença).']:['pbad','δ: você leu '+dl+' e o gráfico dá '+fmt(s.d,2)+' ppm. Trace uma linha do topo do pico até o eixo e veja entre quais números ela cai.']);
- R.push(cat===s.cat?['pok','Faixa certa: '+CATS[s.cat].n+' ('+CATS[s.cat].r+').']:['pbad','Faixa: em δ '+fmt(s.d,2)+' o esperado é '+CATS[s.cat].n+' ('+CATS[s.cat].r+').']);
+ R.push(cat===s.cat?['pok','Faixa certa: '+CATS[s.cat].n+' ('+CATS[s.cat].r+').'+(s.catNota?' '+s.catNota:'')]:['pbad','Faixa: em δ '+fmt(s.d,2)+' o esperado é '+CATS[s.cat].n+' ('+CATS[s.cat].r+').'+(s.catNota?' '+s.catNota:'')]);
  R.push(g===grupoOf(s)?['pok','Grupo certo: '+GR[grupoOf(s)]+'.']:['pbad','Grupo: o sinal tem '+s.h+' H e δ '+fmt(s.d,2)+'. Que grupo tem esse número de H?']);
  R.push(m===s.m?['pok','Tipo certo.']:['pbad','Tipo: conte os picos na ampliação e veja se há mais de um J.']);
  const vi=$('fv');
@@ -479,5 +479,12 @@ function setNuc(n){
  if(c&&window.leitorAttach)window.leitorAttach('pv_chost','prova13');
 }
 window.provaDraw=provaDraw;
+/* exceções à faixa: o δ do sinal fica fora da faixa geral e o feedback explica por quê */
+(function(){const N=(id,sid,txt)=>{const e=EX.find(x=>x.id===id),s=e&&e.s.find(y=>y.id===sid);if(s)s.catNota=txt;};
+ N('43G','A','O–CH= é desprotegido pelo oxigênio e cai por volta de 6,3 a 6,6, na ponta alta da faixa de alceno.');
+ N('43G','B','Em enol éter (C=C–O) o oxigênio empurra elétrons para a ligação dupla e protege o =CH₂: ele cai em 3,9 a 4,3, abaixo da faixa normal de alceno.');
+ N('43G','C','Em enol éter (C=C–O) o oxigênio empurra elétrons para a ligação dupla e protege o =CH₂: ele cai em 3,9 a 4,3, abaixo da faixa normal de alceno.');
+ N('FP2','B','Ar–CH₂–O–C(=O): o C liga a um anel e a um O de éster, então o δ sobe até cerca de 5,1.');
+ N('FP4','A','O–CH₂–O (acetal): dois oxigênios no mesmo C levam o δ para perto de 4,7 a 5.');})();
 window.PROVA_VIZ=(i,k)=>vizOpts(EX[i],k).map(as=>as.map(a=>a.k));window.PROVA_EX=EX;window.PROVA_HS=heightsFor;
 })();

@@ -73,6 +73,14 @@ with sync_playwright() as p:
     assert not er,er
     # as outras abas do RMN seguem funcionando
     pg.click('[data-rp="pra"]');pg.wait_for_timeout(200);assert pg.locator('#resBox details.sec').count()==28
+    # faixas: todo sinal fora da faixa geral do seu tipo de H tem a explicação (exceção) escrita
+    R={'alq':(0.8,2),'alfa':(2,3),'het':(3,5.5),'vin':(4.5,6.5),'aro':(6.5,8.5),'ald':(9,10),'acid':(10,12),'troc':(1,12)}
+    fora=pg.evaluate("window.PROVA_EX.flatMap(e=>e.s.map(s=>({e:e.id,id:s.id,d:s.d,cat:s.cat,n:!!s.catNota})))")
+    for s in fora:
+        lo,hi=R[s['cat']]
+        if not lo<=s['d']<=hi and not s['n']:assert False,('sinal fora da faixa',s)
+    exc={(s['e'],s['id']) for s in fora if s['n']}
+    assert exc>={('43G','B'),('43G','C'),('FP2','B'),('FP4','A')},exc;print('ok  faixas de δ cobrem todos os sinais')
     assert not er,er
     b.close()
 print('ok prova')

@@ -27,7 +27,15 @@ try:
     assert po.locator('table.tb').count()>=1;po.close();print('ok  relatório da Prova ¹H')
     # ---- Prova ¹³C (Leitor em modo prova)
     pg.click('#pv_nc');pg.wait_for_timeout(400)
-    po=abre(pg,'#pv_chost [data-lrel]');layout(po);t=po.text_content('body')
+    assert not pg.locator('#pv_chost #lt_tbl').is_visible(),'tabela de integração não deve aparecer no ¹³C da Prova'
+    n=pg.locator('#pv_chost [data-ltp]').count();assert n>=3
+    pg.click('#lt_chk4');assert 'faltam peças' in pg.inner_text('#lt_fb4')
+    for i in range(n):pg.click('#pv_chost [data-ltp="%d"]'%i)
+    pg.click('#lt_chk4');assert 'Certo: estrutura montada' in pg.inner_text('#lt_fb4')
+    pg.click('#lt_asave');pg.wait_for_timeout(200)
+    po=abre(pg,'#pv_chost #lt_c4 ~ .lcard [data-lrel]');layout(po);t=po.text_content('body')
+    assert po.locator('.pc').count()==n and 'conferem com o composto' in t;po.close()
+    po=abre(pg,'#pv_chost #lt_c4 ~ .lcard [data-lrel]');layout(po);t=po.text_content('body')
     assert 'Prova' in t and 'Sua tabela do caderno' in t and 'Nenhum sinal conferido' in t and po.locator('.zc').count()>=3;po.close();print('ok  relatório da Prova ¹³C')
     # ---- Leitor (explorar) ¹H e ¹³C
     pg.click('[data-rp="leitor"]');pg.wait_for_timeout(400)
