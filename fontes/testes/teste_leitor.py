@@ -38,9 +38,11 @@ with sync_playwright() as p:
     assert pg.locator('#lt_exsel option').count()==11
     pg.select_option('#lt_exsel','3');pg.click('#lt_chips [data-i="0"]')
     assert '211' not in pg.inner_text('#lt_chips')
-    pg.fill('#lt_fd','212');pg.select_option('#lt_fcat','cet');pg.select_option('#lt_fm','s');pg.fill('#lt_fh','0');pg.fill('#lt_fn','1')
+    pg.fill('#lt_fd','212');pg.select_option('#lt_fcat','cet');pg.select_option('#lt_fm','s');pg.fill('#lt_fh','0');pg.fill('#lt_fn','1');pg.select_option('#lt_fg','0')
     pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==0,pg.inner_text('#lt_fb')
+    assert pg.locator('#lt_tab tbody tr').count()==1 and 'Grupo certo' in pg.inner_text('#lt_fb')
     pg.fill('#lt_fn','2');pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==1
+    pg.select_option('#lt_fg','2');pg.fill('#lt_fn','1');pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==1
     pg.click('#pv_nh');assert pg.is_visible('#pv_exsel')
     # voltar ao Leitor: volta o modo de estudo, ¹H
     pg.click('[data-rp="leitor"]');pg.wait_for_timeout(200)

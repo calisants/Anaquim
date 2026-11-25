@@ -30,3 +30,4 @@
 @media(max-width:760px){.lt .lgrid{grid-template-columns:1fr}.lt dl{grid-template-columns:110px 1fr}}
 
 .lt-wrap[data-mode=prova13] .lt-hn{display:none}
+.lt-wrap[data-mode=explore] .lt-pt{display:none}

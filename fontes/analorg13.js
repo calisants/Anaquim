@@ -26,6 +26,7 @@ const LC=['#2a5d84','#b5651d','#3d7a4a','#a13d63','#7a5c9e','#8a6d00'];
 const MN={s:'singleto',d:'dupleto',t:'tripleto',q:'quarteto',quint:'quinteto',sext:'sexteto',sept:'septeto',dd:'dupleto de dupletos (dd)',sd:'septeto de dupletos',m:'multipleto (m)'};
 const NV={s:0,d:1,t:2,q:3,quint:4,sext:5,sept:6,dd:2,sd:7,m:null};
 const HL={s:0,d:1,t:2,q:3};
+const GL=['C sem H','CH','CH₂','CH₃'];
 const nview=s=>s.m==='m'?'multipleto: vários acoplamentos, não se contam vizinhos':(NV[s.m]+(NV[s.m]===1?' vizinho':' vizinhos')+(s.m==='dd'?' (dois H diferentes, um desdobramento para cada)':s.m==='sd'?' (6 H iguais mais 1 H diferente)':''));
 const EST='Valores típicos de livro-texto, escritos aqui sem fonte conferida nesta sessão. Confirme no SDBS ou no Silverstein.';
 const SRC13="Problemas 5.7 A a H do Silverstein (7ª ed. em português): espectros de 13C fora de ressonância, 25,2 MHz, CDCl3. Os δ e as multiplicidades foram lidos das fotos das páginas pelo Anaquim (v257), então são aproximados. O número de C de cada sinal foi deduzido pela fórmula. As alturas no desenho são só indicativas (em 13C a altura não conta C). O sinal perto de 77 nos espectros do livro é o solvente CDCl3. Resolução: passos de Praticar > Problemas resolvidos.";
@@ -174,7 +175,7 @@ function exh(){
  const base=(window.PROVA_EX||[]).map(p=>{const c=JSON.parse(JSON.stringify({id:p.id,grp:'sv',rot:p.rot,nome:p.nome,fs:p.fs,f:p.f,enun:p.enun,s:p.s,est:p.est}));c.fonte=SRCH;c.jt=true;return c;}).filter(c=>/^43[A-H]$/.test(c.id));
  EXHALL=EXH.concat(base);prep(EXHALL);return EXHALL;
 }
-const S={ex:0,sel:null,prova:false,integral:false,steps:0,nuc:'h'};
+const S={rows13:{},ex:0,sel:null,prova:false,integral:false,steps:0,nuc:'h'};
 const E=()=>(S.nuc==='c'?EX13:exh())[S.ex];
 const FQ=()=>S.nuc==='c'?25.2:300;
 const CAT=()=>S.nuc==='c'?CATS13:CATS;
@@ -263,6 +264,15 @@ function drawTable(){
   $('tbl').innerHTML=h+'</table>'+(S.prova?'<div class="lsm" style="margin-top:6px">A integração é só proporção. Use a fórmula '+e.fs+' para achar o número real de H de cada sinal.</div>':'');
  }
 }
+function drawRows13(){
+ const el=$('tab');if(!el)return;const e=E();
+ const ks=Object.keys(S.rows13).map(Number).sort((a,b)=>a-b);
+ if(!ks.length){el.innerHTML='<span class="lsm">Cada sinal que você conferir certo entra aqui, na ordem do seu caderno.</span>';return;}
+ let h='<div style="overflow-x:auto"><table><thead><tr><th>Sinal</th><th>nº C</th><th>δ</th><th>Tipo de C</th><th>Tipo</th><th>H lig.</th><th>Grupo</th></tr></thead><tbody>'+ks.map(k=>{const r=S.rows13[k],s=e.s[k];return '<tr><td><b style="color:'+s.col+'">'+s.id+'</b></td><td>'+r.n+'</td><td>'+r.d+'</td><td>'+r.c+'</td><td>'+r.m+'</td><td>'+r.h+'</td><td>'+r.g+'</td></tr>';}).join('')+'</tbody></table></div>';
+ const nC=ks.reduce((a,k)=>a+S.rows13[k].n,0),nH=ks.reduce((a,k)=>a+S.rows13[k].n*S.rows13[k].h,0);
+ h+='<div class="lsm" style="margin-top:6px">Até agora: '+nC+' C e '+nH+' H em C–H. A fórmula '+e.fs+' tem '+e.f.C+' C e '+e.f.H+' H'+(ks.length===e.s.length?(nH===e.f.H?', então não sobra OH nem NH.':(nH<e.f.H?', então sobram '+(e.f.H-nH)+' H (OH ou NH).':'. Confira os H.')):'.')+'</div>';
+ el.innerHTML=h;
+}
 function drawChips(){
  const e=E();
  $('chips').innerHTML=e.s.map((s,i)=>'<button type="button" class="lchip" data-i="'+i+'" aria-pressed="'+(S.sel===i)+'" style="border-color:'+s.col+'"><b style="color:'+s.col+'">'+s.id+'</b> '+(S.prova?'ler no eixo':fmt(s.d,S.nuc==='c'?1:2)+' ppm')+'</button>').join('');
@@ -279,7 +289,7 @@ function drawPanel(){
  const opt=Object.keys(CT).map(k=>'<option value="'+k+'">'+CT[k].n+' ('+CT[k].r+')</option>').join('');
  const mkeys=C?['s','d','t','q']:Object.keys(MN);
  const mo=mkeys.map(k=>'<option value="'+k+'">'+MN[k]+'</option>').join('');
- $('panel').innerHTML=C?'<div class="lsm" style="margin-bottom:8px">Leia o δ do pico no eixo, como na prova, e responda. Fora de ressonância: s = 0 H, d = 1 H, t = 2 H, q = 3 H.</div><dl><dt>δ que você lê (ppm)</dt><dd><input type="number" id="lt_fd" step="0.1" style="width:100px"></dd><dt>Tipo de C</dt><dd><select id="lt_fcat"><option value="">escolha</option>'+opt+'</select></dd><dt>Formato</dt><dd><select id="lt_fm"><option value="">escolha</option>'+mo+'</select></dd><dt>H ligados</dt><dd><input type="number" id="lt_fh" min="0" max="3" style="width:80px"></dd><dt>C neste sinal</dt><dd><input type="number" id="lt_fn" min="1" max="8" style="width:80px"></dd></dl><div class="lrow" style="margin-top:10px"><button type="button" class="lbtn pri" id="lt_check">Conferir</button></div><div id="lt_fb" style="margin-top:10px"></div>'
+ $('panel').innerHTML=C?'<div class="lsm" style="margin-bottom:8px">Na ordem do seu método: nº de C, δ, faixa, tipo, H ligados e grupo. Leia o δ no eixo, como na prova. Em ¹³C não existe H vizinho (não há acoplamento C–C): o tipo diz quantos H o próprio carbono tem.</div><dl><dt>1. Nº de C neste sinal</dt><dd><input type="number" id="lt_fn" min="1" max="8" style="width:80px"></dd><dt>2. δ que você lê (ppm)</dt><dd><input type="number" id="lt_fd" step="0.1" style="width:100px"></dd><dt>3. Faixa do δ (tipo de C)</dt><dd><select id="lt_fcat"><option value="">escolha</option>'+opt+'</select></dd><dt>4. Tipo (s, d, t, q)</dt><dd><select id="lt_fm"><option value="">escolha</option>'+mo+'</select></dd><dt>5. H ligados ao C</dt><dd><input type="number" id="lt_fh" min="0" max="3" style="width:80px"></dd><dt>6. Grupo possível</dt><dd><select id="lt_fg"><option value="">escolha</option><option value="0">C sem H (C=O, C quaternário)</option><option value="1">CH</option><option value="2">CH₂</option><option value="3">CH₃</option></select></dd></dl><div class="lrow" style="margin-top:10px"><button type="button" class="lbtn pri" id="lt_check">Conferir</button></div><div id="lt_fb" style="margin-top:10px"></div>'
  :'<div class="lsm" style="margin-bottom:8px">Leia o δ do pico no eixo, como na prova, e responda.</div><dl><dt>δ que você lê (ppm)</dt><dd><input type="number" id="lt_fd" step="0.05" style="width:100px"></dd><dt>Tipo de H</dt><dd><select id="lt_fcat"><option value="">escolha</option>'+opt+'</select></dd><dt>Quantos H</dt><dd><input type="number" id="lt_fh" min="0" max="12" style="width:80px"></dd><dt>Formato</dt><dd><select id="lt_fm"><option value="">escolha</option>'+mo+'</select></dd><dt>Vizinhos</dt><dd>'+(s.m==='m'?'<span class="lsm">não se conta em multipleto</span>':'<input type="number" id="lt_fv" min="0" max="12" style="width:80px">')+'</dd></dl><div class="lrow" style="margin-top:10px"><button type="button" class="lbtn pri" id="lt_check">Conferir</button></div><div id="lt_fb" style="margin-top:10px"></div>';
 }
 function checkAnswer(){
@@ -293,12 +303,16 @@ function checkAnswer(){
   R.push(m===s.m?['ok','Formato certo.']:['bad','Formato: conte as linhas na ampliação. 1 linha é s, 2 é d, 3 é t, 4 é q.']);
   R.push(h!==''&&+h===s.hl?['ok','H ligados certo.']:['bad','H ligados: linhas menos 1 (s = 0, d = 1, t = 2, q = 3).']);
   R.push(n!==''&&+n===s.n?['ok','Número de C certo.']:['bad','Número de C: compare o número de sinais com o número de C da fórmula '+e.fs+'. Se faltam sinais, há carbonos equivalentes em algum deles (um sinal mais alto costuma valer 2 ou mais C).']);
+  R.unshift(R.pop());
+  const gv=$('fg').value;R.push(gv!==''&&+gv===s.hl?['ok','Grupo certo: '+GL[s.hl]+'.']:['bad','Grupo: '+MN[s.m]+' quer dizer '+s.hl+' H ligados. Que grupo tem esse número de H?']);
  } else {
   const vi=$('fv'),v=vi?vi.value:'';
   R.push(+h===s.h&&h!==''?['ok','Número de H certo.']:['bad','Número de H: some as proporções, multiplique até bater com '+e.fs+' e confira o sinal.']);
   R.push(m===s.m?['ok','Formato certo.']:['bad','Formato: conte os picos na ampliação ao lado e veja se há mais de um J.']);
   if(s.m!=='m')R.push(+v===NV[s.m]&&v!==''?['ok','Vizinhos certo.']:['bad','Vizinhos: picos menos 1. Em dd e septeto de dupletos, some os H de cada acoplamento (1 + 1 ou 6 + 1).']);
  }
+
+ if(C&&R.every(r=>r[0]==='ok')){S.rows13[S.sel]={n:s.n,d:fmt(s.d,1),g:GL[s.hl],m:s.m,h:s.hl,c:CT[s.cat].n};drawRows13();}
  $('fb').innerHTML=R.map(r=>'<div class="'+(r[0]==='ok'?'lok':'lbad')+'">'+(r[0]==='ok'?'Certo':'Revisar')+': '+r[1]+'</div>').join('')+'<div class="ltip"><b>Atribuição:</b> '+s.sig+'</div>';
 }
 function stepsList(){
@@ -331,7 +345,7 @@ function drawSteps(){
  $('src').textContent=e.fonte||'';
 }
 function head(){const e=E();$('head').innerHTML='<b>'+(S.prova?(e.rot||'Espectro sem nome'):e.nome)+'</b> · fórmula '+sub(e.fs)+' · '+(e.grp==='sv'?'<span class="ltag">δ lidos do gráfico (aproximados)</span>':e.fonte===EST?'<span class="ltag">valores típicos, sem fonte conferida</span>':'<span class="ltag">valores conferidos na sessão de origem</span>')+(e.enun?'<div style="margin-top:4px">'+e.enun+'</div>':'');}
-function renderAll(){head();drawChips();drawOverview();drawTable();drawZoom();drawPanel();drawSteps();}
+function renderAll(){drawRows13();head();drawChips();drawOverview();drawTable();drawZoom();drawPanel();drawSteps();}
 function pick(i){S.sel=i;drawChips();drawOverview();drawZoom();drawPanel();}
 function fillSel(){
  const L=S.nuc==='c'?EX13:exh();
@@ -345,11 +359,12 @@ function build(host){
  +'<div class="lcard"><div class="lrow"><label class="lt-hn" for="lt_nuc"><b>Núcleo:</b></label><select class="lt-hn" id="lt_nuc"><option value="h">¹H</option><option value="c">¹³C</option></select><label for="lt_exsel"><b>Espectro:</b></label><select id="lt_exsel"></select><label class="lchk lt-hn"><input type="checkbox" id="lt_integral"> Mostrar curva de integração</label></div><div id="lt_head" class="lsm" style="margin-top:8px"></div><svg id="lt_ov" viewBox="0 0 1000 290" role="img" aria-label="Espectro de RMN"></svg><div class="lchips" id="lt_chips"></div><div class="lsm" style="margin-top:6px">O eixo vai de δ alto (esquerda) para δ baixo (direita). Clique em um pico ou em uma letra para ampliar o multipleto.</div></div>'
  +'<div class="lcard"><h3>Integração e posições</h3><div id="lt_tbl"></div></div>'
  +'<div class="lgrid"><div class="lcard"><h3 id="lt_zt">Multipleto ampliado</h3><svg id="lt_zoom" viewBox="0 0 600 216" role="img" aria-label="Multipleto ampliado"></svg><div id="lt_zinfo" class="lsm"></div></div><div class="lcard"><h3 id="lt_pt">Significado do pico</h3><div id="lt_panel"><span class="lsm">Clique em um sinal do espectro.</span></div></div></div>'
+ +'<div class="lcard lt-pt"><h3>Sua tabela do caderno</h3><div id="lt_tab"></div></div>'
  +'<div class="lcard"><h3>Resolução passo a passo</h3><div class="lrow"><button type="button" class="lbtn pri" id="lt_nextstep">Mostrar próximo passo</button><button type="button" class="lbtn" id="lt_allsteps">Mostrar todos</button><button type="button" class="lbtn" id="lt_resetsteps">Esconder</button></div><ol class="lsteps" id="lt_steps"></ol><div id="lt_struct"></div><details style="margin-top:10px"><summary>Fonte dos valores deste espectro</summary><div id="lt_src" class="lsm" style="margin-top:6px"></div></details></div></div>';
  host.appendChild(ROOT);
- $('nuc').onchange=ev=>{S.nuc=ev.target.value;S.ex=0;S.sel=null;S.steps=0;$('integral').disabled=S.nuc==='c';fillSel();renderAll();};
+ $('nuc').onchange=ev=>{S.nuc=ev.target.value;S.ex=0;S.sel=null;S.steps=0;S.rows13={};$('integral').disabled=S.nuc==='c';fillSel();renderAll();};
  fillSel();
- $('exsel').onchange=ev=>{S.ex=+ev.target.value;S.sel=null;S.steps=0;renderAll();};
+ $('exsel').onchange=ev=>{S.ex=+ev.target.value;S.sel=null;S.steps=0;S.rows13={};renderAll();};
  $('integral').onchange=ev=>{S.integral=ev.target.checked;drawOverview();};
  $('chips').onclick=ev=>{const b=ev.target.closest('[data-i]');if(b)pick(+b.dataset.i);};
  $('ov').onclick=ev=>{const r=ev.target.closest('rect[data-i]');if(r)pick(+r.dataset.i);};
@@ -362,7 +377,7 @@ function build(host){
 function attach(host,mode){
  if(typeof host==='string')host=document.getElementById(host);if(!host)return;
  if(!ROOT)build(host);else if(ROOT.parentNode!==host)host.appendChild(ROOT);
- if(CUR!==mode){CUR=mode;ROOT.dataset.mode=mode;S.ex=0;S.sel=null;S.steps=0;S.integral=false;
+ if(CUR!==mode){CUR=mode;ROOT.dataset.mode=mode;S.rows13={};S.ex=0;S.sel=null;S.steps=0;S.integral=false;
   if(mode==='prova13'){S.nuc='c';S.prova=true;}else{S.nuc='h';S.prova=false;}
   $('nuc').value=S.nuc;$('integral').checked=false;$('integral').disabled=S.nuc==='c';fillSel();renderAll();}
 }
