@@ -199,3 +199,9 @@ Não mudou: medir degraus, regra de três, montar a estrutura, atribuição escr
 ## v289: Prova em ¹³C segue o método da Camila
 O modo prova de ¹³C (aba Prova > "¹³C: leitura dos sinais") passou a seguir a ordem do caderno: 1. nº de C no sinal, 2. δ, 3. faixa (tipo de C), 4. tipo (s, d, t, q), 5. H ligados, 6. grupo possível (C sem H, CH, CH₂, CH₃). Em ¹³C não há "H vizinho" (sem acoplamento C–C), então os itens de vizinhança do ¹H não existem aqui; o tipo diz os H do próprio carbono. Cada sinal certo entra em "Sua tabela do caderno", com o total de C e de H em C–H até o momento e a comparação com a fórmula (sobra de H = OH ou NH). A tabela só aparece no modo prova. Teste: `testes/teste_leitor.py`.
 Não foi feito: montagem de estrutura em ¹³C, nem possibilidades de fragmentos calculadas pelo app.
+
+## v290/v291: marcação de vizinhos mais robusta, salvar análise, Prova sem a etapa "Atribuição"
+Marcação das possibilidades de vizinhos (Prova ¹H): o estado agora é lido do próprio botão (`aria-pressed`) na hora de conferir, há uma trava de toque duplo (350 ms), o botão marcado mostra ✓ e a mensagem de erro diz o que ficou marcado. Motivo: no tablet da Camila, escolher A e D no sinal C da 2-hexanona foi recusado. Não consegui reproduzir isso no Chromium sem tela (nem com toque emulado), então a causa no tablet continua sendo hipótese. A trava de toque duplo é o suspeito principal.
+Salvar análise: botões "Salvar análise" e "Apagar análise" na Prova ¹H (chave `anaquim-prova-analise-v1`) e na Prova ¹³C (chave `anaquim-leitor-analise-v1`). Ao reabrir o exercício, a tabela do caderno, as possibilidades marcadas e a estrutura voltam como estavam.
+Removido: o passo "4. Atribuição" da Prova ¹H, porque repetia a "Sua tabela do caderno". O último passo agora é "4. Conferir com a resolução". Teste de atribuição saiu de `teste_prova.py` e ganhou uma checagem de que o card não existe mais.
+v290 foi build intermediário, não publicado.

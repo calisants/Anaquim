@@ -23,6 +23,19 @@ with sync_playwright() as p:
     # sinal A: responde certo
     pg.click('[data-pvchip="0"]');pg.fill('#pv_fd','2.45');pg.select_option('#pv_fcat','alfa');pg.select_option('#pv_fg','ch2');pg.select_option('#pv_fm','t');pg.fill('#pv_fv','2');pg.fill('#pv_fh','2');pg.click('#pv_fz [data-pvz="2"]')
     pg.click('#pv_check');assert pg.locator('#pv_fb .pbad').count()==0,pg.inner_text('#pv_fb');assert pg.locator('#pv_tab tbody tr').count()==1
+    # salvar análise e restaurar depois de recarregar
+    pg.click('#pv_asave');assert 'Análise salva' in pg.inner_text('#pv_amsg')
+    pg.reload();pg.evaluate("go('p-rm')");pg.wait_for_timeout(200);pg.click('[data-rp="prova"]');pg.wait_for_timeout(300)
+    assert pg.locator('#pv_tab tbody tr').count()==1 and 'restaurada' in pg.inner_text('#pv_amsg')
+    # duplo toque no mesmo chip de vizinho conta uma vez só
+    pg.click('[data-pvchip="2"]')
+    pg.evaluate("(()=>{const b=document.querySelector('#pv_fz [data-pvz=\"0\"]');b.click();b.click();})()")
+    assert pg.get_attribute('#pv_fz [data-pvz="0"]','aria-pressed')=='true'
+    pg.evaluate("(()=>{const b=document.querySelector('#pv_fz [data-pvz=\"3\"]');b.click();})()")
+    pg.fill('#pv_fh','2');pg.fill('#pv_fd','1.55');pg.select_option('#pv_fcat','alq');pg.select_option('#pv_fg','ch2');pg.select_option('#pv_fm','quint');pg.fill('#pv_fv','4')
+    pg.click('#pv_check');assert 'Possibilidade certa' in pg.inner_text('#pv_fb'),pg.inner_text('#pv_fb')
+    pg.click('#pv_aclear');assert pg.locator('#pv_tab tbody tr').count()==0
+    pg.click('[data-pvchip="0"]')
     # método completo em todos os sinais de todos os exercícios: sempre há ao menos uma possibilidade de vizinhos
     for i in range(13):
         pg.select_option('#pv_exsel',str(i));pg.wait_for_timeout(60)
@@ -39,8 +52,7 @@ with sync_playwright() as p:
     for k in range(6):
         pg.evaluate("(k)=>{const bs=[...document.querySelectorAll('#pv_pool [data-pvp]')];bs.find(b=>b.dataset.pvp==String(k)).click()}",k)
     pg.click('#pv_chk4');assert 'Certo' in pg.inner_text('#pv_fb4'),pg.inner_text('#pv_fb4')
-    # atribuição escrita: modelo aparece
-    pg.click('[data-pvma="0"]');assert 'Modelo' in pg.inner_text('#pv_att')
+    assert pg.locator('#pv_att').count()==0 and pg.locator('#pv_c45').count()==0
     # resolução vem do Resolvidos e mostra passos
     pg.click('#pv_reveal');assert pg.locator('#pv_sol .ppr').count()>=4
     pg.click('#pv_acertei');assert 'Acertei 1 de 13' in pg.inner_text('#pv_prog')

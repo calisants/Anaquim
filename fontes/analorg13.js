@@ -264,6 +264,15 @@ function drawTable(){
   $('tbl').innerHTML=h+'</table>'+(S.prova?'<div class="lsm" style="margin-top:6px">A integração é só proporção. Use a fórmula '+e.fs+' para achar o número real de H de cada sinal.</div>':'');
  }
 }
+const SK13='anaquim-leitor-analise-v1';
+function k13(){const e=E();return e.id||('x:'+e.nome);}
+function sa13Ler(){try{return JSON.parse(localStorage.getItem(SK13)||'{}')||{};}catch(x){return {};}}
+function msg13(x){const m=$('amsg');if(m)m.textContent=x;}
+function quando(ts){const d=new Date(ts);return d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function sa13Salvar(){const A=sa13Ler();A[k13()]={t:Date.now(),rows:S.rows13};try{localStorage.setItem(SK13,JSON.stringify(A));msg13('Análise salva em '+quando(A[k13()].t)+'. Ela volta quando você abrir este espectro.');}catch(x){msg13('Não consegui salvar (o navegador bloqueou o armazenamento).');}}
+function sa13Limpar(){const A=sa13Ler();delete A[k13()];try{localStorage.setItem(SK13,JSON.stringify(A));}catch(x){}S.rows13={};drawRows13();msg13('Análise apagada neste espectro.');}
+function rows13Restaura(){const a=S.nuc==='c'?sa13Ler()[k13()]:null;S.rows13=a?(a.rows||{}):{};return a;}
+function avisoRest(){const a=S.nuc==='c'?sa13Ler()[k13()]:null;msg13(a?'Análise salva em '+quando(a.t)+' (restaurada).':'');}
 function drawRows13(){
  const el=$('tab');if(!el)return;const e=E();
  const ks=Object.keys(S.rows13).map(Number).sort((a,b)=>a-b);
@@ -359,16 +368,17 @@ function build(host){
  +'<div class="lcard"><div class="lrow"><label class="lt-hn" for="lt_nuc"><b>Núcleo:</b></label><select class="lt-hn" id="lt_nuc"><option value="h">¹H</option><option value="c">¹³C</option></select><label for="lt_exsel"><b>Espectro:</b></label><select id="lt_exsel"></select><label class="lchk lt-hn"><input type="checkbox" id="lt_integral"> Mostrar curva de integração</label></div><div id="lt_head" class="lsm" style="margin-top:8px"></div><svg id="lt_ov" viewBox="0 0 1000 290" role="img" aria-label="Espectro de RMN"></svg><div class="lchips" id="lt_chips"></div><div class="lsm" style="margin-top:6px">O eixo vai de δ alto (esquerda) para δ baixo (direita). Clique em um pico ou em uma letra para ampliar o multipleto.</div></div>'
  +'<div class="lcard"><h3>Integração e posições</h3><div id="lt_tbl"></div></div>'
  +'<div class="lgrid"><div class="lcard"><h3 id="lt_zt">Multipleto ampliado</h3><svg id="lt_zoom" viewBox="0 0 600 216" role="img" aria-label="Multipleto ampliado"></svg><div id="lt_zinfo" class="lsm"></div></div><div class="lcard"><h3 id="lt_pt">Significado do pico</h3><div id="lt_panel"><span class="lsm">Clique em um sinal do espectro.</span></div></div></div>'
- +'<div class="lcard lt-pt"><h3>Sua tabela do caderno</h3><div id="lt_tab"></div></div>'
+ +'<div class="lcard lt-pt"><h3>Sua tabela do caderno</h3><div id="lt_tab"></div><div class="lrow" style="margin-top:10px"><button type="button" class="lbtn pri" id="lt_asave">Salvar análise</button><button type="button" class="lbtn" id="lt_aclear">Apagar análise</button></div><div class="lsm" id="lt_amsg" style="margin-top:6px"></div></div>'
  +'<div class="lcard"><h3>Resolução passo a passo</h3><div class="lrow"><button type="button" class="lbtn pri" id="lt_nextstep">Mostrar próximo passo</button><button type="button" class="lbtn" id="lt_allsteps">Mostrar todos</button><button type="button" class="lbtn" id="lt_resetsteps">Esconder</button></div><ol class="lsteps" id="lt_steps"></ol><div id="lt_struct"></div><details style="margin-top:10px"><summary>Fonte dos valores deste espectro</summary><div id="lt_src" class="lsm" style="margin-top:6px"></div></details></div></div>';
  host.appendChild(ROOT);
- $('nuc').onchange=ev=>{S.nuc=ev.target.value;S.ex=0;S.sel=null;S.steps=0;S.rows13={};$('integral').disabled=S.nuc==='c';fillSel();renderAll();};
+ $('nuc').onchange=ev=>{S.nuc=ev.target.value;S.ex=0;S.sel=null;S.steps=0;$('integral').disabled=S.nuc==='c';fillSel();renderAll();rows13Restaura();drawRows13();avisoRest();};
  fillSel();
- $('exsel').onchange=ev=>{S.ex=+ev.target.value;S.sel=null;S.steps=0;S.rows13={};renderAll();};
+ $('exsel').onchange=ev=>{S.ex=+ev.target.value;S.sel=null;S.steps=0;renderAll();rows13Restaura();drawRows13();avisoRest();};
  $('integral').onchange=ev=>{S.integral=ev.target.checked;drawOverview();};
  $('chips').onclick=ev=>{const b=ev.target.closest('[data-i]');if(b)pick(+b.dataset.i);};
  $('ov').onclick=ev=>{const r=ev.target.closest('rect[data-i]');if(r)pick(+r.dataset.i);};
  $('panel').onclick=ev=>{if(ev.target.id==='lt_check')checkAnswer();};
+ $('asave').onclick=sa13Salvar;$('aclear').onclick=sa13Limpar;
  $('nextstep').onclick=()=>{S.steps=Math.min(stepsList().length,S.steps+1);drawSteps();};
  $('allsteps').onclick=()=>{S.steps=stepsList().length;drawSteps();};
  $('resetsteps').onclick=()=>{S.steps=0;drawSteps();};
@@ -377,9 +387,9 @@ function build(host){
 function attach(host,mode){
  if(typeof host==='string')host=document.getElementById(host);if(!host)return;
  if(!ROOT)build(host);else if(ROOT.parentNode!==host)host.appendChild(ROOT);
- if(CUR!==mode){CUR=mode;ROOT.dataset.mode=mode;S.rows13={};S.ex=0;S.sel=null;S.steps=0;S.integral=false;
+ if(CUR!==mode){CUR=mode;ROOT.dataset.mode=mode;S.ex=0;S.sel=null;S.steps=0;S.integral=false;
   if(mode==='prova13'){S.nuc='c';S.prova=true;}else{S.nuc='h';S.prova=false;}
-  $('nuc').value=S.nuc;$('integral').checked=false;$('integral').disabled=S.nuc==='c';fillSel();renderAll();}
+  $('nuc').value=S.nuc;$('integral').checked=false;$('integral').disabled=S.nuc==='c';fillSel();renderAll();rows13Restaura();drawRows13();avisoRest();}
 }
 function leitorDraw(){attach(document.querySelector('[data-rpane="leitor"]'),'explore');}
 window.leitorAttach=attach;

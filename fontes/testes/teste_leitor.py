@@ -41,6 +41,13 @@ with sync_playwright() as p:
     pg.fill('#lt_fd','212');pg.select_option('#lt_fcat','cet');pg.select_option('#lt_fm','s');pg.fill('#lt_fh','0');pg.fill('#lt_fn','1');pg.select_option('#lt_fg','0')
     pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==0,pg.inner_text('#lt_fb')
     assert pg.locator('#lt_tab tbody tr').count()==1 and 'Grupo certo' in pg.inner_text('#lt_fb')
+    pg.click('#lt_asave');assert 'Análise salva' in pg.inner_text('#lt_amsg')
+    pg.reload();pg.evaluate("go('p-rm')");pg.wait_for_timeout(200);pg.click('[data-rp="prova"]');pg.wait_for_timeout(300);pg.click('#pv_nc');pg.wait_for_timeout(300)
+    pg.select_option('#lt_exsel','3');pg.wait_for_timeout(100)
+    assert pg.locator('#lt_tab tbody tr').count()==1 and 'restaurada' in pg.inner_text('#lt_amsg')
+    pg.click('#lt_aclear');assert pg.locator('#lt_tab tbody tr').count()==0
+    pg.click('#lt_chips [data-i="0"]')
+    pg.fill('#lt_fd','212');pg.select_option('#lt_fcat','cet');pg.select_option('#lt_fm','s');pg.fill('#lt_fh','0');pg.fill('#lt_fn','1');pg.select_option('#lt_fg','0')
     pg.fill('#lt_fn','2');pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==1
     pg.select_option('#lt_fg','2');pg.fill('#lt_fn','1');pg.click('#lt_check');assert pg.locator('#lt_fb .lbad').count()==1
     pg.click('#pv_nh');assert pg.is_visible('#pv_exsel')

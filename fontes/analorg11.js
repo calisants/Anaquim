@@ -126,7 +126,7 @@ function save(){try{localStorage.setItem(PK,JSON.stringify(SAVED));}catch(e){}}
 const fmt=(x,d=2)=>x.toFixed(d).replace('.',',');
 const sub=t=>t.replace(/([A-Za-z\)])(\d+)/g,'$1<sub>$2</sub>');
 const FQ=300,UNIT=60;
-const S={rows:{},viz:[],done:[],force:false,ex:0,sel:null,meas:[],ints:[],tool:null,clicks:[],marks:{},chain:[],order:null,att:[],attTxt:[]};
+const S={rows:{},viz:[],done:[],force:false,ex:0,sel:null,meas:[],ints:[],tool:null,clicks:[],marks:{},chain:[],order:null};
 const E=()=>EX[S.ex];
 function binom(n){let r=[1];for(let i=0;i<n;i++){const nr=[1];for(let j=1;j<r.length;j++)nr.push(r[j-1]+r[j]);nr.push(1);r=nr;}return r;}
 function linesOf(s){
@@ -273,7 +273,15 @@ function drawChips(){
  $('chips').innerHTML=e.s.map((s,i)=>'<button type="button" class="pchip" data-pvchip="'+i+'" aria-pressed="'+(S.sel===i)+'" style="border-color:'+s.col+'">'+(S.done[i]?'✓ ':'')+'<b style="color:'+s.col+'">'+s.id+'</b> ler no eixo</button>').join('');
 }
 function grupoOf(s){if(s.cat==='aro')return 'aro';if(s.cat==='vin')return 'vin';if(s.cat==='ald')return 'cho';if(s.cat==='troc'||s.cat==='acid')return 'oh';return s.h===6?'ch32':s.h===4?'ch22':s.h===3?'ch3':s.h===2?'ch2':'ch';}
+const SAK='anaquim-prova-analise-v1';
+function saLer(){try{return JSON.parse(localStorage.getItem(SAK)||'{}')||{};}catch(x){return {};}}
+function saMsg(txt){const m=$('amsg');if(m)m.textContent=txt;}
+function saSalvar(){const e=E(),A=saLer();A[e.id]={t:Date.now(),rows:S.rows,done:S.done,meas:S.meas,ints:S.ints,chain:S.chain};try{localStorage.setItem(SAK,JSON.stringify(A));const d=new Date(A[e.id].t);saMsg('Análise salva em '+d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'. Ela volta quando você abrir este exercício.');}catch(x){saMsg('Não consegui salvar (o navegador bloqueou o armazenamento).');}}
+function saLimpar(){const e=E(),A=saLer();delete A[e.id];try{localStorage.setItem(SAK,JSON.stringify(A));}catch(x){}load(S.ex);saMsg('Análise apagada neste exercício.');}
+function saRestaurar(i){const a=saLer()[EX[i].id];if(!a)return false;S.rows=a.rows||{};S.done=a.done||[];if(a.meas)S.meas=a.meas;if(a.ints)S.ints=a.ints;S.chain=a.chain||[];return true;}
 const UNI={ch22:'CH₂',ch32:'CH₃'};
+function marcaViz(b,on){b.style.background=on?'#cfe6ff':'';b.style.borderWidth=on?'3px':'';const m=b.querySelector('.pvok');if(on&&!m){const i=document.createElement('span');i.className='pvok';i.textContent='✓ ';b.insertBefore(i,b.firstChild);}else if(!on&&m)m.remove();}
+function lerViz(){S.viz=[].slice.call(document.querySelectorAll('#pv_fz [data-pvz]')).filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>+b.dataset.pvz);}
 function vizOpts(e,i){
  const s=e.s[i],n=NV[s.m];if(n==null)return [];
  const O=[];e.s.forEach((x,k)=>{if(k!==i&&x.cat!=='troc')O.push(k);});
@@ -308,10 +316,10 @@ function drawPanel(){
  +'<dt>7. Possibilidades de vizinhos</dt><dd>'+(s.m==='m'?'<span class="psm">não se monta em multipleto</span>':'<div class="psm" style="margin-bottom:4px">Marque os sinais cujos H somam os H vizinhos do item 6. Sem vizinho com H, não marque nada.</div><div class="pchips" id="pv_fz">'+outros.map(o=>'<button type="button" data-pvz="'+o.k+'" aria-pressed="false" style="border-color:'+o.x.col+'"><b style="color:'+o.x.col+'">'+o.x.id+'</b> '+GR[grupoOf(o.x)]+' ('+o.x.h+' H)</button>').join('')+'</div>')+'</dd></dl>'
  +'<div class="prow" style="margin-top:10px"><button type="button" class="pri" id="pv_check">Conferir</button></div><div id="pv_fb" class="pfb" style="margin-top:10px"></div>';
  $('check').onclick=checkAnswer;
- const z=$('fz');if(z)z.onclick=ev=>{const b=ev.target.closest('[data-pvz]');if(!b)return;const k=+b.dataset.pvz,q=S.viz.indexOf(k);if(q>=0)S.viz.splice(q,1);else S.viz.push(k);b.setAttribute('aria-pressed',q<0);b.style.background=q<0?'#f0efe9':'';};
+ const z=$('fz');if(z)z.onclick=ev=>{const b=ev.target.closest('[data-pvz]');if(!b)return;const agora=Date.now();if(b._t&&agora-b._t<350)return;b._t=agora;const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on?'true':'false');marcaViz(b,on);lerViz();};
 }
 function checkAnswer(){
- const e=E(),s=e.s[S.sel],R=[];
+ const e=E(),s=e.s[S.sel],R=[];lerViz();
  const dl=$('fd').value,cat=$('fcat').value,g=$('fg').value,m=$('fm').value,hh=$('fh').value;
  R.push(hh!==''&&+hh===s.h?['pok','Nº de H certo.']:['pbad','Nº de H: use o degrau do passo 1 (regra de três). Se ainda não fez, confira a integração acima.']);
  R.push(dl===''?['pbad','δ: leia no eixo onde o pico cai. O valor do gráfico é '+fmt(s.d,2)+' ppm.']:Math.abs(+dl-s.d)<=0.15?['pok','δ lido certo (o gráfico dá '+fmt(s.d,2)+' ppm; aceito até 0,15 ppm de diferença).']:['pbad','δ: você leu '+dl+' e o gráfico dá '+fmt(s.d,2)+' ppm. Trace uma linha do topo do pico até o eixo e veja entre quais números ela cai.']);
@@ -325,7 +333,7 @@ function checkAnswer(){
   const lista=op.length?op.map(as=>fragTxt(e,S.sel,as)).join('; '):'nenhuma combinação dos outros sinais soma '+n;
   const casa=op.filter(as=>as.map(a=>a.k).sort((x,y)=>x-y).join(',')===mark);
   if(n===0)R.push(S.viz.length===0?['pok','Sem vizinho com H: o vizinho é C=O, O ou carbono sem H.']:['pbad','Singleto: 0 H vizinhos, então não marque nenhum sinal.']);
-  else R.push(casa.length?['pok','Possibilidade certa: '+fragTxt(e,S.sel,casa[0])+' (soma '+n+' H).'+(op.length>1?' Há '+op.length+' possibilidades pelos H: '+lista+'. A estrutura decide qual vale.':'')]:['pbad','Possibilidades: com esses sinais não dá '+n+' H vizinhos. Combinações que fecham: '+lista+'.']);
+  else R.push(casa.length?['pok','Possibilidade certa: '+fragTxt(e,S.sel,casa[0])+' (soma '+n+' H).'+(op.length>1?' Há '+op.length+' possibilidades pelos H: '+lista+'. A estrutura decide qual vale.':'')]:['pbad','Possibilidades: você marcou '+(S.viz.length?S.viz.map(k=>e.s[k].id).sort().join(' + '):'nenhum sinal')+' e isso não dá '+n+' H vizinhos. Combinações que fecham: '+lista+'.']);
   S.fragOK=casa.length?fragTxt(e,S.sel,casa[0]):'';
  }
  const ok=R.every(r=>r[0]==='pok');S.done[S.sel]=ok;
@@ -357,7 +365,7 @@ function drawSol(){
 }
 function drawGate(){
  const e=E(),n=e.s.filter((s,i)=>S.done[i]).length,all=n===e.s.length;
- ['c4','c45'].forEach(id=>{$(id).style.opacity=(all||S.force)?'1':'.45';});
+ ['c4'].forEach(id=>{$(id).style.opacity=(all||S.force)?'1':'.45';});
  $('gate').innerHTML=all||S.force?'':'<div class="pcuid">Antes de montar a estrutura, confira cada sinal no passo 2 ('+n+' de '+e.s.length+' certos). <button type="button" id="pv_skipg">Pular e montar assim mesmo</button></div>';
  const sk=$('skipg');if(sk)sk.onclick=()=>{S.force=true;drawGate();};
 }
@@ -384,26 +392,18 @@ function dica4(){
  const e=E(),L=e.s.filter(s=>s.m!=='m').map(s=>'<div class="ptip">Sinal '+s.id+' ('+GR[grupoOf(s)]+', '+MN[s.m]+'): enxerga '+NV[s.m]+' H do lado.'+(NV[s.m]===0?' O vizinho não tem H (C=O, O, anel sem H).':'')+'</div>').join('');
  $('fb4').innerHTML=L+'<div class="ptip">Procure pares: se um sinal enxerga 3 H, o vizinho é um CH₃, e esse CH₃ tem de enxergar o H dele de volta.</div>';
 }
-function drawAtt(){
- const e=E();
- $('att').innerHTML=e.s.map((s,i)=>{const st=S.att[i];
-  return '<div class="ppr"><h4 style="color:'+s.col+'">Sinal '+s.id+'</h4><div class="psm">'+s.h+' H, '+MN[s.m]+(s.m==='m'?'':', enxerga '+NV[s.m]+' H')+'. Leia o δ no eixo.</div>'
-  +'<textarea data-pvt="'+i+'" placeholder="Como na sua folha: H, δ, grupo, tipo do sinal (tp), vizinhos (Hv) e fragmento">'+((S.attTxt[i])||'').replace(/</g,'&lt;')+'</textarea>'
-  +'<div class="prow" style="margin-top:6px"><button type="button" data-pvma="'+i+'" class="pri">Ver modelo</button>'+(st?'<button type="button" data-pva="ok:'+i+'" class="pok">Acertei</button><button type="button" data-pva="no:'+i+'" class="pbad">Faltou algo</button>':'')+'</div>'
-  +(st?'<div class="pfb"><div class="ptip"><b>Modelo (escrito aqui, sem fonte conferida; confira com seu professor):</b> H '+s.h+' · δ '+fmt(s.d,2)+' · '+GR[grupoOf(s)]+' · '+MN[s.m]+' · Hv '+(s.m==='m'?'x':NV[s.m])+(s.frag?' · '+s.frag:'')+'. '+s.sig+'</div>'+(st==='ok'?'<div class="pok">Marcado como certo.</div>':st==='no'?'<div class="pbad">Marcado para revisar: reescreva incluindo o que faltou.</div>':'')+'</div>':'')+'</div>';}).join('');
- const ok=S.att.filter(v=>v==='ok').length;
- $('attp').textContent='Sinais que você marcou como certos: '+ok+' de '+e.s.length;
-}
 function drawProg(){
  const ok=EX.filter(e=>SAVED[e.id]==='ok').length,no=EX.filter(e=>SAVED[e.id]==='no').length;
  $('prog').textContent='Acertei '+ok+' de '+EX.length+(no?' · para refazer: '+no:'');
  [].slice.call($('exsel').options).forEach((o,i)=>{const e=EX[i];o.textContent=(SAVED[e.id]==='ok'?'✓ ':SAVED[e.id]==='no'?'↻ ':'')+(e.rot||e.nome);});
 }
 function load(i){
- S.ex=i;S.sel=null;S.meas=[];S.ints=[];S.tool=null;S.clicks=[];S.marks={};S.chain=[];S.order=null;S.att=[];S.attTxt=[];S.done=[];S.rows={};S.viz=[];S.force=false;
+ S.ex=i;S.sel=null;S.meas=[];S.ints=[];S.tool=null;S.clicks=[];S.marks={};S.chain=[];S.order=null;S.done=[];S.rows={};S.viz=[];S.force=false;
  $('fb1').innerHTML='';$('sol').innerHTML='';$('fb4').innerHTML='';
  if(EX[i].id==='43A')S.meas=AULA.slice();
- drawEnun();drawTable();drawSpec();drawChips();drawZoom();drawPanel();drawRows();drawBuild();drawAtt();drawGate();
+ const _rest=saRestaurar(i);
+ drawEnun();drawTable();drawSpec();drawChips();drawZoom();drawPanel();drawRows();drawBuild();drawGate();
+ if(_rest){const d=new Date(saLer()[EX[i].id].t);saMsg('Análise salva em '+d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' (restaurada).');}else saMsg('');
 }
 const HTML='<div class="pv">'
 +'<h3 style="margin:0 0 4px">Treino de prova</h3>'
@@ -415,11 +415,10 @@ const HTML='<div class="pv">'
 +'<div class="pcard" style="overflow-x:auto"><svg id="pv_spec" style="min-width:720px" viewBox="0 0 900 500" role="img" aria-label="Espectro com curva de integração"></svg><div class="psm" id="pv_mhint" style="margin-top:6px">As linhas finas são de 1 mm e as mais escuras de 5 mm. A curva sobe em degraus: cada degrau é o sinal que está embaixo dele.</div></div>'
 +'<div class="pcard" id="pv_c1"><h2>1. Integração: medir, somar, regra de três</h2><div id="pv_tbl"></div><div class="prow" style="margin-top:8px"><button type="button" class="pri" id="pv_chk1">Conferir integração</button></div><div id="pv_fb1" class="pfb" style="margin-top:8px"></div></div>'
 +'<div class="pgrid"><div class="pcard"><h2 id="pv_zt">Multipleto ampliado</h2><svg id="pv_zoom" viewBox="0 0 600 216" role="img" aria-label="Multipleto ampliado"></svg><div id="pv_zinfo" class="psm"></div></div><div class="pcard"><h2 id="pv_pt">2. Significado do pico</h2><div class="pchips" id="pv_chips"></div><div id="pv_panel"><span class="psm">Escolha um sinal.</span></div></div></div>'
-+'<div class="pcard"><h2>Sua tabela do caderno</h2><div id="pv_tab" style="overflow-x:auto"></div></div>'
++'<div class="pcard"><h2>Sua tabela do caderno</h2><div id="pv_tab" style="overflow-x:auto"></div><div class="prow" style="margin-top:10px"><button type="button" class="pok" id="pv_asave">Salvar análise</button><button type="button" class="pbad" id="pv_aclear">Apagar análise</button></div><div class="psm" id="pv_amsg" style="margin-top:6px"></div></div>'
 +'<div id="pv_gate"></div>'
 +'<div class="pcard" id="pv_c4"><h2>3. Montar a estrutura</h2><p class="psm" style="margin-top:0">Clique nas peças na ordem em que elas ficam ligadas, da esquerda para a direita. Clique numa peça já colocada para tirar. As peças <b>sem letra</b> (O, C=O, NO₂) não dão sinal de H: vêm da fórmula e do GDH.</p><div class="psm" style="margin-bottom:4px">Peças:</div><div class="pchips" id="pv_pool"></div><div class="psm" style="margin:8px 0 4px">Sua estrutura:</div><div class="pmol" id="pv_chain" style="min-height:48px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;width:100%"></div><div class="prow" style="margin-top:10px"><button type="button" class="pri" id="pv_chk4">Conferir estrutura</button><button type="button" id="pv_dica4">Dica de encaixe</button><button type="button" id="pv_clr4">Limpar</button></div><div id="pv_fb4" class="pfb" style="margin-top:8px"></div></div>'
-+'<div class="pcard" id="pv_c45"><h2>4. Atribuição: escreva o significado de cada pico</h2><p class="psm" style="margin-top:0">Como na prova: escreva você mesma, com suas palavras, o que cada sinal é na molécula. Só depois peça o modelo e compare.</p><div class="ppasso"><b>Uma boa resposta tem 4 coisas:</b><ol><li><mark class="y">Grupo</mark> e número de H (ex.: CH₂, 2 H).</li><li><mark class="b">Onde fica</mark> na estrutura (ex.: ligado ao C=O).</li><li><mark class="p">Por que esse δ</mark> (ex.: carbono alfa, 2 a 2,5 ppm).</li><li><mark class="y">Por que esse formato</mark> (ex.: tripleto, 2 vizinhos).</li></ol></div><div id="pv_att"></div><div class="psm" id="pv_attp" style="margin-top:8px"></div></div>'
-+'<div class="pcard" id="pv_c5"><h2>5. Conferir com a resolução</h2><p class="psm" style="margin-top:0">Escreva a estrutura no caderno, depois revele a resolução passo a passo.</p><div class="prow"><button type="button" class="pri" id="pv_reveal">Revelar resolução</button></div><div id="pv_sol" style="margin-top:10px"></div></div>'
++'<div class="pcard" id="pv_c5"><h2>4. Conferir com a resolução</h2><p class="psm" style="margin-top:0">Escreva a estrutura no caderno, depois revele a resolução passo a passo.</p><div class="prow"><button type="button" class="pri" id="pv_reveal">Revelar resolução</button></div><div id="pv_sol" style="margin-top:10px"></div></div>'
 +'<div class="pcuid"><b>Fontes.</b> <span class="pselo">lido do gráfico</span> δ, H e multiplicidades dos 4.3 vêm do Anaquim (problemas 4.3 do Silverstein, 7ª ed. em português), lidos das páginas, então são aproximados. Os J são típicos, não medidos. <b>As alturas dos degraus são minhas</b>: o Anaquim deduziu a integração pela fórmula e não mediu a curva. Gerei alturas em cm a partir do H real, com uma imprecisão de régua. O exercício A usa os números da sua aula. Nos 5 da folha, as explicações de cada sinal são minhas, sem fonte conferida. No livro, use as alturas que você mesma medir.</div>'
 +'</div><div id="pv_chost" hidden></div></div>';
 let INI=false;
@@ -436,17 +435,11 @@ function provaDraw(){
   $('chain').addEventListener('click',ev=>{const b=ev.target.closest('[data-pvc]');if(!b)return;S.chain.splice(+b.dataset.pvc,1);$('fb4').innerHTML='';drawBuild();});
   $('clr4').addEventListener('click',()=>{S.chain=[];$('fb4').innerHTML='';drawBuild();});
   $('chk4').addEventListener('click',chk4);$('dica4').addEventListener('click',dica4);
-  $('att').addEventListener('input',ev=>{const t=ev.target;if(t.dataset.pvt!==undefined)S.attTxt[+t.dataset.pvt]=t.value;});
-  $('att').addEventListener('click',ev=>{
-   const b=ev.target.closest('button');if(!b)return;
-   if(b.dataset.pvma!==undefined){const i=+b.dataset.pvma;S.att[i]=S.att[i]||'v';drawAtt();}
-   else if(b.dataset.pva){const p=b.dataset.pva.split(':');S.att[+p[1]]=p[0];drawAtt();}
-  });
   $('reveal').addEventListener('click',drawSol);
   $('exsel').addEventListener('change',()=>load(+$('exsel').value));
   $('grade').addEventListener('change',drawSpec);
   drawProg();load(0);
-  $('nh').addEventListener('click',()=>setNuc('h'));$('nc').addEventListener('click',()=>setNuc('c'));
+  $('asave').addEventListener('click',saSalvar);$('aclear').addEventListener('click',saLimpar);$('nh').addEventListener('click',()=>setNuc('h'));$('nc').addEventListener('click',()=>setNuc('c'));
  }
  setNuc(PVN);
 }
