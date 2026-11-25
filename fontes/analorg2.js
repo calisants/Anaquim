@@ -509,8 +509,10 @@ function relCss(cor){return ':root{--c:'+cor+'}*{box-sizing:border-box}body{marg
    +'footer{padding:20px 28px 0;font-size:.8rem;color:#5B6877}footer p{margin:0 0 4px}'
    +'.imp{display:block;margin:20px auto 0;font:inherit;font-weight:600;background:var(--c);color:#fff;border:0;border-radius:10px;padding:11px 20px;cursor:pointer}'
    +'.tb{width:100%;border-collapse:collapse;font-size:.88rem}.tb th{text-align:left;font-size:.8rem;font-weight:700;color:var(--c);border-bottom:2px solid var(--c);padding:5px 6px}.tb td{padding:5px 6px;border-bottom:1px solid #EDF1F5;vertical-align:top}.tbw{overflow-x:auto;break-inside:avoid}'
+   +'.cad{display:flex;flex-wrap:wrap;align-items:center;row-gap:20px}.pc{position:relative;display:inline-block;border:2px solid #8896A5;border-radius:10px;padding:6px 12px;margin-bottom:6px;font-size:1.1rem;background:#fff}.pc i{position:absolute;left:50%;bottom:-12px;transform:translateX(-50%);color:#fff;font-style:normal;font-size:.72rem;font-weight:700;min-width:21px;height:21px;line-height:21px;text-align:center;border-radius:50%}.lg{width:18px;height:3px;background:#8896A5;margin:0 3px 6px}'
+   +'.mol{text-align:center;margin-top:12px}.mol svg{max-width:340px;width:100%;height:auto}.mol .nt{margin-top:2px}.sv{width:100%;height:auto;display:block}.zg{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}.zc{border:1px solid #D9E0E7;border-radius:12px;padding:10px 12px;break-inside:avoid}.zh{display:flex;align-items:center;gap:8px;margin-bottom:4px}.zl{flex:none;width:26px;height:26px;border-radius:50%;color:#fff;display:grid;place-items:center;font-weight:700}.zc svg{width:100%;height:auto;display:block}'
    +'.stp{margin:0;padding-left:20px}.stp li{margin:0 0 6px;break-inside:avoid}.fm{font-size:1.15rem;font-weight:600;overflow-wrap:anywhere}.nt{font-size:.86rem;color:#5B6877;margin:8px 0 0}'
-   +'@media print{body{background:#fff}.pg{max-width:none}.imp{display:none}header{-webkit-print-color-adjust:exact;print-color-adjust:exact}.n,.bar i,.cr span{-webkit-print-color-adjust:exact;print-color-adjust:exact}}';}
+   +'@media print{body{background:#fff}.pg{max-width:none}.imp{display:none}header{-webkit-print-color-adjust:exact;print-color-adjust:exact}.n,.bar i,.cr span,.zl,.pc i{-webkit-print-color-adjust:exact;print-color-adjust:exact}}';}
 const relHoje=()=>new Date().toLocaleDateString('pt-BR');
 const relCor=()=>(getComputedStyle(document.documentElement).getPropertyValue('--keep')||'#1F5FA8').trim();
 /* cartão com pares rótulo/valor; its = [[rótulo, valor]] (texto puro) */
@@ -526,6 +528,26 @@ function relPagina(o){
   b+='<button class="imp" onclick="window.print()">Imprimir ou salvar em PDF</button>';
   return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(o.titulo+' · Anaquim')+'</title><style>'+relCss(cor)+'</style></head><body><div class="pg">'+b+'</div></body></html>';
 }
+const relSub=s=>esc(s).replace(/([A-Za-z\)])(\d+)/g,'$1<sub>$2</sub>');
+const relChave=n=>String(n).split('· ').pop().toLowerCase().replace(/\s*\(.*\)/,'').trim();
+/* estrutura como peças ligadas, com a letra do sinal de cada grupo; pecas = [[texto, letra]], sinais = [{id,col}] */
+function relCadeia(pecas,sinais,anel){
+  return '<div class="cad">'+pecas.map((p,i)=>{const s=p[1]?sinais.find(x=>x.id===p[1]):null;
+    return (i?'<span class="lg"></span>':'')+'<span class="pc"'+(s?' style="border-color:'+s.col+'"':'')+'>'+relSub(p[0])+(s?'<i style="background:'+s.col+'">'+esc(s.id)+'</i>':'')+'</span>';}).join('')
+    +'</div>'+(anel?'<p class="nt">As duas pontas se ligam e fecham o anel.</p>':'');
+}
+/* desenho da estrutura (RDKit, gerado na hora de empacotar), se o composto tem um */
+function relDesenho(nome){
+  const D=typeof RELEST!=='undefined'?RELEST:null,s=D&&D[relChave(nome)];
+  return s?'<div class="mol">'+s+'<p class="nt">Desenho da estrutura do composto.</p></div>':'';
+}
+/* figura SVG: tira as áreas de clique do app */
+const relFig=(svg,vb)=>'<svg class="sv" viewBox="'+vb+'" xmlns="http://www.w3.org/2000/svg" role="img">'+svg.replace(/<rect data-i=[^>]*\/>/g,'')+'</svg>';
+/* cartões dos picos ampliados; zs = [{id,col,tit,svg,info}] */
+function relZooms(zs){
+  return '<div class="zg">'+zs.map(z=>'<div class="zc" style="border-top:4px solid '+z.col+'"><div class="zh"><span class="zl" style="background:'+z.col+'">'+esc(z.id)+'</span><b>'+esc(z.tit)+'</b></div>'
+    +'<svg viewBox="0 0 600 216" xmlns="http://www.w3.org/2000/svg" role="img">'+z.svg+'</svg>'+(z.info?'<p class="nt">'+esc(z.info)+'</p>':'')+'</div>').join('')+'</div>';
+}
 /* abre o relatório numa janela; se o navegador bloquear, baixa o arquivo. devolve a mensagem para a tela */
 function relAbrir(html,arquivo){
   const b=new Blob([html],{type:'text/html;charset=utf-8'}),u=URL.createObjectURL(b),w=window.open(u,'_blank');
@@ -534,7 +556,7 @@ function relAbrir(html,arquivo){
   else msg='Relatório aberto. Toque em "Imprimir ou salvar em PDF".';
   setTimeout(()=>URL.revokeObjectURL(u),60000);return msg;
 }
-window.relCard=relCard;window.relTabela=relTabela;window.relPagina=relPagina;window.relAbrir=relAbrir;window.relHoje=relHoje;
+window.relCadeia=relCadeia;window.relDesenho=relDesenho;window.relFig=relFig;window.relZooms=relZooms;window.relCard=relCard;window.relTabela=relTabela;window.relPagina=relPagina;window.relAbrir=relAbrir;window.relHoje=relHoje;
 /* relatório visual: página autônoma, pronta para imprimir ou salvar em PDF */
 function icRelatorio(){
   const L=ICLAST;if(!L)return '';

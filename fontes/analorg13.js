@@ -192,8 +192,8 @@ function linesOf(s){
  for(const c of cp){const n=c[0],J=c[1];const pc=binom(n),sm=pc.reduce((a,b)=>a+b);const N2=[];for(const l of L)pc.forEach((cc,k)=>N2.push({p:l.p+(k-n/2)*J/FQ(),w:l.w*cc/sm}));L=N2;}
  return L;
 }
-function drawOverview(){
- const e=E();const C=S.nuc==='c';let g='';
+function ovSvg(e,C,sel,integral){
+ let g='';
  if(!C){
   const W=1000,L=20,R=20,base=250,pk=140;
   const dmax=Math.max.apply(null,e.s.map(s=>s.d));const pmax=Math.max(6,Math.ceil(dmax+0.9)),pmin=0;
@@ -201,11 +201,11 @@ function drawOverview(){
   const sg=0.035,N=900;const ys=[];let mx=0;
   for(let i=0;i<=N;i++){const p=pmin+(pmax-pmin)*i/N;let y=0;for(const s of e.s)y+=s.h*Math.exp(-0.5*Math.pow((p-s.d)/sg,2));ys.push(y);if(y>mx)mx=y;}
   let path='';for(let i=0;i<=N;i++){const p=pmin+(pmax-pmin)*i/N;path+=(i?'L':'M')+X(p).toFixed(1)+' '+(base-ys[i]/mx*pk).toFixed(1);}
-  if(S.sel!==null){const s=e.s[S.sel];g+='<rect x="'+X(s.d+0.25)+'" y="10" width="'+(X(s.d-0.25)-X(s.d+0.25))+'" height="'+(base-10)+'" fill="'+s.col+'" opacity=".12"/>';}
+  if(sel!==null){const s=e.s[sel];g+='<rect x="'+X(s.d+0.25)+'" y="10" width="'+(X(s.d-0.25)-X(s.d+0.25))+'" height="'+(base-10)+'" fill="'+s.col+'" opacity=".12"/>';}
   for(let p=0;p<=pmax;p++)g+='<line x1="'+X(p)+'" y1="'+base+'" x2="'+X(p)+'" y2="'+(base+6)+'" stroke="#555"/><text x="'+X(p)+'" y="'+(base+22)+'" text-anchor="middle" font-size="13" fill="#333">'+p+'</text>';
   g+='<line x1="'+L+'" y1="'+base+'" x2="'+(W-R)+'" y2="'+base+'" stroke="#555"/><text x="'+(W-R)+'" y="'+(base+40)+'" text-anchor="end" font-size="13" fill="#555">δ (ppm)</text>';
   g+='<path d="'+path+'" fill="none" stroke="#1d1d1b" stroke-width="1.6"/>';
-  if(S.integral){const tot=e.s.reduce((a,s)=>a+s.h,0);let ip='';
+  if(integral){const tot=e.s.reduce((a,s)=>a+s.h,0);let ip='';
    for(let i=0;i<=N;i++){const p=pmax-(pmax-pmin)*i/N;let v=0;for(const s of e.s)v+=s.h/(1+Math.exp(-(s.d-p)/0.03));ip+=(i?'L':'M')+X(p).toFixed(1)+' '+(80-v/tot*65).toFixed(1);}
    g+='<path d="'+ip+'" fill="none" stroke="#b5651d" stroke-width="1.6"/>';}
   e.s.forEach((s,i)=>{let y=0;for(const t of e.s)y+=t.h*Math.exp(-0.5*Math.pow((s.d-t.d)/sg,2));const top=base-y/mx*pk;
@@ -214,7 +214,7 @@ function drawOverview(){
  } else {
   const W=1000,L=20,R=20,base=250,pk=165,pmax=220,pmin=0;
   const X=p=>L+(pmax-p)/(pmax-pmin)*(W-L-R);
-  if(S.sel!==null){const s=e.s[S.sel];g+='<rect x="'+X(s.d+9)+'" y="10" width="'+(X(s.d-9)-X(s.d+9))+'" height="'+(base-10)+'" fill="'+s.col+'" opacity=".12"/>';}
+  if(sel!==null){const s=e.s[sel];g+='<rect x="'+X(s.d+9)+'" y="10" width="'+(X(s.d-9)-X(s.d+9))+'" height="'+(base-10)+'" fill="'+s.col+'" opacity=".12"/>';}
   for(let p=0;p<=pmax;p+=20)g+='<line x1="'+X(p)+'" y1="'+base+'" x2="'+X(p)+'" y2="'+(base+6)+'" stroke="#555"/><text x="'+X(p)+'" y="'+(base+22)+'" text-anchor="middle" font-size="13" fill="#333">'+p+'</text>';
   g+='<line x1="'+L+'" y1="'+base+'" x2="'+(W-R)+'" y2="'+base+'" stroke="#555"/><text x="'+(W-R)+'" y="'+(base+40)+'" text-anchor="end" font-size="13" fill="#555">δ (ppm)</text>';
   [75.7,77.0,78.3].forEach(p=>{g+='<line x1="'+X(p)+'" y1="'+base+'" x2="'+X(p)+'" y2="'+(base-34)+'" stroke="#aaa" stroke-width="2"/>';});
@@ -225,8 +225,11 @@ function drawOverview(){
    const hw=lines.length>1?9:5;
    g+='<rect data-i="'+i+'" x="'+X(s.d+hw)+'" y="20" width="'+Math.max(24,X(s.d-hw)-X(s.d+hw))+'" height="'+(base-20)+'" fill="transparent" style="cursor:pointer"/>';});
  }
- $('ov').innerHTML=g;
+ return g;
 }
+function drawOverview(){$('ov').innerHTML=ovSvg(E(),S.nuc==='c',S.sel,S.integral);}
+window.LEITOR_OV=(e,nuc)=>ovSvg(e,nuc==='c',null,false);
+
 function drawZoom(){
  const e=E();const svg=$('zoom');
  if(S.sel===null){svg.innerHTML='<text x="300" y="100" text-anchor="middle" fill="#777">Escolha um sinal</text>';$('zt').textContent='Multipleto ampliado';$('zinfo').textContent='';return;}
@@ -389,6 +392,14 @@ function relLeitor(){
  if(!window.relPagina)return;
  const e=E(),C=S.nuc==='c',f=e.f,nu=C?'¹³C':'¹H',txt=h=>String(h).replace(/<[^>]+>/g,''),d=dbe(f);
  let b='<section><h2>Composto</h2><div class="grid">'+relCard('Dados',[['Fórmula',e.fs],['GDH',String(d)],['Sinais de '+nu,String(e.s.length)]])+'</div></section>';
+ const ov=relFig(ovSvg(e,C,null,false),'0 0 1000 290'),keep=S.sel,rowsP=S.rows13;
+ const zs=e.s.map((s,i)=>{S.sel=i;drawZoom();const r=S.prova?rowsP[i]:null;
+  const tt=S.prova?(r?'Sinal '+s.id+' · δ '+String(r.d).replace('.',',')+' ppm · '+r.n+' C':'Sinal '+s.id)
+   :'Sinal '+s.id+' · δ '+fmt(s.d,C?1:2).replace('.',',')+' ppm · '+(C?s.n+' C':s.h+' H')+' · '+txt(MN[s.m]);
+  return {id:s.id,col:s.col,tit:tt,svg:$('zoom').innerHTML,info:$('zinfo').textContent};});
+ S.sel=keep;drawZoom();
+ b+='<section><h2>Espectro simulado</h2>'+ov+'<p class="nt">Espectro desenhado pelo app a partir dos dados do exercício. Cada letra marca um sinal, na mesma cor dos cartões abaixo.</p></section>';
+ b+='<section><h2>Cada sinal ampliado</h2>'+relZooms(zs)+'</section>';
  let tit,rot,rodape;
  if(S.prova){
   const ks=Object.keys(S.rows13).map(Number).sort((a,b)=>a-b);
@@ -404,7 +415,7 @@ function relLeitor(){
    :relTabela(['Sinal','δ (ppm)','Integração','H','Formato','Tipo de H'],e.s.map((s,i)=>[s.id,fmt(s.d),String(r[i]),String(s.h),txt(MN[s.m]),txt(CATS[s.cat].n)])))+'</section>';
   const L=stepsList();
   b+='<section><h2>Passo a passo</h2><ol class="stp">'+L.map(x=>'<li>'+x.replace(/<(?!\/?b>)[^>]*>/g,'')+'</li>').join('')+'</ol></section>';
-  if(e.est)b+='<section><h2>Estrutura</h2><p class="fm">'+e.est.map(x=>esc(txt(x[0]))+(x[1]?' ('+esc(x[1])+')':'')).join(' · ')+'</p><p class="nt">Peças separadas por ·.'+'</p></section>';
+  if(e.est)b+='<section><h2>Estrutura</h2>'+relCadeia(e.est,e.s,false)+'<p class="nt">Cada peça traz, no círculo, a letra do sinal que ela explica.</p>'+relDesenho(e.nome)+'</section>';
   tit=e.nome;rot='Leitor de espectros';
   rodape=[e.fonte||'',e.grp==='sv'?'Os δ foram lidos de gráficos e são aproximados.':''].filter(Boolean);
  }

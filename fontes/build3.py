@@ -142,6 +142,8 @@ js="const SVG="+json.dumps(store,ensure_ascii=False)+";\nconst MAPS="+json.dumps
 import compostos
 js+="const COMP="+json.dumps(compostos.build_comp(svg,EXD),ensure_ascii=False)+";\n"
 js+="const BDJSON="+json.dumps(open("analor_bd.json",encoding="utf-8").read(),ensure_ascii=False)+";\n"
+import rmn_estruturas
+js+="const RELEST="+json.dumps(rmn_estruturas.build(),ensure_ascii=False)+";\n"
 js+="const MSFS="+json.dumps(compostos.MSFS,ensure_ascii=False)+";\n"
 for _ph,_f in (("<!--@@ANALORG2_HTML@@-->","analorg2.html"),("/*@@ANALORG2_CSS@@*/","analorg2.css"),("/*@@ANALORG3_CSS@@*/","analorg3.css"),("/*@@ANALORG2_JS@@*/","analorg2.js"),("/*@@ANALORG3_JS@@*/","analorg3.js"),("/*@@ANALORG4_CSS@@*/","analorg4.css"),("/*@@ANALORG4_JS@@*/","analorg4.js"),("/*@@ANALORG5_CSS@@*/","analorg5.css"),("/*@@ANALORG5_JS@@*/","analorg5.js"),("<!--@@ANALORG6_HTML@@-->","analorg6.html"),("/*@@ANALORG6_CSS@@*/","analorg6.css"),("/*@@ANALORG6_JS@@*/","analorg6.js"),("<!--@@ANALORG7_HTML@@-->","analorg7.html"),("/*@@ANALORG7_CSS@@*/","analorg7.css"),("/*@@ANALORG7_JS@@*/","analorg7.js"),("/*@@ANALORG8_CSS@@*/","analorg8.css"),("/*@@ANALORG8_JS@@*/","analorg8.js"),("/*@@ANALORG9_CSS@@*/","analorg9.css"),("/*@@ANALORG10_CSS@@*/","analorg10.css"),("/*@@ANALORG9_JS@@*/","analorg9.js"),("/*@@ANALORG10_JS@@*/","analorg10.js"),("/*@@ANALORG11_CSS@@*/","analorg11.css"),("/*@@ANALORG11_JS@@*/","analorg11.js"),("/*@@ANALORG12_CSS@@*/","analorg12.css"),("/*@@ANALORG12_JS@@*/","analorg12.js"),("/*@@ANALORG13_CSS@@*/","analorg13.css"),("/*@@ANALORG13_JS@@*/","analorg13.js")):
     _t=open(_f,encoding="utf-8").read()

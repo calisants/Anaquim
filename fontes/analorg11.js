@@ -280,16 +280,28 @@ function saSalvar(){const e=E(),A=saLer();A[e.id]={t:Date.now(),rows:S.rows,done
 function saLimpar(){const e=E(),A=saLer();delete A[e.id];try{localStorage.setItem(SAK,JSON.stringify(A));}catch(x){}load(S.ex);saMsg('Análise apagada neste exercício.');}
 function saRestaurar(i){const a=saLer()[EX[i].id];if(!a)return false;S.rows=a.rows||{};S.done=a.done||[];if(a.meas)S.meas=a.meas;if(a.ints)S.ints=a.ints;S.chain=a.chain||[];return true;}
 /* relatório da análise (mesmo layout do relatório do Identificar) */
+function chainOk(){
+ const e=E(),n=e.est.length;if(S.chain.length<n)return false;
+ const key=i=>e.est[i][0]+'|'+(e.est[i][1]||''),tgt=e.est.map((_,i)=>key(i)),usr=S.chain.map(key),eq=(a,b)=>a.every((v,k)=>v===b[k]);
+ let ok=eq(usr,tgt)||eq(usr,tgt.slice().reverse());
+ if(!ok&&e.ring){for(let r=0;r<n&&!ok;r++){const rot=tgt.map((_,k)=>tgt[(k+r)%n]);if(eq(usr,rot)||eq(usr,rot.slice().reverse()))ok=true;}}
+ return ok;
+}
 function relProva(){
  if(!window.relPagina){return;}
  const e=E(),f=e.f,Ht=e.Hint||f.H,gdh=(2*f.C+2+f.N-f.H-f.X)/2,ks=Object.keys(S.rows).map(Number).sort((a,b)=>a-b),txt=h=>String(h).replace(/<[^>]+>/g,'');
  let b='<section><h2>Dados do exercício</h2><div class="grid">'+relCard('Dados',[['Fórmula',e.fs],['GDH',String(gdh)],['H que a regra de três usa',String(Ht)]])+'</div></section>';
+ if(window.LEITOR_OV)b+='<section><h2>Espectro simulado</h2>'+relFig(LEITOR_OV(e,'h'),'0 0 1000 290')+'<p class="nt">Espectro desenhado pelo app a partir dos dados do exercício. Cada letra marca um sinal, na mesma cor dos cartões abaixo.</p></section>';
+ const keep=S.sel,zs=e.s.map((s,i)=>{S.sel=i;drawZoom();const r=S.rows[i];
+  return {id:s.id,col:s.col,tit:r?'Sinal '+s.id+' · δ '+String(r.d).replace('.',',')+' ppm · '+r.h+' H · '+(MN[r.m]||r.m):'Sinal '+s.id,svg:$('zoom').innerHTML,info:$('zinfo').textContent};});
+ S.sel=keep;drawZoom();
+ b+='<section><h2>Cada sinal ampliado</h2>'+relZooms(zs)+'</section>';
  const ms=e.s.map((s,i)=>[s.id,S.meas[i]>0?String(S.meas[i]).replace('.',',')+' cm':'',S.ints[i]!=null&&!isNaN(S.ints[i])?String(S.ints[i]):'']).filter(r=>r[1]||r[2]);
  if(ms.length)b+='<section><h2>Integração</h2>'+relTabela(['Sinal','Degrau','H (regra de três)'],ms)+'<p class="nt">H = degrau × '+Ht+' ÷ soma dos degraus, arredondado.</p></section>';
  b+='<section><h2>Sua tabela do caderno <span class="mut">('+ks.length+' de '+e.s.length+' sinais)</span></h2>'
   +(ks.length?relTabela(['Sinal','H','δ (ppm)','Grupo','Tipo','H vizinhos','Vizinhos possíveis'],ks.map(k=>{const r=S.rows[k];return [e.s[k].id,String(r.h),String(r.d).replace('.',','),txt(r.g),String(r.m),String(r.v),txt(r.f)];})):'<p class="mut">Nenhum sinal conferido ainda.</p>')+'</section>';
- const ch=S.chain.map(i=>{const p=e.est[i];return txt(p[0])+(p[1]?' ('+p[1]+')':'');});
- b+='<section><h2>Estrutura montada</h2>'+(ch.length?'<p class="fm">'+ch.map(esc).join(' · ')+'</p><p class="nt">Peças separadas por ·, na ordem em que você ligou. O app confere só as ligações entre as peças.</p>':'<p class="mut">Ainda não montada.</p>')+'</section>';
+ const ok=chainOk();
+ b+='<section><h2>Estrutura montada</h2>'+(S.chain.length?relCadeia(S.chain.map(i=>e.est[i]),e.s,ok&&e.ring)+'<p class="nt">Peças na ordem em que você ligou; o círculo traz a letra do sinal de cada grupo. '+(ok?'As ligações conferem com o composto.':'O app confere só as ligações entre as peças, e aqui ainda há ligação que não bate.')+'</p>'+(ok?relDesenho(e.nome):''):'<p class="mut">Ainda não montada.</p>')+'</section>';
  const st=SAVED[e.id];b+='<section><h2>Resolução</h2><p>'+(st==='ok'?'Você marcou que acertou a estrutura.':st==='no'?'Você marcou que errou e quer refazer.':'Ainda sem marcação de acerto ou erro.')+'</p></section>';
  const h=relPagina({marca:'Anaquim · Prova de RMN ¹H',rotulo:'Exercício',titulo:e.rot||e.nome,corpo:b,rodape:['Os δ, H e formatos dos problemas 4.3 foram lidos das fotos das páginas e são aproximados; a integração do 4.3 foi deduzida da fórmula. Confira com a resolução e com o Silverstein.']});
  saMsg(relAbrir(h,'relatorio-prova-'+e.id+'.html'));
@@ -430,9 +442,10 @@ const HTML='<div class="pv">'
 +'<div class="pcard" style="overflow-x:auto"><svg id="pv_spec" style="min-width:720px" viewBox="0 0 900 500" role="img" aria-label="Espectro com curva de integração"></svg><div class="psm" id="pv_mhint" style="margin-top:6px">As linhas finas são de 1 mm e as mais escuras de 5 mm. A curva sobe em degraus: cada degrau é o sinal que está embaixo dele.</div></div>'
 +'<div class="pcard" id="pv_c1"><h2>1. Integração: medir, somar, regra de três</h2><div id="pv_tbl"></div><div class="prow" style="margin-top:8px"><button type="button" class="pri" id="pv_chk1">Conferir integração</button></div><div id="pv_fb1" class="pfb" style="margin-top:8px"></div></div>'
 +'<div class="pgrid"><div class="pcard"><h2 id="pv_zt">Multipleto ampliado</h2><svg id="pv_zoom" viewBox="0 0 600 216" role="img" aria-label="Multipleto ampliado"></svg><div id="pv_zinfo" class="psm"></div></div><div class="pcard"><h2 id="pv_pt">2. Significado do pico</h2><div class="pchips" id="pv_chips"></div><div id="pv_panel"><span class="psm">Escolha um sinal.</span></div></div></div>'
-+'<div class="pcard"><h2>Sua tabela do caderno</h2><div id="pv_tab" style="overflow-x:auto"></div><div class="prow" style="margin-top:10px"><button type="button" class="pok" id="pv_asave">Salvar análise</button><button type="button" class="pbad" id="pv_aclear">Apagar análise</button><button type="button" id="pv_arel">Relatório (PDF)</button></div><div class="psm" id="pv_amsg" style="margin-top:6px"></div></div>'
++'<div class="pcard"><h2>Sua tabela do caderno</h2><div id="pv_tab" style="overflow-x:auto"></div></div>'
 +'<div id="pv_gate"></div>'
 +'<div class="pcard" id="pv_c4"><h2>3. Montar a estrutura</h2><p class="psm" style="margin-top:0">Clique nas peças na ordem em que elas ficam ligadas, da esquerda para a direita. Clique numa peça já colocada para tirar. As peças <b>sem letra</b> (O, C=O, NO₂) não dão sinal de H: vêm da fórmula e do GDH.</p><div class="psm" style="margin-bottom:4px">Peças:</div><div class="pchips" id="pv_pool"></div><div class="psm" style="margin:8px 0 4px">Sua estrutura:</div><div class="pmol" id="pv_chain" style="min-height:48px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;width:100%"></div><div class="prow" style="margin-top:10px"><button type="button" class="pri" id="pv_chk4">Conferir estrutura</button><button type="button" id="pv_dica4">Dica de encaixe</button><button type="button" id="pv_clr4">Limpar</button></div><div id="pv_fb4" class="pfb" style="margin-top:8px"></div></div>'
++'<div class="pcard" id="pv_csr"><h2>Salvar e gerar o relatório</h2><p class="psm" style="margin-top:0">Depois de montar a estrutura, guarde a análise neste aparelho para continuar depois, ou gere o relatório com o espectro, cada sinal ampliado, a tabela do caderno e a estrutura.</p><div class="prow" style="margin-top:8px"><button type="button" class="pok" id="pv_asave">Salvar análise</button><button type="button" class="pbad" id="pv_aclear">Apagar análise</button><button type="button" class="pri" id="pv_arel">Relatório (PDF)</button></div><div class="psm" id="pv_amsg" style="margin-top:6px"></div></div>'
 +'<div class="pcard" id="pv_c5"><h2>4. Conferir com a resolução</h2><p class="psm" style="margin-top:0">Escreva a estrutura no caderno, depois revele a resolução passo a passo.</p><div class="prow"><button type="button" class="pri" id="pv_reveal">Revelar resolução</button></div><div id="pv_sol" style="margin-top:10px"></div></div>'
 +'<div class="pcuid"><b>Fontes.</b> <span class="pselo">lido do gráfico</span> δ, H e multiplicidades dos 4.3 vêm do Anaquim (problemas 4.3 do Silverstein, 7ª ed. em português), lidos das páginas, então são aproximados. Os J são típicos, não medidos. <b>As alturas dos degraus são minhas</b>: o Anaquim deduziu a integração pela fórmula e não mediu a curva. Gerei alturas em cm a partir do H real, com uma imprecisão de régua. O exercício A usa os números da sua aula. Nos 5 da folha, as explicações de cada sinal são minhas, sem fonte conferida. No livro, use as alturas que você mesma medir.</div>'
 +'</div><div id="pv_chost" hidden></div></div>';

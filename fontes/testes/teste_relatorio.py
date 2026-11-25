@@ -18,20 +18,21 @@ try:
     b=abrir(p);pg=b.new_page(viewport={'width':390,'height':900});er=[];pg.on('pageerror',lambda e:er.append(str(e)))
     pg.goto('http://localhost:8773/index.html');pg.wait_for_timeout(1500)
     # ---- Prova ¹H, com uma linha da tabela do caderno vinda de análise salva
-    pg.evaluate("localStorage.setItem('anaquim-prova-analise-v1',JSON.stringify({'43A':{t:Date.now(),rows:{'0':{h:3,d:'1.26',g:'CH₃',m:'t',v:2,f:'CH₃ vizinho de CH₂'}},done:[],meas:[],ints:[],chain:[]}}))")
+    pg.evaluate("localStorage.setItem('anaquim-prova-analise-v1',JSON.stringify({'43A':{t:Date.now(),rows:{'0':{h:3,d:'1.26',g:'CH₃',m:'t',v:2,f:'CH₃ vizinho de CH₂'}},done:[],meas:[],ints:[],chain:Array.from({length:window.PROVA_EX[0].est.length},(_,i)=>i)}}))")
     pg.reload();pg.wait_for_timeout(1200)
     pg.evaluate("go('p-rm')");pg.click('[data-rp="prova"]');pg.wait_for_timeout(300)
     po=abre(pg,'#pv_arel');layout(po);t=po.text_content('body')
     assert 'Prova de RMN' in t and 'Sua tabela do caderno' in t and 'CH₃ vizinho de CH₂' in t and 'Estrutura montada' in t
+    assert 'Espectro simulado' in t and 'Cada sinal ampliado' in t and po.locator('.zc').count()==5 and po.locator('.pc').count()>=3 and po.locator('.mol svg').count()==1
     assert po.locator('table.tb').count()>=1;po.close();print('ok  relatório da Prova ¹H')
     # ---- Prova ¹³C (Leitor em modo prova)
     pg.click('#pv_nc');pg.wait_for_timeout(400)
     po=abre(pg,'#pv_chost [data-lrel]');layout(po);t=po.text_content('body')
-    assert 'Prova' in t and 'Sua tabela do caderno' in t and 'Nenhum sinal conferido' in t;po.close();print('ok  relatório da Prova ¹³C')
+    assert 'Prova' in t and 'Sua tabela do caderno' in t and 'Nenhum sinal conferido' in t and po.locator('.zc').count()>=3;po.close();print('ok  relatório da Prova ¹³C')
     # ---- Leitor (explorar) ¹H e ¹³C
     pg.click('[data-rp="leitor"]');pg.wait_for_timeout(400)
     po=abre(pg,'#p-rm [data-rpane="leitor"] .lt-wrap [data-lrel] >> nth=1');layout(po);t=po.text_content('body')
-    assert 'Leitor de espectros' in t and 'Passo a passo' in t and 'Sinais' in t and 'Fórmula' in t;po.close()
+    assert 'Leitor de espectros' in t and 'Passo a passo' in t and 'Sinais' in t and 'Fórmula' in t and po.locator('.zc').count()==3 and po.locator('.mol svg').count()==1 and po.locator('svg.sv').count()==1;po.close()
     pg.select_option('#lt_nuc','c');pg.wait_for_timeout(200)
     po=abre(pg,'#p-rm [data-rpane="leitor"] .lt-wrap [data-lrel] >> nth=1');layout(po);t=po.text_content('body')
     assert 'RMN de ¹³C' in t and 'Fora de ressonância' in t;po.close();print('ok  relatório do Leitor (¹H e ¹³C)')
