@@ -205,3 +205,8 @@ Marcação das possibilidades de vizinhos (Prova ¹H): o estado agora é lido do
 Salvar análise: botões "Salvar análise" e "Apagar análise" na Prova ¹H (chave `anaquim-prova-analise-v1`) e na Prova ¹³C (chave `anaquim-leitor-analise-v1`). Ao reabrir o exercício, a tabela do caderno, as possibilidades marcadas e a estrutura voltam como estavam.
 Removido: o passo "4. Atribuição" da Prova ¹H, porque repetia a "Sua tabela do caderno". O último passo agora é "4. Conferir com a resolução". Teste de atribuição saiu de `teste_prova.py` e ganhou uma checagem de que o card não existe mais.
 v290 foi build intermediário, não publicado.
+
+## v292/v293: relatório (PDF) na Prova, no Leitor e no Ler PDF
+Botão "Relatório (PDF)" na Prova ¹H (dados do exercício, integração medida, tabela do caderno, estrutura montada, marcação de acerto), na Prova ¹³C e no Leitor (modo estudo: sinais, passo a passo, estrutura) e no Ler PDF (IV, massas e RMN: arquivo lido e tabela de bandas, picos ou sinais). O layout é o do relatório do Identificar: faixa colorida no topo, cartões, tabelas, rodapé e botão "Imprimir ou salvar em PDF".
+Como foi feito: o CSS e a página do relatório do Identificar viraram funções comuns em `analorg2.js` (`relCss`, `relPagina`, `relCard`, `relTabela`, `relAbrir`); o Identificar continua gerando o mesmo relatório. As tabelas ganharam estilo próprio (`.tb`). Cada módulo monta só o corpo: `relProva` (analorg11), `relLeitor` (analorg13), `spRelatorio` (analorg8).
+Honestidade: o relatório mostra o que você preencheu e as fontes de cada módulo (δ aproximados dos 4.3 e 5.7, altura do SDBS que não é integração). Não tem nota nem correção automática além do que a tela já faz. Teste: `testes/teste_relatorio.py`.

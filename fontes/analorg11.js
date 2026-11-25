@@ -1,7 +1,7 @@
 /* ================= ANALORG v11: RMN, treino de prova de ¹H (integração por régua) =================
    Aba "Prova" dentro de RMN. 13 exercícios: problemas 4.3 A–H do Silverstein (os mesmos de "Resolvidos") e 5 espectros da folha da aula.
    Fluxo da prova: medir os degraus com a régua, regra de três, ler cada sinal (δ, tipo de H, grupo, formato, vizinhos), montar a estrutura,
-   escrever o significado de cada pico no formato da folha e só então ver a resolução.
+   conferir com a resolução.
    FONTES (honestas): δ, H e multiplicidade dos 4.3 foram lidos das fotos das páginas (v257), então são aproximados. A integração dos 4.3 foi
    deduzida pela fórmula; as ALTURAS DOS DEGRAUS são geradas aqui (escritas aqui), exceto o exercício A, que usa os números da aula.
    J são típicos, não medidos. Os 5 da folha: δ lidos do gráfico da folha; as explicações de cada sinal são escritas aqui, sem fonte conferida.
@@ -279,6 +279,21 @@ function saMsg(txt){const m=$('amsg');if(m)m.textContent=txt;}
 function saSalvar(){const e=E(),A=saLer();A[e.id]={t:Date.now(),rows:S.rows,done:S.done,meas:S.meas,ints:S.ints,chain:S.chain};try{localStorage.setItem(SAK,JSON.stringify(A));const d=new Date(A[e.id].t);saMsg('Análise salva em '+d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'. Ela volta quando você abrir este exercício.');}catch(x){saMsg('Não consegui salvar (o navegador bloqueou o armazenamento).');}}
 function saLimpar(){const e=E(),A=saLer();delete A[e.id];try{localStorage.setItem(SAK,JSON.stringify(A));}catch(x){}load(S.ex);saMsg('Análise apagada neste exercício.');}
 function saRestaurar(i){const a=saLer()[EX[i].id];if(!a)return false;S.rows=a.rows||{};S.done=a.done||[];if(a.meas)S.meas=a.meas;if(a.ints)S.ints=a.ints;S.chain=a.chain||[];return true;}
+/* relatório da análise (mesmo layout do relatório do Identificar) */
+function relProva(){
+ if(!window.relPagina){return;}
+ const e=E(),f=e.f,Ht=e.Hint||f.H,gdh=(2*f.C+2+f.N-f.H-f.X)/2,ks=Object.keys(S.rows).map(Number).sort((a,b)=>a-b),txt=h=>String(h).replace(/<[^>]+>/g,'');
+ let b='<section><h2>Dados do exercício</h2><div class="grid">'+relCard('Dados',[['Fórmula',e.fs],['GDH',String(gdh)],['H que a regra de três usa',String(Ht)]])+'</div></section>';
+ const ms=e.s.map((s,i)=>[s.id,S.meas[i]>0?String(S.meas[i]).replace('.',',')+' cm':'',S.ints[i]!=null&&!isNaN(S.ints[i])?String(S.ints[i]):'']).filter(r=>r[1]||r[2]);
+ if(ms.length)b+='<section><h2>Integração</h2>'+relTabela(['Sinal','Degrau','H (regra de três)'],ms)+'<p class="nt">H = degrau × '+Ht+' ÷ soma dos degraus, arredondado.</p></section>';
+ b+='<section><h2>Sua tabela do caderno <span class="mut">('+ks.length+' de '+e.s.length+' sinais)</span></h2>'
+  +(ks.length?relTabela(['Sinal','H','δ (ppm)','Grupo','Tipo','H vizinhos','Vizinhos possíveis'],ks.map(k=>{const r=S.rows[k];return [e.s[k].id,String(r.h),String(r.d).replace('.',','),txt(r.g),String(r.m),String(r.v),txt(r.f)];})):'<p class="mut">Nenhum sinal conferido ainda.</p>')+'</section>';
+ const ch=S.chain.map(i=>{const p=e.est[i];return txt(p[0])+(p[1]?' ('+p[1]+')':'');});
+ b+='<section><h2>Estrutura montada</h2>'+(ch.length?'<p class="fm">'+ch.map(esc).join(' · ')+'</p><p class="nt">Peças separadas por ·, na ordem em que você ligou. O app confere só as ligações entre as peças.</p>':'<p class="mut">Ainda não montada.</p>')+'</section>';
+ const st=SAVED[e.id];b+='<section><h2>Resolução</h2><p>'+(st==='ok'?'Você marcou que acertou a estrutura.':st==='no'?'Você marcou que errou e quer refazer.':'Ainda sem marcação de acerto ou erro.')+'</p></section>';
+ const h=relPagina({marca:'Anaquim · Prova de RMN ¹H',rotulo:'Exercício',titulo:e.rot||e.nome,corpo:b,rodape:['Os δ, H e formatos dos problemas 4.3 foram lidos das fotos das páginas e são aproximados; a integração do 4.3 foi deduzida da fórmula. Confira com a resolução e com o Silverstein.']});
+ saMsg(relAbrir(h,'relatorio-prova-'+e.id+'.html'));
+}
 const UNI={ch22:'CH₂',ch32:'CH₃'};
 function marcaViz(b,on){b.style.background=on?'#cfe6ff':'';b.style.borderWidth=on?'3px':'';const m=b.querySelector('.pvok');if(on&&!m){const i=document.createElement('span');i.className='pvok';i.textContent='✓ ';b.insertBefore(i,b.firstChild);}else if(!on&&m)m.remove();}
 function lerViz(){S.viz=[].slice.call(document.querySelectorAll('#pv_fz [data-pvz]')).filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>+b.dataset.pvz);}
@@ -408,14 +423,14 @@ function load(i){
 const HTML='<div class="pv">'
 +'<h3 style="margin:0 0 4px">Treino de prova</h3>'
 +'<div class="prow" style="margin-bottom:8px"><button type="button" class="pri" id="pv_nh">¹H com régua</button><button type="button" id="pv_nc">¹³C: leitura dos sinais</button></div><div id="pv_hbody">'
-+'<p class="hint" style="margin:0 0 8px">Você mede os degraus da curva de integração, faz a regra de três, lê cada sinal (δ, grupo, formato, vizinhos), monta a estrutura e escreve o significado de cada pico, como na prova. 8 problemas 4.3 do Silverstein e 5 espectros da folha da aula.</p>'
++'<p class="hint" style="margin:0 0 8px">Você mede os degraus da curva de integração, faz a regra de três, lê cada sinal (δ, grupo, formato, vizinhos), monta a estrutura e confere com a resolução, como na prova. 8 problemas 4.3 do Silverstein e 5 espectros da folha da aula.</p>'
 +'<div class="pcard" id="pv_metodo"><h2>O método da sua aula</h2><div class="ppasso"><ol><li><mark class="b">Meça</mark> o degrau de cada sinal com a régua (em cm).</li><li><mark class="b">Some</mark> todos os degraus.</li><li>Regra de três: <mark class="y">soma dos degraus ↔ H total da fórmula</mark>, então <mark class="y">degrau ↔ x</mark>. Fórmula: <b>x = degrau × H total ÷ soma</b>.</li><li><mark class="b">Arredonde</mark> cada x para inteiro. A soma dos inteiros tem de dar o H total.</li></ol></div><p class="psm" style="margin:6px 0 0">Exemplo da aula, 2-hexanona (C₆H₁₂O, 12 H): degraus 0,6; 0,8; 0,6; 0,6; 0,9. Soma = 3,5. Então 0,6 × 12 ÷ 3,5 = 2,06, que arredonda para <b>2 H</b>. O exercício A já vem com esses números.</p></div>'
 +'<div class="pcard prow"><label><b>Exercício</b> <select id="pv_exsel" style="max-width:calc(100vw - 80px)"></select></label><label class="psm"><input type="checkbox" id="pv_grade" checked> linhas de régua (1 mm)</label><span class="pprog" id="pv_prog"></span></div>'
 +'<div class="pcard" id="pv_enun"></div>'
 +'<div class="pcard" style="overflow-x:auto"><svg id="pv_spec" style="min-width:720px" viewBox="0 0 900 500" role="img" aria-label="Espectro com curva de integração"></svg><div class="psm" id="pv_mhint" style="margin-top:6px">As linhas finas são de 1 mm e as mais escuras de 5 mm. A curva sobe em degraus: cada degrau é o sinal que está embaixo dele.</div></div>'
 +'<div class="pcard" id="pv_c1"><h2>1. Integração: medir, somar, regra de três</h2><div id="pv_tbl"></div><div class="prow" style="margin-top:8px"><button type="button" class="pri" id="pv_chk1">Conferir integração</button></div><div id="pv_fb1" class="pfb" style="margin-top:8px"></div></div>'
 +'<div class="pgrid"><div class="pcard"><h2 id="pv_zt">Multipleto ampliado</h2><svg id="pv_zoom" viewBox="0 0 600 216" role="img" aria-label="Multipleto ampliado"></svg><div id="pv_zinfo" class="psm"></div></div><div class="pcard"><h2 id="pv_pt">2. Significado do pico</h2><div class="pchips" id="pv_chips"></div><div id="pv_panel"><span class="psm">Escolha um sinal.</span></div></div></div>'
-+'<div class="pcard"><h2>Sua tabela do caderno</h2><div id="pv_tab" style="overflow-x:auto"></div><div class="prow" style="margin-top:10px"><button type="button" class="pok" id="pv_asave">Salvar análise</button><button type="button" class="pbad" id="pv_aclear">Apagar análise</button></div><div class="psm" id="pv_amsg" style="margin-top:6px"></div></div>'
++'<div class="pcard"><h2>Sua tabela do caderno</h2><div id="pv_tab" style="overflow-x:auto"></div><div class="prow" style="margin-top:10px"><button type="button" class="pok" id="pv_asave">Salvar análise</button><button type="button" class="pbad" id="pv_aclear">Apagar análise</button><button type="button" id="pv_arel">Relatório (PDF)</button></div><div class="psm" id="pv_amsg" style="margin-top:6px"></div></div>'
 +'<div id="pv_gate"></div>'
 +'<div class="pcard" id="pv_c4"><h2>3. Montar a estrutura</h2><p class="psm" style="margin-top:0">Clique nas peças na ordem em que elas ficam ligadas, da esquerda para a direita. Clique numa peça já colocada para tirar. As peças <b>sem letra</b> (O, C=O, NO₂) não dão sinal de H: vêm da fórmula e do GDH.</p><div class="psm" style="margin-bottom:4px">Peças:</div><div class="pchips" id="pv_pool"></div><div class="psm" style="margin:8px 0 4px">Sua estrutura:</div><div class="pmol" id="pv_chain" style="min-height:48px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;width:100%"></div><div class="prow" style="margin-top:10px"><button type="button" class="pri" id="pv_chk4">Conferir estrutura</button><button type="button" id="pv_dica4">Dica de encaixe</button><button type="button" id="pv_clr4">Limpar</button></div><div id="pv_fb4" class="pfb" style="margin-top:8px"></div></div>'
 +'<div class="pcard" id="pv_c5"><h2>4. Conferir com a resolução</h2><p class="psm" style="margin-top:0">Escreva a estrutura no caderno, depois revele a resolução passo a passo.</p><div class="prow"><button type="button" class="pri" id="pv_reveal">Revelar resolução</button></div><div id="pv_sol" style="margin-top:10px"></div></div>'
@@ -439,7 +454,7 @@ function provaDraw(){
   $('exsel').addEventListener('change',()=>load(+$('exsel').value));
   $('grade').addEventListener('change',drawSpec);
   drawProg();load(0);
-  $('asave').addEventListener('click',saSalvar);$('aclear').addEventListener('click',saLimpar);$('nh').addEventListener('click',()=>setNuc('h'));$('nc').addEventListener('click',()=>setNuc('c'));
+  $('asave').addEventListener('click',saSalvar);$('arel').addEventListener('click',relProva);$('aclear').addEventListener('click',saLimpar);$('nh').addEventListener('click',()=>setNuc('h'));$('nc').addEventListener('click',()=>setNuc('c'));
  }
  setNuc(PVN);
 }

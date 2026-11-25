@@ -209,13 +209,13 @@ function spDesenha(met,r){
     h+=spTabela(['Banda (cm⁻¹)','O que pode ser (tabela do app)'],P.map(p=>{const hit=IRT.filter(q=>p.v<=q[0]+(q[0]===q[1]?5:0)&&p.v>=q[1]-(q[0]===q[1]?5:0)),nm=[...new Set(hit.map(q=>q[2]))];
       return['<b>'+p.v+(p.w>=110&&p.v>2400?' (larga)':'')+'</b>',nm.length?esc(nm.slice(0,3).join('; '))+(nm.length>3?'; ...':''):'nada na tabela do app'];}));
     h+='<p class="hint">As faixas se sobrepõem: use como pista e confirme com outra banda. Marquei "larga" só nas bandas muito largas acima de 2400 cm⁻¹.</p>';
-    h+='<div class="row"><button class="btn" type="button" data-sp-go="iv">Levar as bandas para o Identificar</button></div>';
+    h+='<div class="row"><button class="btn" type="button" data-sp-go="iv">Levar as bandas para o Identificar</button><button class="btn ghost" type="button" data-sp-rel="iv">Relatório (PDF)</button></div>';
   }else if(met==='ms'){
     const P=r.pk.slice().sort((a,b)=>a[0]-b[0]),mm=spMProvavel(r.pk),M=Math.max(...P.map(p=>p[0]));
     h+=spStick(P.map(p=>[p[0],p[1]]),{a:Math.max(0,Math.floor(Math.min(...P.map(p=>p[0]))/10)*10-5),b:Math.ceil(M/10)*10+5,tk:(()=>{const t=[],a=Math.max(0,Math.floor(Math.min(...P.map(p=>p[0]))/10)*10),b=Math.ceil(M/10)*10,s=b-a>120?40:20;for(let v=Math.ceil(a/s)*s;v<=b;v+=s)t.push(v);return t;})(),alt:'Picos de massas lidos (m/z e intensidade relativa)'});
     h+=spTabela(['m/z','Intensidade relativa (%)'],P.map(p=>['<b>'+p[0]+'</b>'+(p[0]===mm.M?' (provável M)':mm.iso.indexOf(p[0])>=0?' (provável M+1: isótopo ¹³C)':''),p[1]===null?'sem valor':p[1]]));
     h+='<p class="hint">"Provável M" é o maior m/z que não parece o pico M+1 do isótopo ¹³C. É só uma pista: com Cl, Br ou S aparece também o M+2, e em álcoois e éteres o M quase não aparece. Confira antes de analisar.</p>';
-    h+='<div class="row"><button class="btn" type="button" data-sp-go="msan">Analisar estes picos</button><button class="btn ghost" type="button" data-sp-go="ms">Levar para o Identificar</button></div>';
+    h+='<div class="row"><button class="btn" type="button" data-sp-go="msan">Analisar estes picos</button><button class="btn ghost" type="button" data-sp-go="ms">Levar para o Identificar</button><button class="btn ghost" type="button" data-sp-rel="ms">Relatório (PDF)</button></div>';
   }else{
     const S=r.sinais,nu=r.nuc==='c'?'¹³C':'¹H';
     const pts=S.map(s=>[s.d,s.r]),a=r.nuc==='c'?Math.max(200,Math.ceil(Math.max(...S.map(s=>s.d))/20)*20+10):12,tk=[];
@@ -224,7 +224,7 @@ function spDesenha(met,r){
     h+=spTabela(['δ (ppm)',r.nuc==='c'?'Intensidade':'Linhas','Altura relativa','Pode ser (tabela do app)'],S.map(s=>{const t=rmnTipos(s.d,r.nuc);
       return['<b>'+rmnFmt(s.d,r.nuc).replace('.',',')+'</b>',r.nuc==='c'?'':s.n,s.r+'%',(t.tipos.length?esc(t.tipos.slice(0,3).join('; '))+(t.tipos.length>3?'; ...':''):'nada na tabela do app')+(t.nota?' <i>('+t.nota+')</i>':'')];}));
     h+='<p class="hint">A altura vem da curva e <b>não é integração</b>: o SDBS não imprime a integral. Serve só para comparar um sinal com outro.</p>';
-    h+='<div class="row"><button class="btn" type="button" data-sp-go="rmn">Levar os δ de '+nu+' para o Identificar</button></div>';
+    h+='<div class="row"><button class="btn" type="button" data-sp-go="rmn">Levar os δ de '+nu+' para o Identificar</button><button class="btn ghost" type="button" data-sp-rel="rmn">Relatório (PDF)</button></div>';
   }
   box.innerHTML=h;
 }
@@ -255,7 +255,7 @@ function spLevar(met){
 }
 function spLer(met,f){
   const box=document.querySelector('.sppdf[data-sp="'+met+'"]'),msg=box.querySelector('[data-sp-msg]');
-  msg.textContent='Lendo o arquivo…';SPR[met]=null;spDesenha(met,null);
+  msg.textContent='Lendo o arquivo…';SPR[met]=null;SPN[met]=f.name||'';spDesenha(met,null);
   const falha=e=>{msg.textContent=(e&&e.erro?rmnErro(e):PDF_ERR)+(ehPdf(f)?' (Se o navegador for muito antigo, o leitor de PDF pode não abrir.)':'');};
   const fim=async()=>{
     try{
@@ -272,6 +272,32 @@ function spLer(met,f){
   };
   fim();
 }
+const SPN={};
+/* relatório do espectro lido (mesmo layout do relatório do Identificar) */
+function spRelatorio(met,box){
+  const r=SPR[met];if(!r||!window.relPagina)return;
+  const txt=h=>String(h).replace(/<[^>]+>/g,''),arq=SPN[met]||'';
+  let b='',tit,marca,rod;
+  if(met==='iv'){
+    const P=r.peaks.slice().sort((a,b)=>b.v-a.v);
+    b+='<section><h2>Bandas lidas <span class="mut">('+P.length+')</span></h2>'+relTabela(['Banda (cm⁻¹)','O que pode ser (tabela do app)'],P.map(p=>{const hit=IRT.filter(q=>p.v<=q[0]+(q[0]===q[1]?5:0)&&p.v>=q[1]-(q[0]===q[1]?5:0)),nm=[...new Set(hit.map(q=>q[2]))];
+      return [p.v+(p.w>=110&&p.v>2400?' (larga)':''),nm.length?nm.slice(0,3).join('; ')+(nm.length>3?'; ...':''):'nada na tabela do app'];}))+'</section>';
+    tit='Espectro de IV';marca='Anaquim · Leitura de PDF';rod=['As faixas se sobrepõem: use como pista e confirme com outra banda. A leitura pode trazer bandas a mais ou errar 1 unidade.'];
+  }else if(met==='ms'){
+    const P=r.pk.slice().sort((a,b)=>a[0]-b[0]),mm=spMProvavel(r.pk);
+    b+='<section><h2>Picos lidos <span class="mut">('+P.length+')</span></h2>'+relTabela(['m/z','Intensidade relativa (%)','Observação'],P.map(p=>[String(p[0]),p[1]===null?'sem valor':String(p[1]),p[0]===mm.M?'provável M':mm.iso.indexOf(p[0])>=0?'provável M+1 (isótopo ¹³C)':'']))+'</section>';
+    tit='Espectro de massas';marca='Anaquim · Leitura de PDF';rod=['"Provável M" é o maior m/z que não parece o pico M+1. É só uma pista: com Cl, Br ou S aparece também o M+2, e em álcoois e éteres o M quase não aparece. A leitura por imagem pode errar em 1 unidade de m/z.'];
+  }else{
+    const S=r.sinais,nu=r.nuc==='c'?'¹³C':'¹H';
+    b+='<section><h2>Sinais lidos <span class="mut">('+S.length+')</span></h2>'+relTabela(['δ (ppm)',r.nuc==='c'?'Intensidade':'Linhas','Altura relativa','Pode ser (tabela do app)'],S.map(s=>{const t=rmnTipos(s.d,r.nuc);
+      return [rmnFmt(s.d,r.nuc).replace('.',','),r.nuc==='c'?'':String(s.n),s.r+'%',(t.tipos.length?t.tipos.slice(0,3).join('; ')+(t.tipos.length>3?'; ...':''):'nada na tabela do app')+(t.nota?' ('+t.nota+')':'')];}))+'</section>';
+    tit='Espectro de RMN de '+nu;marca='Anaquim · Leitura de PDF';rod=['A altura vem da curva e não é integração: o SDBS não imprime a integral. Serve só para comparar um sinal com outro. Confira os δ no espectro original.'];
+  }
+  const dados=[['Tipo',tit.replace('Espectro de ','')],['Arquivo',arq||'não informado']];
+  b='<section><h2>Arquivo</h2><div class="grid">'+relCard('Origem',dados)+'</div></section>'+b;
+  const h=relPagina({marca:marca,rotulo:'Leitura de espectro',titulo:tit,corpo:b,rodape:rod});
+  const m=box&&box.querySelector('[data-sp-msg]'),msg=relAbrir(h,'relatorio-'+met+'.html');if(m)m.textContent=msg;
+}
 function spInit(){
   document.querySelectorAll('.sppdf[data-sp]').forEach(b=>{
     if(b.dataset.ok)return;b.dataset.ok='1';const met=b.dataset.sp,id='spf-'+met;
@@ -279,7 +305,7 @@ function spInit(){
       +'<label for="'+id+'">Arquivo do espectro (.pdf, .jdx, .csv ou .txt)<input type="file" id="'+id+'" accept="'+SP_ARQ[met]+'"></label>'
       +'<p class="hint" data-sp-msg aria-live="polite">Nenhum arquivo escolhido.</p><div data-sp-out></div>';
     b.querySelector('input[type=file]').addEventListener('change',e=>{const f=e.target.files[0];if(f)spLer(met,f);});
-    b.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-sp-go]');if(t)spLevar(t.dataset.spGo);});
+    b.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-sp-go]');if(t)spLevar(t.dataset.spGo);const q=e.target.closest&&e.target.closest('[data-sp-rel]');if(q)spRelatorio(q.dataset.spRel,b);});
   });
 }
 document.addEventListener('DOMContentLoaded',spInit);

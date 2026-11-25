@@ -368,8 +368,8 @@ function build(host){
  +'<div class="lcard"><div class="lrow"><label class="lt-hn" for="lt_nuc"><b>Núcleo:</b></label><select class="lt-hn" id="lt_nuc"><option value="h">¹H</option><option value="c">¹³C</option></select><label for="lt_exsel"><b>Espectro:</b></label><select id="lt_exsel"></select><label class="lchk lt-hn"><input type="checkbox" id="lt_integral"> Mostrar curva de integração</label></div><div id="lt_head" class="lsm" style="margin-top:8px"></div><svg id="lt_ov" viewBox="0 0 1000 290" role="img" aria-label="Espectro de RMN"></svg><div class="lchips" id="lt_chips"></div><div class="lsm" style="margin-top:6px">O eixo vai de δ alto (esquerda) para δ baixo (direita). Clique em um pico ou em uma letra para ampliar o multipleto.</div></div>'
  +'<div class="lcard"><h3>Integração e posições</h3><div id="lt_tbl"></div></div>'
  +'<div class="lgrid"><div class="lcard"><h3 id="lt_zt">Multipleto ampliado</h3><svg id="lt_zoom" viewBox="0 0 600 216" role="img" aria-label="Multipleto ampliado"></svg><div id="lt_zinfo" class="lsm"></div></div><div class="lcard"><h3 id="lt_pt">Significado do pico</h3><div id="lt_panel"><span class="lsm">Clique em um sinal do espectro.</span></div></div></div>'
- +'<div class="lcard lt-pt"><h3>Sua tabela do caderno</h3><div id="lt_tab"></div><div class="lrow" style="margin-top:10px"><button type="button" class="lbtn pri" id="lt_asave">Salvar análise</button><button type="button" class="lbtn" id="lt_aclear">Apagar análise</button></div><div class="lsm" id="lt_amsg" style="margin-top:6px"></div></div>'
- +'<div class="lcard"><h3>Resolução passo a passo</h3><div class="lrow"><button type="button" class="lbtn pri" id="lt_nextstep">Mostrar próximo passo</button><button type="button" class="lbtn" id="lt_allsteps">Mostrar todos</button><button type="button" class="lbtn" id="lt_resetsteps">Esconder</button></div><ol class="lsteps" id="lt_steps"></ol><div id="lt_struct"></div><details style="margin-top:10px"><summary>Fonte dos valores deste espectro</summary><div id="lt_src" class="lsm" style="margin-top:6px"></div></details></div></div>';
+ +'<div class="lcard lt-pt"><h3>Sua tabela do caderno</h3><div id="lt_tab"></div><div class="lrow" style="margin-top:10px"><button type="button" class="lbtn pri" id="lt_asave">Salvar análise</button><button type="button" class="lbtn" id="lt_aclear">Apagar análise</button><button type="button" class="lbtn" data-lrel="1">Relatório (PDF)</button></div><div class="lsm" id="lt_amsg" style="margin-top:6px"></div></div>'
+ +'<div class="lcard"><h3>Resolução passo a passo</h3><div class="lrow"><button type="button" class="lbtn pri" id="lt_nextstep">Mostrar próximo passo</button><button type="button" class="lbtn" id="lt_allsteps">Mostrar todos</button><button type="button" class="lbtn" data-lrel="1">Relatório (PDF)</button><button type="button" class="lbtn" id="lt_resetsteps">Esconder</button></div><div class="lsm" id="lt_rmsg" aria-live="polite"></div><ol class="lsteps" id="lt_steps"></ol><div id="lt_struct"></div><details style="margin-top:10px"><summary>Fonte dos valores deste espectro</summary><div id="lt_src" class="lsm" style="margin-top:6px"></div></details></div></div>';
  host.appendChild(ROOT);
  $('nuc').onchange=ev=>{S.nuc=ev.target.value;S.ex=0;S.sel=null;S.steps=0;$('integral').disabled=S.nuc==='c';fillSel();renderAll();rows13Restaura();drawRows13();avisoRest();};
  fillSel();
@@ -378,11 +378,38 @@ function build(host){
  $('chips').onclick=ev=>{const b=ev.target.closest('[data-i]');if(b)pick(+b.dataset.i);};
  $('ov').onclick=ev=>{const r=ev.target.closest('rect[data-i]');if(r)pick(+r.dataset.i);};
  $('panel').onclick=ev=>{if(ev.target.id==='lt_check')checkAnswer();};
- $('asave').onclick=sa13Salvar;$('aclear').onclick=sa13Limpar;
+ $('asave').onclick=sa13Salvar;$('aclear').onclick=sa13Limpar;ROOT.addEventListener('click',ev=>{if(ev.target.closest('[data-lrel]'))relLeitor();});
  $('nextstep').onclick=()=>{S.steps=Math.min(stepsList().length,S.steps+1);drawSteps();};
  $('allsteps').onclick=()=>{S.steps=stepsList().length;drawSteps();};
  $('resetsteps').onclick=()=>{S.steps=0;drawSteps();};
  renderAll();
+}
+/* relatório (mesmo layout do relatório do Identificar) */
+function relLeitor(){
+ if(!window.relPagina)return;
+ const e=E(),C=S.nuc==='c',f=e.f,nu=C?'¹³C':'¹H',txt=h=>String(h).replace(/<[^>]+>/g,''),d=dbe(f);
+ let b='<section><h2>Composto</h2><div class="grid">'+relCard('Dados',[['Fórmula',e.fs],['GDH',String(d)],['Sinais de '+nu,String(e.s.length)]])+'</div></section>';
+ let tit,rot,rodape;
+ if(S.prova){
+  const ks=Object.keys(S.rows13).map(Number).sort((a,b)=>a-b);
+  const nC=ks.reduce((a,k)=>a+S.rows13[k].n,0),nH=ks.reduce((a,k)=>a+S.rows13[k].n*S.rows13[k].h,0);
+  b+='<section><h2>Sua tabela do caderno <span class="mut">('+ks.length+' de '+e.s.length+' sinais)</span></h2>'
+   +(ks.length?relTabela(['Sinal','nº C','δ (ppm)','Tipo de C','Tipo','H ligados','Grupo'],ks.map(k=>{const r=S.rows13[k];return [e.s[k].id,String(r.n),String(r.d).replace('.',','),txt(r.c),String(r.m),String(r.h),txt(r.g)];}))
+   +'<p class="nt">Até agora: '+nC+' C e '+nH+' H em C–H. A fórmula tem '+f.C+' C e '+f.H+' H.</p>':'<p class="mut">Nenhum sinal conferido ainda.</p>')+'</section>';
+  tit=e.rot||'Espectro sem nome';rot='Prova';
+  rodape=['Os δ de ¹³C dos 5.7 foram lidos das fotos pelo Anaquim e são aproximados. Em ¹³C a altura do sinal não conta carbonos e não existe H vizinho.'];
+ }else{
+  const r=C?null:ratio(e);
+  b+='<section><h2>Sinais</h2>'+(C?relTabela(['Sinal','δ (ppm)','Fora de ressonância','H ligados','C no sinal'],e.s.map(s=>[s.id,fmt(s.d,1),txt(MN[s.m]),String(s.hl),String(s.n)]))
+   :relTabela(['Sinal','δ (ppm)','Integração','H','Formato','Tipo de H'],e.s.map((s,i)=>[s.id,fmt(s.d),String(r[i]),String(s.h),txt(MN[s.m]),txt(CATS[s.cat].n)])))+'</section>';
+  const L=stepsList();
+  b+='<section><h2>Passo a passo</h2><ol class="stp">'+L.map(x=>'<li>'+x.replace(/<(?!\/?b>)[^>]*>/g,'')+'</li>').join('')+'</ol></section>';
+  if(e.est)b+='<section><h2>Estrutura</h2><p class="fm">'+e.est.map(x=>esc(txt(x[0]))+(x[1]?' ('+esc(x[1])+')':'')).join(' · ')+'</p><p class="nt">Peças separadas por ·.'+'</p></section>';
+  tit=e.nome;rot='Leitor de espectros';
+  rodape=[e.fonte||'',e.grp==='sv'?'Os δ foram lidos de gráficos e são aproximados.':''].filter(Boolean);
+ }
+ const h=relPagina({marca:'Anaquim · RMN de '+nu,rotulo:rot,titulo:tit,corpo:b,rodape:rodape});
+ const m=$('amsg');const msg=relAbrir(h,'relatorio-leitor.html');if(S.prova){if(m)m.textContent=msg;}else{const s=$('rmsg');if(s)s.textContent=msg;}
 }
 function attach(host,mode){
  if(typeof host==='string')host=document.getElementById(host);if(!host)return;

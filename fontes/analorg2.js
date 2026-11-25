@@ -491,6 +491,50 @@ function icTexto(){
   o.push('Feito no Anaquim: https://anaquim.litteraria.com.br');
   return o.join('\n');
 }
+/* ---------- layout comum dos relatórios (Identificar, Prova, Leitor e Ler PDF) ---------- */
+function relCss(cor){return ':root{--c:'+cor+'}*{box-sizing:border-box}body{margin:0;background:#EEF1F4;color:#15202B;font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}'
+   +'.pg{max-width:780px;margin:0 auto;background:#fff;padding:0 0 28px}'
+   +'header{background:var(--c);color:#fff;padding:26px 28px 22px}.am{margin-top:12px;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;opacity:.8}.mk{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85;font-weight:600}'
+   +'h1{margin:2px 0 4px;font-size:1.65rem;line-height:1.2}.sub{margin:0;opacity:.9;font-size:.92rem}'
+   +'section{padding:22px 28px 0}h2{font-size:1.05rem;margin:0 0 12px;padding-bottom:6px;border-bottom:2px solid var(--c)}h3{margin:0 0 6px;font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--c)}'
+   +'.mut{color:#5B6877;font-weight:400}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}'
+   +'.card{border:1px solid #D9E0E7;border-radius:10px;padding:10px 12px;break-inside:avoid}dl{margin:0}dl div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid #EDF1F5;min-width:0}dl div:last-child{border:0}dt{color:#5B6877}dd{margin:0;font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}dt{flex:none;max-width:45%}'
+   +'.pills{display:flex;flex-wrap:wrap;gap:6px}.pill{background:#EEF3F8;border:1px solid #D4DEE9;border-radius:99px;padding:3px 11px;font-size:.88rem}'
+   +'.res{border:1px solid #D9E0E7;border-radius:12px;padding:12px 14px;margin:0 0 10px;break-inside:avoid}.rt{display:flex;align-items:center;gap:10px}'
+   +'.n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}'
+   +'.nm{flex:1;min-width:0}.nm b{display:block;font-size:1.05rem}.nm span{font-size:.86rem}.pc{font-size:1.3rem;font-weight:700;color:var(--c)}'
+   +'.bar{height:8px;border-radius:99px;background:#E4EAF0;margin:9px 0}.bar i{display:block;height:100%;background:var(--c);border-radius:99px}'
+   +'.cr{display:flex;flex-wrap:wrap;gap:5px}.cr span{font-size:.78rem;border-radius:6px;padding:2px 8px;background:#EEF1F4;color:#4B5866}.cr .ok{background:#DDF1E6;color:#17613B}.cr .md{background:#FBF0CF;color:#7A5A00}.cr .no{background:#F7E3DE;color:#9A2F20}'
+   +'.det{font-size:.86rem;color:#5B6877;margin:8px 0 0}.leg{font-size:.8rem;color:#5B6877;margin:4px 0 0}.obs{margin:0;padding:10px 12px;background:#FBF6E4;border-radius:10px}'
+   +'footer{padding:20px 28px 0;font-size:.8rem;color:#5B6877}footer p{margin:0 0 4px}'
+   +'.imp{display:block;margin:20px auto 0;font:inherit;font-weight:600;background:var(--c);color:#fff;border:0;border-radius:10px;padding:11px 20px;cursor:pointer}'
+   +'.tb{width:100%;border-collapse:collapse;font-size:.88rem}.tb th{text-align:left;font-size:.8rem;font-weight:700;color:var(--c);border-bottom:2px solid var(--c);padding:5px 6px}.tb td{padding:5px 6px;border-bottom:1px solid #EDF1F5;vertical-align:top}.tbw{overflow-x:auto;break-inside:avoid}'
+   +'.stp{margin:0;padding-left:20px}.stp li{margin:0 0 6px;break-inside:avoid}.fm{font-size:1.15rem;font-weight:600;overflow-wrap:anywhere}.nt{font-size:.86rem;color:#5B6877;margin:8px 0 0}'
+   +'@media print{body{background:#fff}.pg{max-width:none}.imp{display:none}header{-webkit-print-color-adjust:exact;print-color-adjust:exact}.n,.bar i,.cr span{-webkit-print-color-adjust:exact;print-color-adjust:exact}}';}
+const relHoje=()=>new Date().toLocaleDateString('pt-BR');
+const relCor=()=>(getComputedStyle(document.documentElement).getPropertyValue('--keep')||'#1F5FA8').trim();
+/* cartão com pares rótulo/valor; its = [[rótulo, valor]] (texto puro) */
+function relCard(tit,its){return '<div class="card"><h3>'+esc(tit)+'</h3><dl>'+its.map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(v)+'</dd></div>').join('')+'</dl></div>';}
+/* tabela: cab = [texto], lin = [[texto]] */
+function relTabela(cab,lin){return '<div class="tbw"><table class="tb"><thead><tr>'+cab.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+lin.map(l=>'<tr>'+l.map(c=>'<td>'+esc(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';}
+/* página completa. o = {marca, rotulo, titulo, corpo (html), rodape:[texto]} */
+function relPagina(o){
+  const cor=relCor();let b='';
+  b+='<header><div class="mk">'+esc(o.marca)+'</div>'+(o.rotulo?'<div class="am">'+esc(o.rotulo)+'</div>':'')+'<h1>'+esc(o.titulo)+'</h1><p class="sub">'+relHoje()+'</p></header>';
+  b+=o.corpo;
+  b+='<footer>'+(o.rodape||[]).map(x=>'<p>'+esc(x)+'</p>').join('')+'<p>Feito no Anaquim · anaquim.litteraria.com.br</p></footer>';
+  b+='<button class="imp" onclick="window.print()">Imprimir ou salvar em PDF</button>';
+  return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(o.titulo+' · Anaquim')+'</title><style>'+relCss(cor)+'</style></head><body><div class="pg">'+b+'</div></body></html>';
+}
+/* abre o relatório numa janela; se o navegador bloquear, baixa o arquivo. devolve a mensagem para a tela */
+function relAbrir(html,arquivo){
+  const b=new Blob([html],{type:'text/html;charset=utf-8'}),u=URL.createObjectURL(b),w=window.open(u,'_blank');
+  let msg;
+  if(!w){const a=document.createElement('a');a.href=u;a.download=arquivo;document.body.appendChild(a);a.click();a.remove();msg='O navegador bloqueou a janela. Baixei o relatório: abra o arquivo e use Imprimir para gerar o PDF.';}
+  else msg='Relatório aberto. Toque em "Imprimir ou salvar em PDF".';
+  setTimeout(()=>URL.revokeObjectURL(u),60000);return msg;
+}
+window.relCard=relCard;window.relTabela=relTabela;window.relPagina=relPagina;window.relAbrir=relAbrir;window.relHoje=relHoje;
 /* relatório visual: página autônoma, pronta para imprimir ou salvar em PDF */
 function icRelatorio(){
   const L=ICLAST;if(!L)return '';
@@ -515,23 +559,7 @@ function icRelatorio(){
   if(no.obs)b+='<section><h2>Observações</h2><p class="obs">'+esc(no.obs).replace(/\n/g,'<br>')+'</p></section>';
   b+='<footer><p>A porcentagem compara os compostos do banco do app e não é uma probabilidade real. Se o composto não está na lista, o app mostra só o mais parecido. Confirme com os espectros e com a literatura.</p><p>Feito no Anaquim · anaquim.litteraria.com.br</p></footer>';
   b+='<button class="imp" onclick="window.print()">Imprimir ou salvar em PDF</button>';
-  const css=':root{--c:'+cor+'}*{box-sizing:border-box}body{margin:0;background:#EEF1F4;color:#15202B;font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}'
-   +'.pg{max-width:780px;margin:0 auto;background:#fff;padding:0 0 28px}'
-   +'header{background:var(--c);color:#fff;padding:26px 28px 22px}.am{margin-top:12px;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;opacity:.8}.mk{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85;font-weight:600}'
-   +'h1{margin:2px 0 4px;font-size:1.65rem;line-height:1.2}.sub{margin:0;opacity:.9;font-size:.92rem}'
-   +'section{padding:22px 28px 0}h2{font-size:1.05rem;margin:0 0 12px;padding-bottom:6px;border-bottom:2px solid var(--c)}h3{margin:0 0 6px;font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--c)}'
-   +'.mut{color:#5B6877;font-weight:400}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}'
-   +'.card{border:1px solid #D9E0E7;border-radius:10px;padding:10px 12px;break-inside:avoid}dl{margin:0}dl div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid #EDF1F5;min-width:0}dl div:last-child{border:0}dt{color:#5B6877}dd{margin:0;font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}dt{flex:none;max-width:45%}'
-   +'.pills{display:flex;flex-wrap:wrap;gap:6px}.pill{background:#EEF3F8;border:1px solid #D4DEE9;border-radius:99px;padding:3px 11px;font-size:.88rem}'
-   +'.res{border:1px solid #D9E0E7;border-radius:12px;padding:12px 14px;margin:0 0 10px;break-inside:avoid}.rt{display:flex;align-items:center;gap:10px}'
-   +'.n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}'
-   +'.nm{flex:1;min-width:0}.nm b{display:block;font-size:1.05rem}.nm span{font-size:.86rem}.pc{font-size:1.3rem;font-weight:700;color:var(--c)}'
-   +'.bar{height:8px;border-radius:99px;background:#E4EAF0;margin:9px 0}.bar i{display:block;height:100%;background:var(--c);border-radius:99px}'
-   +'.cr{display:flex;flex-wrap:wrap;gap:5px}.cr span{font-size:.78rem;border-radius:6px;padding:2px 8px;background:#EEF1F4;color:#4B5866}.cr .ok{background:#DDF1E6;color:#17613B}.cr .md{background:#FBF0CF;color:#7A5A00}.cr .no{background:#F7E3DE;color:#9A2F20}'
-   +'.det{font-size:.86rem;color:#5B6877;margin:8px 0 0}.leg{font-size:.8rem;color:#5B6877;margin:4px 0 0}.obs{margin:0;padding:10px 12px;background:#FBF6E4;border-radius:10px}'
-   +'footer{padding:20px 28px 0;font-size:.8rem;color:#5B6877}footer p{margin:0 0 4px}'
-   +'.imp{display:block;margin:20px auto 0;font:inherit;font-weight:600;background:var(--c);color:#fff;border:0;border-radius:10px;padding:11px 20px;cursor:pointer}'
-   +'@media print{body{background:#fff}.pg{max-width:none}.imp{display:none}header{-webkit-print-color-adjust:exact;print-color-adjust:exact}.n,.bar i,.cr span{-webkit-print-color-adjust:exact;print-color-adjust:exact}}';
+  const css=relCss(cor);
   return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc((no.nome||'Identificação do composto')+' · Anaquim')+'</title><style>'+css+'</style></head><body><div class="pg">'+b+'</div></body></html>';
 }
 function icMsg(t){const m=$('#icExpMsg');if(m)m.textContent=t;}
