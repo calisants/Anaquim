@@ -21,8 +21,17 @@ with sync_playwright() as p:
     # um valor errado é recusado
     pg.fill('#pv_tbl [data-pvi="0"]','3');pg.click('#pv_chk1');assert 'Revisar' in pg.inner_text('#pv_fb1')
     # sinal A: responde certo
-    pg.click('[data-pvchip="0"]');pg.fill('#pv_fd','2.45');pg.select_option('#pv_fcat','alfa');pg.select_option('#pv_fg','ch2');pg.select_option('#pv_fm','t');pg.fill('#pv_fv','2')
-    pg.click('#pv_check');assert pg.locator('#pv_fb .pbad').count()==0
+    pg.click('[data-pvchip="0"]');pg.fill('#pv_fd','2.45');pg.select_option('#pv_fcat','alfa');pg.select_option('#pv_fg','ch2');pg.select_option('#pv_fm','t');pg.fill('#pv_fv','2');pg.fill('#pv_fh','2');pg.click('#pv_fz [data-pvz="2"]')
+    pg.click('#pv_check');assert pg.locator('#pv_fb .pbad').count()==0,pg.inner_text('#pv_fb');assert pg.locator('#pv_tab tbody tr').count()==1
+    # método completo em todos os sinais de todos os exercícios: sempre há ao menos uma possibilidade de vizinhos
+    for i in range(13):
+        pg.select_option('#pv_exsel',str(i));pg.wait_for_timeout(60)
+        for k,sg in enumerate(pg.evaluate("PROVA_EX[%d].s.slice().sort((a,b)=>b.d-a.d).map(s=>[s.d,s.h,s.m,s.cat])"%i)):
+            pg.click('[data-pvchip="%d"]'%k)
+            op=pg.evaluate("PROVA_VIZ(%d,%d)"%(i,k))
+            nv=pg.evaluate("({s:0,d:1,t:2,q:3,quint:4,sext:5,sept:6,dd:2,sd:7}['%s'])"%sg[2])
+            if sg[2]!='m' and nv: assert op,(i,k,sg)
+    pg.select_option('#pv_exsel','0');pg.click('[data-pvchip="0"]')
     # montar estrutura da 2-hexanona: B, C=O, A, C, D, E
     ordem=pg.evaluate("PROVA_EX[0].est.map(a=>a[0]+'|'+(a[1]||''))")
     for k in range(6):

@@ -126,7 +126,7 @@ function save(){try{localStorage.setItem(PK,JSON.stringify(SAVED));}catch(e){}}
 const fmt=(x,d=2)=>x.toFixed(d).replace('.',',');
 const sub=t=>t.replace(/([A-Za-z\)])(\d+)/g,'$1<sub>$2</sub>');
 const FQ=300,UNIT=60;
-const S={done:[],force:false,ex:0,sel:null,meas:[],ints:[],tool:null,clicks:[],marks:{},chain:[],order:null,att:[],attTxt:[]};
+const S={rows:{},viz:[],done:[],force:false,ex:0,sel:null,meas:[],ints:[],tool:null,clicks:[],marks:{},chain:[],order:null,att:[],attTxt:[]};
 const E=()=>EX[S.ex];
 function binom(n){let r=[1];for(let i=0;i<n;i++){const nr=[1];for(let j=1;j<r.length;j++)nr.push(r[j-1]+r[j]);nr.push(1);r=nr;}return r;}
 function linesOf(s){
@@ -273,31 +273,70 @@ function drawChips(){
  $('chips').innerHTML=e.s.map((s,i)=>'<button type="button" class="pchip" data-pvchip="'+i+'" aria-pressed="'+(S.sel===i)+'" style="border-color:'+s.col+'">'+(S.done[i]?'✓ ':'')+'<b style="color:'+s.col+'">'+s.id+'</b> ler no eixo</button>').join('');
 }
 function grupoOf(s){if(s.cat==='aro')return 'aro';if(s.cat==='vin')return 'vin';if(s.cat==='ald')return 'cho';if(s.cat==='troc'||s.cat==='acid')return 'oh';return s.h===6?'ch32':s.h===4?'ch22':s.h===3?'ch3':s.h===2?'ch2':'ch';}
+const UNI={ch22:'CH₂',ch32:'CH₃'};
+function vizOpts(e,i){
+ const s=e.s[i],n=NV[s.m];if(n==null)return [];
+ const O=[];e.s.forEach((x,k)=>{if(k!==i&&x.cat!=='troc')O.push(k);});
+ const out=[];
+ (function go(q,sum,acc){
+  if(q===O.length){if(sum===n&&acc.length)out.push(acc);return;}
+  go(q+1,sum,acc);
+  const x=e.s[O[q]];
+  go(q+1,sum+x.h,acc.concat([{k:O[q],half:false}]));
+  if(UNI[grupoOf(x)])go(q+1,sum+x.h/2,acc.concat([{k:O[q],half:true}]));
+ })(0,0,[]);
+ return out;
+}
+function fragTxt(e,i,as){
+ const s=e.s[i];if(!as.length)return GR[grupoOf(s)]+' sem vizinho com H';
+ return as.map(a=>{const x=e.s[a.k];return (a.half?UNI[grupoOf(x)]:GR[grupoOf(x)])+' ('+x.id+')';}).join(' + ')+' ↔ ['+GR[grupoOf(s)]+']';
+}
 function drawPanel(){
  const e=E();
  if(S.sel===null){$('panel').innerHTML='<span class="psm">Escolha um sinal (ou clique no pico).</span>';$('pt').textContent='2. Significado do pico';return;}
- const s=e.s[S.sel];$('pt').textContent='2. Significado do sinal '+s.id;
+ const s=e.s[S.sel];$('pt').textContent='2. Significado do sinal '+s.id;S.viz=[];
  const opt=Object.keys(CATS).map(k=>'<option value="'+k+'">'+CATS[k].n+' ('+CATS[k].r+')</option>').join('');
  const mo=Object.keys(MN).map(k=>'<option value="'+k+'">'+MN[k]+'</option>').join('');
- $('panel').innerHTML='<div class="psm" style="margin-bottom:8px">Leia o δ do pico no eixo, como na prova. O número de H você já tirou no passo 1.</div>'
- +'<dl><dt>δ que você lê (ppm)</dt><dd><input type="number" id="pv_fd" step="0.05"></dd>'
- +'<dt>Tipo de H</dt><dd><select id="pv_fcat"><option value="">escolha</option>'+opt+'</select></dd>'
- +'<dt>Grupo</dt><dd><select id="pv_fg"><option value="">escolha</option>'+Object.keys(GR).map(k=>'<option value="'+k+'">'+GR[k]+'</option>').join('')+'</select></dd>'
- +'<dt>Formato</dt><dd><select id="pv_fm"><option value="">escolha</option>'+mo+'</select></dd>'
- +'<dt>Vizinhos</dt><dd>'+(s.m==='m'?'<span class="psm">não se conta em multipleto</span>':'<input type="number" id="pv_fv" min="0" max="12">')+'</dd></dl>'
+ const outros=e.s.map((x,k)=>({x:x,k:k})).filter(o=>o.k!==S.sel&&o.x.cat!=='troc');
+ $('panel').innerHTML='<div class="psm" style="margin-bottom:8px">Na ordem do seu método: H do sinal, δ, faixa, grupo, tipo, H vizinhos e as possibilidades de grupos vizinhos. Leia o δ no eixo, como na prova.</div>'
+ +'<dl><dt>1. Nº de H do sinal</dt><dd><input type="number" id="pv_fh" min="0" max="12"></dd>'
+ +'<dt>2. δ que você lê (ppm)</dt><dd><input type="number" id="pv_fd" step="0.05"></dd>'
+ +'<dt>3. Faixa do δ (tipo de H)</dt><dd><select id="pv_fcat"><option value="">escolha</option>'+opt+'</select></dd>'
+ +'<dt>4. Grupo possível</dt><dd><select id="pv_fg"><option value="">escolha</option>'+Object.keys(GR).map(k=>'<option value="'+k+'">'+GR[k]+'</option>').join('')+'</select></dd>'
+ +'<dt>5. Tipo (s, d, t, q...)</dt><dd><select id="pv_fm"><option value="">escolha</option>'+mo+'</select></dd>'
+ +'<dt>6. H vizinhos</dt><dd>'+(s.m==='m'?'<span class="psm">não se conta em multipleto</span>':'<input type="number" id="pv_fv" min="0" max="12">')+'</dd>'
+ +'<dt>7. Possibilidades de vizinhos</dt><dd>'+(s.m==='m'?'<span class="psm">não se monta em multipleto</span>':'<div class="psm" style="margin-bottom:4px">Marque os sinais cujos H somam os H vizinhos do item 6. Sem vizinho com H, não marque nada.</div><div class="pchips" id="pv_fz">'+outros.map(o=>'<button type="button" data-pvz="'+o.k+'" aria-pressed="false" style="border-color:'+o.x.col+'"><b style="color:'+o.x.col+'">'+o.x.id+'</b> '+GR[grupoOf(o.x)]+' ('+o.x.h+' H)</button>').join('')+'</div>')+'</dd></dl>'
  +'<div class="prow" style="margin-top:10px"><button type="button" class="pri" id="pv_check">Conferir</button></div><div id="pv_fb" class="pfb" style="margin-top:10px"></div>';
  $('check').onclick=checkAnswer;
+ const z=$('fz');if(z)z.onclick=ev=>{const b=ev.target.closest('[data-pvz]');if(!b)return;const k=+b.dataset.pvz,q=S.viz.indexOf(k);if(q>=0)S.viz.splice(q,1);else S.viz.push(k);b.setAttribute('aria-pressed',q<0);b.style.background=q<0?'#f0efe9':'';};
 }
 function checkAnswer(){
  const e=E(),s=e.s[S.sel],R=[];
- const dl=$('fd').value,cat=$('fcat').value,g=$('fg').value,m=$('fm').value;
- R.push(dl===''?['pbad','δ: leia no eixo onde o pico cai. O valor do gráfico é '+fmt(s.d,2)+' ppm.']:Math.abs(+dl-s.d)<=0.15?['pok','δ lido certo (o gráfico dá '+fmt(s.d,2)+' ppm; aceito até 0,15 ppm de diferença).']:['pbad','δ: você leu '+dl+' e o gráfico dá '+fmt(s.d,2)+' ppm. Trace uma linha do topo do pico até o eixo.']);
- R.push(cat===s.cat?['pok','Tipo de H certo.']:['pbad','Tipo de H: em δ '+fmt(s.d,2)+' o esperado é '+CATS[s.cat].n+' ('+CATS[s.cat].r+').']);
- R.push(g===grupoOf(s)?['pok','Grupo certo: '+GR[grupoOf(s)]+'.']:['pbad','Grupo: o sinal tem '+s.h+' H (passo 1) e δ '+fmt(s.d,2)+'. Que grupo tem esse número de H?']);
- R.push(m===s.m?['pok','Formato certo.']:['pbad','Formato: conte os picos na ampliação e veja se há mais de um J.']);
- const vi=$('fv');if(vi)R.push(vi.value!==''&&+vi.value===NV[s.m]?['pok','Vizinhos certo.']:['pbad','Vizinhos: picos menos 1.']);
- S.done[S.sel]=R.every(r=>r[0]==='pok');drawChips();drawGate();
+ const dl=$('fd').value,cat=$('fcat').value,g=$('fg').value,m=$('fm').value,hh=$('fh').value;
+ R.push(hh!==''&&+hh===s.h?['pok','Nº de H certo.']:['pbad','Nº de H: use o degrau do passo 1 (regra de três). Se ainda não fez, confira a integração acima.']);
+ R.push(dl===''?['pbad','δ: leia no eixo onde o pico cai. O valor do gráfico é '+fmt(s.d,2)+' ppm.']:Math.abs(+dl-s.d)<=0.15?['pok','δ lido certo (o gráfico dá '+fmt(s.d,2)+' ppm; aceito até 0,15 ppm de diferença).']:['pbad','δ: você leu '+dl+' e o gráfico dá '+fmt(s.d,2)+' ppm. Trace uma linha do topo do pico até o eixo e veja entre quais números ela cai.']);
+ R.push(cat===s.cat?['pok','Faixa certa: '+CATS[s.cat].n+' ('+CATS[s.cat].r+').']:['pbad','Faixa: em δ '+fmt(s.d,2)+' o esperado é '+CATS[s.cat].n+' ('+CATS[s.cat].r+').']);
+ R.push(g===grupoOf(s)?['pok','Grupo certo: '+GR[grupoOf(s)]+'.']:['pbad','Grupo: o sinal tem '+s.h+' H e δ '+fmt(s.d,2)+'. Que grupo tem esse número de H?']);
+ R.push(m===s.m?['pok','Tipo certo.']:['pbad','Tipo: conte os picos na ampliação e veja se há mais de um J.']);
+ const vi=$('fv');
+ if(vi)R.push(vi.value!==''&&+vi.value===NV[s.m]?['pok','H vizinhos certo.']:['pbad','H vizinhos: picos menos 1.']);
+ if(vi){
+  const n=NV[s.m],op=vizOpts(e,S.sel),mark=S.viz.slice().sort((a,b)=>a-b).join(',');
+  const lista=op.length?op.map(as=>fragTxt(e,S.sel,as)).join('; '):'nenhuma combinação dos outros sinais soma '+n;
+  const casa=op.filter(as=>as.map(a=>a.k).sort((x,y)=>x-y).join(',')===mark);
+  if(n===0)R.push(S.viz.length===0?['pok','Sem vizinho com H: o vizinho é C=O, O ou carbono sem H.']:['pbad','Singleto: 0 H vizinhos, então não marque nenhum sinal.']);
+  else R.push(casa.length?['pok','Possibilidade certa: '+fragTxt(e,S.sel,casa[0])+' (soma '+n+' H).'+(op.length>1?' Há '+op.length+' possibilidades pelos H: '+lista+'. A estrutura decide qual vale.':'')]:['pbad','Possibilidades: com esses sinais não dá '+n+' H vizinhos. Combinações que fecham: '+lista+'.']);
+  S.fragOK=casa.length?fragTxt(e,S.sel,casa[0]):'';
+ }
+ const ok=R.every(r=>r[0]==='pok');S.done[S.sel]=ok;
+ if(ok){S.rows[S.sel]={h:s.h,d:fmt(s.d,2),g:GR[grupoOf(s)],m:s.m,v:s.m==='m'?'x':NV[s.m],f:s.m==='m'?'multipleto':(S.fragOK||GR[grupoOf(s)]+' sem vizinho com H')};}
+ drawChips();drawGate();drawRows();
  $('fb').innerHTML=R.map(r=>'<div class="'+r[0]+'">'+(r[0]==='pok'?'Certo':'Revisar')+': '+r[1]+'</div>').join('');
+}
+function drawRows(){
+ const e=E(),el=$('tab');if(!el)return;
+ const ks=Object.keys(S.rows).map(Number).sort((a,b)=>a-b);
+ el.innerHTML=ks.length?'<table><thead><tr><th>Sinal</th><th>H</th><th>δ</th><th>Grupo</th><th>Tipo</th><th>H viz.</th><th>Vizinhos possíveis</th></tr></thead><tbody>'+ks.map(k=>{const r=S.rows[k],s=e.s[k];return '<tr><td><b style="color:'+s.col+'">'+s.id+'</b></td><td>'+r.h+'</td><td>'+r.d+'</td><td>'+r.g+'</td><td>'+r.m+'</td><td>'+r.v+'</td><td>'+r.f+'</td></tr>';}).join('')+'</tbody></table>':'<span class="psm">Cada sinal que você conferir certo entra aqui, na ordem do seu caderno.</span>';
 }
 function drawEnun(){
  const e=E(),f=e.f;
@@ -361,10 +400,10 @@ function drawProg(){
  [].slice.call($('exsel').options).forEach((o,i)=>{const e=EX[i];o.textContent=(SAVED[e.id]==='ok'?'✓ ':SAVED[e.id]==='no'?'↻ ':'')+(e.rot||e.nome);});
 }
 function load(i){
- S.ex=i;S.sel=null;S.meas=[];S.ints=[];S.tool=null;S.clicks=[];S.marks={};S.chain=[];S.order=null;S.att=[];S.attTxt=[];S.done=[];S.force=false;
+ S.ex=i;S.sel=null;S.meas=[];S.ints=[];S.tool=null;S.clicks=[];S.marks={};S.chain=[];S.order=null;S.att=[];S.attTxt=[];S.done=[];S.rows={};S.viz=[];S.force=false;
  $('fb1').innerHTML='';$('sol').innerHTML='';$('fb4').innerHTML='';
  if(EX[i].id==='43A')S.meas=AULA.slice();
- drawEnun();drawTable();drawSpec();drawChips();drawZoom();drawPanel();drawBuild();drawAtt();drawGate();
+ drawEnun();drawTable();drawSpec();drawChips();drawZoom();drawPanel();drawRows();drawBuild();drawAtt();drawGate();
 }
 const HTML='<div class="pv">'
 +'<h3 style="margin:0 0 4px">Treino de prova</h3>'
@@ -376,6 +415,7 @@ const HTML='<div class="pv">'
 +'<div class="pcard" style="overflow-x:auto"><svg id="pv_spec" style="min-width:720px" viewBox="0 0 900 500" role="img" aria-label="Espectro com curva de integração"></svg><div class="psm" id="pv_mhint" style="margin-top:6px">As linhas finas são de 1 mm e as mais escuras de 5 mm. A curva sobe em degraus: cada degrau é o sinal que está embaixo dele.</div></div>'
 +'<div class="pcard" id="pv_c1"><h2>1. Integração: medir, somar, regra de três</h2><div id="pv_tbl"></div><div class="prow" style="margin-top:8px"><button type="button" class="pri" id="pv_chk1">Conferir integração</button></div><div id="pv_fb1" class="pfb" style="margin-top:8px"></div></div>'
 +'<div class="pgrid"><div class="pcard"><h2 id="pv_zt">Multipleto ampliado</h2><svg id="pv_zoom" viewBox="0 0 600 216" role="img" aria-label="Multipleto ampliado"></svg><div id="pv_zinfo" class="psm"></div></div><div class="pcard"><h2 id="pv_pt">2. Significado do pico</h2><div class="pchips" id="pv_chips"></div><div id="pv_panel"><span class="psm">Escolha um sinal.</span></div></div></div>'
++'<div class="pcard"><h2>Sua tabela do caderno</h2><div id="pv_tab" style="overflow-x:auto"></div></div>'
 +'<div id="pv_gate"></div>'
 +'<div class="pcard" id="pv_c4"><h2>3. Montar a estrutura</h2><p class="psm" style="margin-top:0">Clique nas peças na ordem em que elas ficam ligadas, da esquerda para a direita. Clique numa peça já colocada para tirar. As peças <b>sem letra</b> (O, C=O, NO₂) não dão sinal de H: vêm da fórmula e do GDH.</p><div class="psm" style="margin-bottom:4px">Peças:</div><div class="pchips" id="pv_pool"></div><div class="psm" style="margin:8px 0 4px">Sua estrutura:</div><div class="pmol" id="pv_chain" style="min-height:48px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;width:100%"></div><div class="prow" style="margin-top:10px"><button type="button" class="pri" id="pv_chk4">Conferir estrutura</button><button type="button" id="pv_dica4">Dica de encaixe</button><button type="button" id="pv_clr4">Limpar</button></div><div id="pv_fb4" class="pfb" style="margin-top:8px"></div></div>'
 +'<div class="pcard" id="pv_c45"><h2>4. Atribuição: escreva o significado de cada pico</h2><p class="psm" style="margin-top:0">Como na prova: escreva você mesma, com suas palavras, o que cada sinal é na molécula. Só depois peça o modelo e compare.</p><div class="ppasso"><b>Uma boa resposta tem 4 coisas:</b><ol><li><mark class="y">Grupo</mark> e número de H (ex.: CH₂, 2 H).</li><li><mark class="b">Onde fica</mark> na estrutura (ex.: ligado ao C=O).</li><li><mark class="p">Por que esse δ</mark> (ex.: carbono alfa, 2 a 2,5 ppm).</li><li><mark class="y">Por que esse formato</mark> (ex.: tripleto, 2 vizinhos).</li></ol></div><div id="pv_att"></div><div class="psm" id="pv_attp" style="margin-top:8px"></div></div>'
@@ -418,5 +458,5 @@ function setNuc(n){
  if(c&&window.leitorAttach)window.leitorAttach('pv_chost','prova13');
 }
 window.provaDraw=provaDraw;
-window.PROVA_EX=EX;window.PROVA_HS=heightsFor;
+window.PROVA_VIZ=(i,k)=>vizOpts(EX[i],k).map(as=>as.map(a=>a.k));window.PROVA_EX=EX;window.PROVA_HS=heightsFor;
 })();
